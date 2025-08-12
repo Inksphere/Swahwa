@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Help / Contact</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: white;
+      max-width: 600px;
+      width: 90%;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      border-radius: 12px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #007bff;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Need Help?</h1>
+    <form action="https://formspree.io/f/mwpqoora" method="POST">
+
+      <label for="name">Your Ad.no</label>
+      <input type="number" id="number" name="number" required />
+
+      <label for="name">Your Name</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="email">Your Email</label>
+      <input type="email" id="email" name="email" required />
+
+       <label for="name">Your Whatsapp Number </label>
+      <input type="number" id="number" name="number" required />
+
+      <label for="message">Your Promblem</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+
+      <button type="submit">Send Message</button>
+    </form>
+    <div class="footer-note">
+      We'll respond within 24–48 hours.
+    </div>
+  </div>
+</body>
+<script>
+  // Mapping of Ad.no to Names
+  const studentMap = {
+    1050: "MUHAMMAD SINAN PC",
+    1070: "MUHAMMED MUSAMMIL B K",
+    1074: "MUAD .M",
+    1058: "MUHAMMED JALAL AT",
+    1051: "MUHAMMAD HISHAM T",
+    1056: "MUHAMMED SHADIN N.M.",
+    1076: "MUHAMMED MINHAJ KK",
+    1071: "SAYYID MOHAMMAD ZUHAIR A K",
+    1075: "MUHAMMED HASHIM P",
+    1061: "ANSHID M P",
+    1072: "MOHAMMED SINAN TP",
+    1078: "MUHAMMED RABIEUE MK",
+    1088: "MOHAMMED NAEEM K",
+    1082: "MUHAMMED SANEEN",
+    1090: "MUHAMMED BASSAM",
+    1066: "HASHIM MOHAMMED K P",
+    1063: "MOHAMMED RISHADH. T",
+    1073: "MUHAMMAD MUSTHAFA KK",
+    1068: "MUHAMMED UVAIS.EK",
+    1053: "AMEEN T",
+    1040: "MUHAMMAD RIFAD K",
+    1059: "AFSAL",
+    1064: "MOHAMED SHAMIL M",
+    1013: "MOHAMMED SAHAD.K",
+    1087: "MUHAMMED SHAMIL. A",
+    1089: "ADIL SHAH M",
+    1084: "ASIM MOHAMED M",
+    1024: "FADHIL KATTIPARUTHI",
+    1008: "MUHAMMED MINHAJ",
+    1086: "MOHAMMED NIDAL",
+    1085: "MUHAMMED NAFIH",
+    1014: "MURSHID MK"
+  };
+
+  // Auto-fill name based on Ad.no
+  document.getElementById("number").addEventListener("input", function () {
+    const adNo = this.value.trim();
+    const nameField = document.getElementById("name");
+    nameField.value = studentMap[adNo] || ""; // Clear if not found
+  });
+</script>
+
+</html>

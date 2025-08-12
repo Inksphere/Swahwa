@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border: 2px solid #e0e6ed;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
+      transition: all 0.3s ease;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      color: #333;
+      font-size: 2.5rem;
+      font-weight: 300;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    /* Role Selection Screen */
+    .role-selection {
+      display: block;
+    }
+
+    .role-cards {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .role-card {
+      background: white;
+      border: 3px solid #e0e6ed;
+      border-radius: 15px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex: 1;
+      min-width: 150px;
+      max-width: 180px;
+    }
+
+    .role-card:hover {
+      border-color: #667eea;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+    }
+
+    .role-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .role-card:hover .role-icon {
+      transform: scale(1.1);
+    }
+
+    .admin-card .role-icon {
+      color: #e74c3c;
+    }
+
+    .student-card .role-icon {
+      color: #3498db;
+    }
+
+    .role-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .role-description {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    /* Login Form Screen */
+    .login-form {
+      display: none;
+    }
+
+    .form-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .back-btn {
+      background: #f8f9fa;
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+      cursor: pointer;
+      margin-right: 15px;
+      transition: background 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: #e9ecef;
+    }
+
+    .form-title {
+      flex: 1;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #e0e6ed;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    .error-message {
+      background: #ffe6e6;
+      color: #d8000c;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      margin-top: 15px;
+      display: none;
+      border: 1px solid #ffb3b3;
+    }
+
+    .admin-form .login-btn {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    }
+
+    .admin-form .form-group input:focus {
+      border-color: #e74c3c;
+      box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+    }
+
+    .student-form .login-btn {
+      background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    }
+
+    .student-form .form-group input:focus {
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    @media (max-width: 480px) {
+      .role-cards {
+        flex-direction: column;
+      }
+      
+      .role-card {
+        max-width: 100%;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Role Selection Screen -->
+    <div id="roleSelection" class="role-selection">
+      <div class="header">
+        <h1>Welcome</h1>
+        <p>Choose your login type</p>
+      </div>
+      
+      <div class="role-cards">
+        <div class="role-card admin-card" onclick="showAdminLogin()">
+          <div class="role-icon">👨‍💼</div>
+          <div class="role-title">Admin</div>
+          <div class="role-description">Administrative Access</div>
+        </div>
+        
+        <div class="role-card student-card" onclick="showStudentLogin()">
+          <div class="role-icon">🎓</div>
+          <div class="role-title">Student</div>
+          <div class="role-description">Student Portal</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Login Form -->
+    <div id="adminLogin" class="login-form admin-form">
+      <div class="form-header">
+        <button class="back-btn" onclick="showRoleSelection()">
+          ← Back
+        </button>
+        <div class="form-title">Admin Login</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="adminUsername">Username</label>
+        <input type="text" id="adminUsername" placeholder="Enter admin username" value="admin">
+      </div>
+      
+      <div class="form-group">
+        <label for="adminPassword">Password</label>
+        <input type="password" id="adminPassword" placeholder="Enter password">
+      </div>
+      
+      <button class="login-btn" onclick="adminLogin()">Login as Admin</button>
+      <div class="error-message" id="adminError"></div>
+    </div>
+
+    <!-- Student Login Form -->
+    <div id="studentLogin" class="login-form student-form">
+      <div class="form-header">
+        <button class="back-btn" onclick="showRoleSelection()">
+          ← Back
+        </button>
+        <div class="form-title">Student Login</div>
+      </div>
+      
+      <div class="form-group">
+        <label for="studentAdmission">Admission Number</label>
+        <input type="text" id="studentAdmission" placeholder="Enter your admission number">
+      </div>
+      
+      <button class="login-btn" onclick="studentLogin()">Login as Student</button>
+      <div class="error-message" id="studentError"></div>
+    </div>
+  </div>
+
+  <script>
+    // Show different screens
+    function showRoleSelection() {
+      document.getElementById('roleSelection').style.display = 'block';
+      document.getElementById('adminLogin').style.display = 'none';
+      document.getElementById('studentLogin').style.display = 'none';
+      clearErrors();
+    }
+
+    function showAdminLogin() {
+      document.getElementById('roleSelection').style.display = 'none';
+      document.getElementById('adminLogin').style.display = 'block';
+      document.getElementById('studentLogin').style.display = 'none';
+      document.getElementById('adminPassword').focus();
+      clearErrors();
+    }
+
+    function showStudentLogin() {
+      document.getElementById('roleSelection').style.display = 'none';
+      document.getElementById('adminLogin').style.display = 'none';
+      document.getElementById('studentLogin').style.display = 'block';
+      document.getElementById('studentAdmission').focus();
+      clearErrors();
+    }
+
+    function clearErrors() {
+      document.getElementById('adminError').style.display = 'none';
+      document.getElementById('studentError').style.display = 'none';
+    }
+
+    // Admin login function
+    function adminLogin() {
+      const username = document.getElementById('adminUsername').value.trim();
+      const password = document.getElementById('adminPassword').value.trim();
+      const errorDiv = document.getElementById('adminError');
+
+      if (username.toLowerCase() === 'admin' && password === '123') {
+        window.location.href = 'admin-dashboard.html';
+      } else if (username.toLowerCase() !== 'admin') {
+        showError(errorDiv, 'Invalid admin username.');
+      } else {
+        showError(errorDiv, 'Incorrect password. Please try again.');
+      }
+    }
+
+    // Student login function
+    function studentLogin() {
+      const admissionNumber = document.getElementById('studentAdmission').value.trim();
+      const errorDiv = document.getElementById('studentError');
+
+      if (admissionNumber === '') {
+        showError(errorDiv, 'Please enter your admission number.');
+      } else if (!isNaN(admissionNumber) && admissionNumber.length > 0) {
+        window.location.href = `show.html?user=${admissionNumber}`;
+      } else {
+        showError(errorDiv, 'Please enter a valid admission number.');
+      }
+    }
+
+    function showError(errorDiv, message) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    }
+
+    // Add Enter key support
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        if (document.getElementById('adminLogin').style.display === 'block') {
+          adminLogin();
+        } else if (document.getElementById('studentLogin').style.display === 'block') {
+          studentLogin();
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
