@@ -338,7 +338,7 @@
       const password = document.getElementById('adminPassword').value.trim();
       const errorDiv = document.getElementById('adminError');
 
-      if (username.toLowerCase() === 'admin' && password === '123') {
+      if (username.toLowerCase() === 'admin' && password === 'add') {
         window.location.href = 'admin-dashboard.html';
       } else if (username.toLowerCase() !== 'admin') {
         showError(errorDiv, 'Invalid admin username.');
@@ -379,4 +379,5 @@
   </script>
 
 </body>
+
 </html>
