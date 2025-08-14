@@ -388,10 +388,13 @@
     <div id="list" class="section">
     <h2>Help / Contact Form</h2>
     </div>
-    
+    <div class="refresh-button">
+  <button onclick="exportDebitToPDF()">📄 Export Debit to PDF</button>
+</div>
   </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
+
     function showSection(id, event) {
       // Remove active from all links
       document.querySelectorAll('.menu a').forEach(el => el.classList.remove('active'));
@@ -584,6 +587,28 @@
           document.getElementById("creditTotalAmount").textContent = "Error";
         });
     }
+    
+    function exportDebitToPDF() {
+  const username = document.getElementById('debitUsername').textContent.trim();
+  const amount = document.getElementById('debitTotalAmount').textContent.trim();
+
+  if (!username || amount === "0.00" || amount === "Error") {
+    alert("Please load valid debit data before exporting.");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+  doc.text("Debit Summary", 20, 20);
+
+  doc.setFontSize(14);
+  doc.text(`Username: ${username}`, 20, 40);
+  doc.text(`Total Debit: ₹${amount}`, 20, 50);
+
+  doc.save(`Debit_Summary_${username}.pdf`);
+}
 
     function loadDebitData() {
       const username = document.getElementById('debitUsernameInput').value.trim();
@@ -677,4 +702,5 @@
   </script>
 
 </body>
+
 </html>
