@@ -358,6 +358,46 @@
       font-size: 0.9rem;
     }
     
+    /* Received Button Styles */
+    .received-btn {
+      background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-left: 10px;
+      box-shadow: 0 2px 6px rgba(40, 167, 69, 0.3);
+    }
+    
+    .received-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+    }
+    
+    .received-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(40, 167, 69, 0.3);
+    }
+    
+    .received-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .action-cell {
+      white-space: nowrap;
+    }
+    
+    .transaction-row.received {
+      opacity: 0.7;
+      background-color: #f0f9ff;
+    }
+    
     @media (max-width: 768px) {
       .filter-grid {
         grid-template-columns: 1fr;
@@ -382,6 +422,15 @@
 
       .new-item-form {
         flex-direction: column;
+      }
+      
+      .received-btn {
+        margin-left: 0;
+        margin-top: 5px;
+      }
+      
+      .action-cell {
+        white-space: normal;
       }
     }
     
@@ -647,6 +696,7 @@
               <th>Type</th>
               <th>Description</th>
               <th>Amount</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody id="ledgerBody"></tbody>
@@ -665,6 +715,7 @@
     let itemsPerPage = 10;
     let predefinedItems = [];
     let currentItemInputMode = 'predefined'; // 'predefined', 'custom'
+    let receivedTransactions = new Set(); // Track which transactions have been received
     const api = "https://script.google.com/macros/s/AKfycbwl2547hMsMHLi0l1e9xcq6Ue_eV9wgL4gVWyCIASTZZrY2VY-brzxsqVRsKtYSbRk2/exec";
 
     // Default predefined items
@@ -682,6 +733,100 @@
       'Accessories',
       'Emergency Expense'
     ];
+
+    // Load received transactions from localStorage
+    function loadReceivedTransactions() {
+      if (currentUsername) {
+        const stored = localStorage.getItem(`receivedTransactions_${currentUsername}`);
+        receivedTransactions = new Set(stored ? JSON.parse(stored) : []);
+      }
+    }
+
+    // Save received transactions to localStorage
+    function saveReceivedTransactions() {
+      if (currentUsername) {
+        localStorage.setItem(`receivedTransactions_${currentUsername}`, JSON.stringify([...receivedTransactions]));
+      }
+    }
+
+    // Generate unique transaction ID
+    function generateTransactionId(entry) {
+      return `${entry.date}_${entry.type}_${entry.item}_${entry.amount}`;
+    }
+
+    // Handle received button click
+    function markAsReceived(transactionId, amount, description, buttonElement) {
+      if (receivedTransactions.has(transactionId)) {
+        alert("This transaction has already been marked as received!");
+        return;
+      }
+
+      if (confirm(`Mark as received: ₹${amount} for "${description}"?\n\nThis will add ₹${amount} to your balance as credit.`)) {
+        // Disable button and show processing
+        buttonElement.disabled = true;
+        buttonElement.innerText = 'Processing...';
+
+        // Add credit entry for the received amount
+        addReceivedCredit(amount, description, transactionId, buttonElement);
+      }
+    }
+
+    // Add credit for received transaction
+    function addReceivedCredit(amount, originalDescription, transactionId, buttonElement) {
+      const item = `Received: ${originalDescription}`;
+      const requestUrl = `${api}?action=add_credit&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(item)}&amount=${encodeURIComponent(amount)}`;
+      
+      console.log("Adding received credit:", { amount, item, transactionId });
+
+      fetch(requestUrl, { 
+        method: "GET",
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+        .then(res => {
+          return res.text().then(text => {
+            try {
+              const jsonData = JSON.parse(text);
+              return { success: res.ok, data: jsonData, raw: text };
+            } catch (parseError) {
+              return { success: res.ok, data: null, raw: text, parseError: parseError.message };
+            }
+          });
+        })
+        .then(result => {
+          if (!result.success || !result.data || result.data.result !== "success") {
+            throw new Error(result.data?.error || "Failed to add received credit");
+          }
+
+          // Mark transaction as received
+          receivedTransactions.add(transactionId);
+          saveReceivedTransactions();
+
+          // Remove the button and update the row
+          const row = buttonElement.closest('tr');
+          row.classList.add('received');
+          buttonElement.parentElement.innerHTML = '<span style="color: #28a745; font-weight: 600;">✅ Received</span>';
+
+          // Refresh data
+          setTimeout(() => {
+            fetchSummary();
+            fetchLedger();
+          }, 500);
+
+          alert(`✅ Marked as received! ₹${amount} has been added to your balance.`);
+
+        })
+        .catch(error => {
+          console.error("Error adding received credit:", error);
+          
+          // Re-enable button
+          buttonElement.disabled = false;
+          buttonElement.innerText = 'Received';
+          
+          alert(`❌ Failed to mark as received: ${error.message}`);
+        });
+    }
 
     // Initialize predefined items
     function initializePredefinedItems() {
@@ -890,6 +1035,9 @@
       // Initialize predefined items for this user
       initializePredefinedItems();
       
+      // Load received transactions for this user
+      loadReceivedTransactions();
+      
       fetchSummary();
       fetchLedger();
       
@@ -1063,7 +1211,8 @@
           allLedgerData = ledgerData.map(entry => ({
             ...entry,
             parsedDate: new Date(entry.date),
-            searchText: `${entry.item || ''} ${entry.type || ''}`.toLowerCase()
+            searchText: `${entry.item || ''} ${entry.type || ''}`.toLowerCase(),
+            transactionId: generateTransactionId(entry)
           }));
           
           // Apply current filters and display
@@ -1170,7 +1319,13 @@
       // Display rows
       pageData.forEach((entry, index) => {
         const row = document.createElement("tr");
-        row.className = entry.type === 'credit' ? 'credit-row' : 'debit-row';
+        row.className = entry.type === 'credit' ? 'credit-row transaction-row' : 'debit-row transaction-row';
+        
+        // Check if transaction was already received
+        const isReceived = receivedTransactions.has(entry.transactionId);
+        if (isReceived) {
+          row.classList.add('received');
+        }
         
         // Format date
         let formattedDate = 'N/A';
@@ -1190,11 +1345,24 @@
         const item = entry.item || 'No description';
         const type = (entry.type || 'unknown').charAt(0).toUpperCase() + (entry.type || 'unknown').slice(1);
         
+        // Create action cell content
+        let actionContent = '';
+        if (entry.type === 'debit' && !entry.item.startsWith('Received:')) {
+          if (isReceived) {
+            actionContent = '<span style="color: #28a745; font-weight: 600;">✅ Received</span>';
+          } else {
+            actionContent = `<button class="received-btn" onclick="markAsReceived('${entry.transactionId}', ${amount}, '${item.replace(/'/g, "\\'")}', this)">💰 Received</button>`;
+          }
+        } else if (entry.type === 'credit') {
+          actionContent = '<span style="color: #6c757d;">—</span>';
+        }
+        
         row.innerHTML = `
           <td>${formattedDate}</td>
           <td>${typeIcon} ${type}</td>
           <td>${item}</td>
           <td class="amount-display ${amountClass}">₹${amount.toFixed(2)}</td>
+          <td class="action-cell">${actionContent}</td>
         `;
         tbody.appendChild(row);
       });
@@ -1294,34 +1462,34 @@
     }
 
     function exportData() {
-  if (filteredData.length === 0) {
-    alert("No data to export!");
-    return;
-  }
+      if (filteredData.length === 0) {
+        alert("No data to export!");
+        return;
+      }
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
 
-  const headers = ["Date", "Type", "Description", "Amount"];
-  const rows = filteredData.map(entry => [
-    entry.parsedDate.toLocaleDateString('en-IN'),
-    entry.type,
-    entry.item || '',
-    entry.amount.toFixed(2)
-  ]);
+      const headers = ["Date", "Type", "Description", "Amount", "Status"];
+      const rows = filteredData.map(entry => [
+        entry.parsedDate.toLocaleDateString('en-IN'),
+        entry.type,
+        entry.item || '',
+        entry.amount.toFixed(2),
+        receivedTransactions.has(entry.transactionId) ? 'Received' : (entry.type === 'debit' && !entry.item.startsWith('Received:') ? 'Pending' : '-')
+      ]);
 
-  doc.setFontSize(14);
-  doc.text(`${currentUsername} - Transactions`, 14, 15);
+      doc.setFontSize(14);
+      doc.text(`${currentUsername} - Transactions`, 14, 15);
 
-  doc.autoTable({
-    startY: 20,
-    head: [headers],
-    body: rows
-  });
+      doc.autoTable({
+        startY: 20,
+        head: [headers],
+        body: rows
+      });
 
-  doc.save(`${currentUsername}_transactions_${new Date().toISOString().split('T')[0]}.pdf`);
-}
-
+      doc.save(`${currentUsername}_transactions_${new Date().toISOString().split('T')[0]}.pdf`);
+    }
 
     function addEntry() {
       if (!currentUsername) {
@@ -1508,5 +1676,4 @@
     });
   </script>
 </body>
-
 </html>
