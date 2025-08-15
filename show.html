@@ -185,8 +185,52 @@
 
     <script>
         /* ----------  MINIMAL JS TO MATCH ORIGINAL  ---------- */
-        let currentUsername = null;
+         let currentUsername = null;
+        let debugMode = false;
+        let allLedgerData = [];
+        let filteredData = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        let predefinedItems = [];
+        let currentItemInputMode = 'predefined';
+        let receivedTransactions = new Set();
         const api = "https://script.google.com/macros/s/AKfycbwl2547hMsMHLi0l1e9xcq6Ue_eV9wgL4gVWyCIASTZZrY2VY-brzxsqVRsKtYSbRk2/exec";
+
+        // Student data mapping
+        const studentData = {
+            '1050': 'MUHAMMAD SINAN PC',
+            '1070': 'MUHAMMED MUSAMMIL B K',
+            '1074': 'MUAD .M',
+            '1058': 'MUHAMMED JALAL AT',
+            '1051': 'MUHAMMAD HISHAM T',
+            '1056': 'MUHAMMED SHADIN N.M.',
+            '1076': 'MUHAMMED MINHAJ KK',
+            '1071': 'SAYYID MOHAMMAD ZUHAIR A K',
+            '1075': 'MUHAMMED HASHIM P',
+            '1061': 'ANSHID M P',
+            '1072': 'SINAN TP',
+            '1078': 'MUHAMMED RABIEUE MK',
+            '1088': 'NAEEM K',
+            '1082': 'MUHAMMED SANEEN',
+            '1090': 'MUHAMMED BASSAM',
+            '1066': 'HASHIM K P',
+            '1063': 'RISHADH. T',
+            '1073': 'MUHAMMAD MUSTHAFA KK',
+            '1068': 'MUHAMMED UVAIS.EK',
+            '1053': 'AMEEN T',
+            '1040': 'MUHAMMAD RIFAD K',
+            '1059': 'AFSAL',
+            '1064': 'SHAMIL M',
+            '1013': 'SAHAD.K',
+            '1087': 'SHAMIL. A',
+            '1089': 'ADIL SHAH M',
+            '1084': 'ASIM M',
+            '1024': 'FADHIL KATTIPARUTHI',
+            '1008': 'MINHAJ',
+            '1086': 'NIDAL',
+            '1085': 'NAFIH',
+            '1014': 'MURSHID MK'
+        };
 
         /* Login / Logout */
         function login() {
@@ -281,3 +325,4 @@
     </script>
 </body>
 </html>
+
