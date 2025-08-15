@@ -1,723 +1,283 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-   <title>siteosphia</title>
-<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Inksphere/Swahwa/main/10149443.png">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: white;
-      min-height: 100vh;
-      padding: 20px;
-      color: #333;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    
-    h1 {
-      color: #333;
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 2.5rem;
-    }
-    
-    .card {
-      background: white;
-      margin-bottom: 30px;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      border: 1px solid #e1e5e9;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-    }
-    
-    .login-card {
-      max-width: 500px;
-      margin: 50px auto;
-      text-align: center;
-    }
-    
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    
-    .login-form input {
-      padding: 15px 20px;
-      border: 2px solid #e1e5e9;
-      border-radius: 10px;
-      font-size: 1.1rem;
-      text-align: center;
-      transition: all 0.3s ease;
-    }
-    
-    .login-form input:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-    
-    .login-form button {
-      padding: 15px 20px;
-      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: all 0.3s ease;
-    }
-    
-    .login-form button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-    
-    .login-form button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-    
-    .user-info {
-      text-align: center;
-      font-size: 1.2rem;
-      color: #333;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-    }
-    
-    .logout-btn {
-      padding: 8px 15px;
-      background: linear-gradient(45deg, #dc3545 0%, #e74c3c 100%);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-    
-    .logout-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 3px 10px rgba(220, 53, 69, 0.4);
-    }
-    
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-    
-    .summary-item {
-      text-align: center;
-      padding: 20px;
-      background: white;
-      border-radius: 10px;
-      border: 2px solid #e1e5e9;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    }
-    
-    .summary-item.credit .summary-amount {
-      color: #28a745;
-    }
-    
-    .summary-item.debit .summary-amount {
-      color: #dc3545;
-    }
-    
-    .summary-item.balance .summary-amount.positive {
-      color: #28a745;
-    }
-    
-    .summary-item.balance .summary-amount.negative {
-      color: #dc3545;
-    }
-    
-    .summary-label {
-      font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 5px;
-    }
-    
-    .summary-amount {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #333;
-    }
-    
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 2fr 1fr 1fr;
-      gap: 15px;
-      align-items: end;
-    }
-    
-    @media (max-width: 768px) {
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    input, select, button {
-      padding: 12px 15px;
-      border: 2px solid #e1e5e9;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-    }
-    
-    input:focus, select:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-    
-    button {
-      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-    
-    button:active {
-      transform: translateY(0);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siteosphia</title>
 
-    .sqac-btn {
-      background: linear-gradient(45deg, #17a2b8 0%, #138496 100%);
-      padding: 12px 24px;
-      font-size: 1rem;
-      margin: 20px 0;
-      position: relative;
-      overflow: hidden;
-    }
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Inksphere/Swahwa/main/10149443.png">
+    <style>
+        /* ----------  NEW STYLES  ---------- */
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:#fff;min-height:100vh;padding:20px;color:#333}
+        .dashboard-container{max-width:1200px;margin:0 auto}
+        .main-title{color:#333;text-align:center;margin-bottom:30px;font-size:2.5rem}
+        .card{background:#fff;backdrop-filter:blur(10px);border-radius:15px;padding:25px;box-shadow:0 8px 32px rgba(0,0,0,.1);transition:transform .3s ease;border:1px solid #e1e5e9;margin-bottom:25px}
+        .card:hover{transform:translateY(-5px);box-shadow:0 12px 40px rgba(0,0,0,.15)}
+        .card-header{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+        .card-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(45deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
+        .card h3{color:#2c3e50;font-size:18px;margin:0}
+        .card p{color:#7f8c8d;line-height:1.6;margin-bottom:15px}
 
-    .sqac-btn:hover {
-      background: linear-gradient(45deg, #138496 0%, #117a8b 100%);
-      box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
-    }
+        /* Login Card */
+        .login-card{max-width:500px;margin:50px auto;text-align:center}
+        .login-form{display:flex;flex-direction:column;gap:20px;margin-top:20px}
+        .login-form input{padding:15px 20px;border:2px solid #e1e5e9;border-radius:10px;font-size:1.1rem;text-align:center;transition:all .3s ease}
+        .login-form input:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1)}
 
-    .sqac-btn:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s;
-    }
+        /* Profile Header */
+        .profile-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-radius:15px;padding:30px;margin-bottom:30px;color:#fff;text-align:center}
+        .profile-photo{width:120px;height:120px;border-radius:50%;border:4px solid #ff8a00;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#f8f9fa;font-size:3rem;color:#667eea;margin:0 auto 20px}
+        .student-name{font-size:2rem;font-weight:bold;margin-bottom:10px;text-shadow:1px 1px 2px rgba(0,0,0,.3)}
+        .student-role{font-size:1.2rem;opacity:.9;font-weight:500;margin-bottom:20px}
+        .profile-actions{display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
+        .profile-btn{padding:12px 24px;background:rgba(255,255,255,.2);color:#fff;border:2px solid rgba(255,255,255,.3);border-radius:8px;cursor:pointer;font-weight:600;transition:all .3s ease;text-decoration:none;display:inline-flex;align-items:center;gap:8px;backdrop-filter:blur(10px)}
+        .profile-btn:hover{background:rgba(255,255,255,.3);border-color:rgba(255,255,255,.5);transform:translateY(-2px)}
+        .profile-btn.danger{background:rgba(220,53,69,.8);border-color:#dc3545}
+        .profile-btn.danger:hover{background:#dc3545}
 
-    .sqac-btn:hover:before {
-      left: 100%;
-    }
-    
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    
-    th, td {
-      border: 1px solid #e1e5e9;
-      padding: 12px;
-      text-align: left;
-    }
-    
-    th {
-      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      font-weight: 600;
-      text-transform: uppercase;
-      font-size: 0.9rem;
-      letter-spacing: 0.5px;
-    }
-    
-    tr:nth-child(even) {
-      background-color: #f8f9fa;
-    }
-    
-    tr:hover {
-      background-color: #e3f2fd;
-      transition: background-color 0.3s ease;
-    }
-    
-    .credit-row {
-      border-left: 4px solid #28a745;
-    }
-    
-    .debit-row {
-      border-left: 4px solid #dc3545;
-    }
-    
-    .text-success {
-      color: #28a745;
-      font-weight: bold;
-    }
-    
-    .text-danger {
-      color: #dc3545;
-      font-weight: bold;
-    }
-    
-    .error {
-      color: #dc3545;
-      background: #ffe6e6;
-      padding: 15px;
-      border-radius: 8px;
-      margin: 15px 0;
-      text-align: center;
-      font-weight: 500;
-      border: 1px solid #dc3545;
-    }
-    
-    .loading {
-      color: #6c757d;
-      font-style: italic;
-      text-align: center;
-      padding: 20px;
-    }
-    
-    .status-message {
-      text-align: center;
-      padding: 20px;
-      color: #6c757d;
-      font-size: 1.1rem;
-    }
-    
-    .amount-display {
-      font-weight: bold;
-      font-family: 'Courier New', monospace;
-    }
-    
-    .refresh-btn {
-      background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
-      padding: 8px 15px;
-      font-size: 0.9rem;
-      margin-left: 10px;
-    }
-    
-    .hidden {
-      display: none;
-    }
+        /* Stats Grid */
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-top:20px}
+        .stat-item{text-align:center;padding:20px;background:#f8f9fa;border-radius:10px;border:2px solid #e1e5e9;transition:all .3s ease}
+        .stat-item:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,0,0,.1)}
+        .stat-item.credit{border-color:#28a745}
+        .stat-item.debit{border-color:#dc3545}
+        .stat-item.balance.positive{border-color:#28a745}
+        .stat-item.balance.negative{border-color:#dc3545}
+        .stat-number{font-size:24px;font-weight:bold;color:#667eea;display:block;margin-bottom:5px}
+        .stat-number.credit{color:#28a745}
+        .stat-number.debit{color:#dc3545}
+        .stat-number.balance.positive{color:#28a745}
+        .stat-number.balance.negative{color:#dc3545}
+        .stat-label{font-size:12px;color:#7f8c8d;text-transform:uppercase;letter-spacing:.5px}
 
-    .sqac-section {
-      text-align: center;
-      margin: 20px 0;
-    }
+        /* Form & Filter Grid */
+        .form-grid,.filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;align-items:end;margin-bottom:15px}
+        input,select{padding:12px 15px;border:2px solid #e1e5e9;border-radius:8px;font-size:1rem;transition:all .3s ease}
+        input:focus,select:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 3px rgba(102,126,234,.1)}
+        .btn{padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:500;transition:all .3s ease;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-size:14px;text-transform:uppercase;letter-spacing:.5px}
+        .btn-primary{background:linear-gradient(45deg,#667eea 0%,#764ba2 100%);color:#fff}
+        .btn-success{background:linear-gradient(45deg,#28a745 0%,#20c997 100%);color:#fff}
+        .btn-warning{background:linear-gradient(45deg,#ff7043 0%,#ff5722 100%);color:#fff}
+        .btn-info{background:linear-gradient(45deg,#17a2b8 0%,#138496 100%);color:#fff}
+        .btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,0,0,.2)}
+        .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 
-    .auto-login-form {
-      display: none;
-      position: absolute;
-      top: -1000px;
-      left: -1000px;
-      width: 1px;
-      height: 1px;
-      overflow: hidden;
-    }
-  </style>
+        /* Table */
+        table{width:100%;border-collapse:collapse;margin-top:20px;background:#fff;border-radius:8px;overflow:hidden}
+        th,td{border:1px solid #e1e5e9;padding:12px;text-align:left}
+        th{background:linear-gradient(45deg,#667eea 0%,#764ba2 100%);color:#fff;font-weight:600;text-transform:uppercase;font-size:.9rem;letter-spacing:.5px}
+        tr:nth-child(even){background:#f8f9fa}
+        tr:hover{background:#e3f2fd;transition:background-color .3s ease}
+        .credit-row{border-left:4px solid #28a745}
+        .debit-row{border-left:4px solid #dc3545}
+        .text-success{color:#28a745!important;font-weight:bold}
+        .text-danger{color:#dc3545!important;font-weight:bold}
+        .amount-display{font-weight:bold;font-family:'Courier New',monospace}
+
+        /* Pagination */
+        .pagination-controls{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:20px;flex-wrap:wrap}
+        .pagination-btn{padding:8px 12px;background:linear-gradient(45deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:.9rem;transition:all .3s ease}
+        .pagination-btn:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(102,126,234,.4)}
+        .pagination-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+        .pagination-btn.active{background:linear-gradient(45deg,#4caf50 0%,#66bb6a 100%)}
+
+        /* Utility */
+        .hidden{display:none}
+        .error{color:#dc3545;background:#f8d7da;padding:15px;border-radius:8px;margin:15px 0;text-align:center;font-weight:500;border:1px solid #f5c6cb}
+        .loading{color:#6c757d;font-style:italic;text-align:center;padding:20px}
+        .status-message{text-align:center;padding:20px;color:#6c757d;font-size:1.1rem}
+
+        /* Responsive */
+        @media(max-width:768px){
+            .main-title{font-size:2rem}
+            .form-grid,.filter-grid{grid-template-columns:1fr}
+            .profile-actions{flex-direction:column;width:100%}
+            .profile-btn{width:100%;justify-content:center}
+            .student-name{font-size:1.5rem}
+            .stats-grid{grid-template-columns:1fr}
+            .pagination-controls{flex-direction:column}
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>📘 Student Dashboard</h1>
-    
-    <!-- Login Section -->
-    <div id="loginSection" class="card login-card">
-      <h3>👋 Welcome! Please Enter Your Name</h3>
-      <div class="login-form">
-        <input type="text" id="usernameInput" placeholder="Enter your name" maxlength="50">
-        <button onclick="login()">Login</button>
-        <button onclick="window.location.href='index.html'">🏠Home</button>
-      </div>
+    <div class="dashboard-container">
+        <h1 class="main-title">📘 Student Financial Dashboard</h1>
+
+        <!-- Login Section -->
+        <div id="loginSection" class="card login-card">
+            <div class="card-header">
+                <div class="card-icon">👋</div>
+                <h3>Welcome! Please Enter Your AD.NO</h3>
+            </div>
+            <div class="login-form">
+                <input type="text" id="usernameInput" placeholder="Enter your name or AD.NO" maxlength="50">
+                <button class="btn btn-primary" onclick="login()">🚀 Login</button>
+                <button class="btn btn-info" onclick="window.location.href='admin-dashboard.html'">🏠 Home</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboardSection" class="hidden">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-photo">
+                    <span id="profileIcon">👤</span>
+                </div>
+                <h2 class="student-name" id="studentName">STUDENT NAME</h2>
+                <p class="student-role">Student Dashboard</p>
+                <div class="profile-actions">
+                    <button class="profile-btn danger" onclick="logout()">🚪 Check Another</button>
+                    <button class="profile-btn" onclick="window.location.href='admin-dashboard.html'">🏠 Home</button>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+                <!-- Financial Summary -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">💰</div>
+                        <h3>Financial Summary</h3>
+                    </div>
+                    <p>Track your financial activities and current balance.</p>
+                    <div class="stats-grid">
+                        <div class="stat-item credit">
+                            <span class="stat-number credit" id="totalCredit">₹0</span>
+                            <span class="stat-label">Total Credit</span>
+                        </div>
+                        <div class="stat-item debit">
+                            <span class="stat-number debit" id="totalDebit">₹0</span>
+                            <span class="stat-label">Total Debit</span>
+                        </div>
+                        <div class="stat-item balance" id="balanceCard">
+                            <span class="stat-number balance" id="balanceAmountElement">₹<span id="balanceAmount">0</span></span>
+                            <span class="stat-label">Current Balance</span>
+                        </div>
+                    </div>
+                    <div style="margin-top:20px">
+                        <button class="btn btn-success" onclick="refreshData()">🔄 Refresh Data</button>
+                    </div>
+                </div>
+
+                <!-- Transaction Ledger -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📄</div>
+                        <h3>Transaction Ledger</h3>
+                    </div>
+                    <p>View your complete transaction history.</p>
+                    <div id="ledgerStatus" class="loading">Loading transactions...</div>
+                    <table id="ledgerTable" style="display:none">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledgerBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Dashboard Section -->
-    <div id="dashboardSection" class="hidden">
-      <div class="card">
-        <div class="user-info">
-          <span><strong>Welcome, </strong><span id="currentUser"></span>!</span>
-          <button class="logout-btn" onclick="logout()">🚪 Logout</button>
-           <button onclick="window.location.href='index.html'">Home</button>
-        </div>
-      </div>
+    <script>
+        /* ----------  MINIMAL JS TO MATCH ORIGINAL  ---------- */
+        let currentUsername = null;
+        const api = "https://script.google.com/macros/s/AKfycbwl2547hMsMHLi0l1e9xcq6Ue_eV9wgL4gVWyCIASTZZrY2VY-brzxsqVRsKtYSbRk2/exec";
 
-      <div class="card">
-        <h3>💰 Financial Summary</h3>
-        <div class="summary-grid">
-          <div class="summary-item credit">
-            <div class="summary-label">Total Credit</div>
-            <div class="summary-amount">₹<span id="totalCredit">0</span></div>
-          </div>
-          <div class="summary-item debit">
-            <div class="summary-label">Total Debit</div>
-            <div class="summary-amount">₹<span id="totalDebit">0</span></div>
-          </div>
-          <div class="summary-item balance">
-            <div class="summary-label">Current Balance</div>
-            <div class="summary-amount" id="balanceDisplay">₹<span id="balanceAmount">0</span></div>
-          </div>
-        </div>
-        <button class="refresh-btn" onclick="refreshData()">🔄 Refresh</button>
-      </div>
+        /* Login / Logout */
+        function login() {
+            const username = document.getElementById("usernameInput").value.trim();
+            if (!username) { alert("⚠️ Please enter your name."); return; }
 
-      <!-- SQAC Portal Section -->
-      <div class="card">
-        <div class="sqac-section">
-          <h3>🎓 Academic Portal Access</h3>
-          <p>Access your SQAC portal with automatic login</p>
-          <button class="sqac-btn" onclick="openPortalWithAutoLogin()">
-            🔗 Check SQAC Portal
-          </button>
-        </div>
-      </div>
+            currentUsername = username;
+            document.getElementById("studentName").innerText = username;
 
-      <div class="card">
-        <h3>📄 Transaction Ledger</h3>
-        <div id="ledgerStatus" class="loading">Loading transactions...</div>
-        <table id="ledgerTable" style="display: none;">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Type</th>
-              <th>Description</th>
-              <th>Amount</th>
-            </tr>
-          </thead>
-          <tbody id="ledgerBody"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+            document.getElementById("loginSection").classList.add("hidden");
+            document.getElementById("dashboardSection").classList.remove("hidden");
 
-  <!-- Hidden form for auto-login to SQAC portal -->
-  <form id="autoLoginForm" class="auto-login-form" method="POST" target="_blank" action="https://portal.sabeelulhidaya.info/login">
-    <input type="text" name="username" id="autoUsername">
-    <input type="password" name="password" id="autoPassword" value="">
-    <input type="hidden" name="auto_login" value="true">
-    <input type="submit">
-  </form>
+            fetchSummary();
+            fetchLedger();
 
-  <script>
-    let currentUsername = null;
-    const api = "https://script.google.com/macros/s/AKfycbwl2547hMsMHLi0l1e9xcq6Ue_eV9wgL4gVWyCIASTZZrY2VY-brzxsqVRsKtYSbRk2/exec";
-
-    // Check for username in URL first
-    const urlUsername = new URLSearchParams(window.location.search).get("user");
-    
-    function showError(message) {
-      return `<div class="error">❌ ${message}</div>`;
-    }
-
-    function login() {
-      const username = document.getElementById("usernameInput").value.trim();
-      
-      if (!username) {
-        alert("⚠️ Please enter your name.");
-        return;
-      }
-
-      if (username.length < 2) {
-        alert("⚠️ Please enter a valid name (at least 2 characters).");
-        return;
-      }
-
-      // Set current username
-      currentUsername = username;
-      document.getElementById("currentUser").innerText = username;
-      
-      // Hide login section and show dashboard
-      document.getElementById("loginSection").classList.add("hidden");
-      document.getElementById("dashboardSection").classList.remove("hidden");
-      
-      // Load data
-      fetchSummary();
-      fetchLedger();
-      
-      // Update URL without refreshing page
-      const newUrl = new URL(window.location);
-      newUrl.searchParams.set('user', username);
-      window.history.pushState({}, '', newUrl);
-    }
-
-    function logout() {
-      currentUsername = null;
-      
-      // Clear form inputs
-      document.getElementById("usernameInput").value = "";
-      
-      // Reset summary
-      document.getElementById("totalCredit").innerText = "0";
-      document.getElementById("totalDebit").innerText = "0";
-      document.getElementById("balanceAmount").innerText = "0";
-      
-      // Clear ledger
-      document.getElementById("ledgerBody").innerHTML = "";
-      document.getElementById("ledgerTable").style.display = "none";
-      document.getElementById("ledgerStatus").innerHTML = '<div class="loading">Loading transactions...</div>';
-      
-      // Show login section and hide dashboard
-      document.getElementById("loginSection").classList.remove("hidden");
-      document.getElementById("dashboardSection").classList.add("hidden");
-      
-      // Remove user from URL
-      const newUrl = new URL(window.location);
-      newUrl.searchParams.delete('user');
-      window.history.pushState({}, '', newUrl);
-    }
-
-    function updateBalanceColor(balance) {
-      const balanceDisplay = document.getElementById("balanceDisplay");
-      balanceDisplay.classList.remove("positive", "negative");
-      
-      if (balance > 0) {
-        balanceDisplay.classList.add("positive");
-      } else if (balance < 0) {
-        balanceDisplay.classList.add("negative");
-      }
-    }
-
-    function fetchSummary() {
-      if (!currentUsername) return;
-      
-      console.log("Fetching summary for:", currentUsername);
-      
-      // Show loading state
-      document.getElementById("totalCredit").innerText = "...";
-      document.getElementById("totalDebit").innerText = "...";
-      document.getElementById("balanceAmount").innerText = "...";
-      
-      fetch(`${api}?action=get_summary&username=${encodeURIComponent(currentUsername)}`)
-        .then(res => {
-          console.log("Summary response status:", res.status);
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return res.json();
-        })
-        .then(data => {
-          console.log("Summary data:", data);
-          if (data.error) {
-            throw new Error(data.error);
-          }
-          
-          const balance = data.balance || 0;
-          
-          document.getElementById("totalCredit").innerText = (data.totalCredit || 0).toFixed(2);
-          document.getElementById("totalDebit").innerText = (data.totalDebit || 0).toFixed(2);
-          document.getElementById("balanceAmount").innerText = balance.toFixed(2);
-          
-          updateBalanceColor(balance);
-        })
-        .catch(error => {
-          console.error("Error fetching summary:", error);
-          document.getElementById("totalCredit").innerText = "Error";
-          document.getElementById("totalDebit").innerText = "Error";
-          document.getElementById("balanceAmount").innerText = "Error";
-        });
-    }
-
-    function fetchLedger() {
-      if (!currentUsername) return;
-      
-      console.log("Fetching ledger for:", currentUsername);
-      document.getElementById("ledgerStatus").innerHTML = '<div class="loading">📊 Loading transactions...</div>';
-      document.getElementById("ledgerTable").style.display = "none";
-      
-      fetch(`${api}?action=get_ledger&username=${encodeURIComponent(currentUsername)}`)
-        .then(res => {
-          console.log("Ledger response status:", res.status);
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          return res.json();
-        })
-        .then(data => {
-          console.log("Ledger data:", data);
-          
-          const tbody = document.getElementById("ledgerBody");
-          tbody.innerHTML = "";
-          
-          let ledgerData = data.ledger || [];
-          
-          if (!Array.isArray(ledgerData)) {
-            throw new Error("Invalid ledger data format");
-          }
-          
-          if (ledgerData.length === 0) {
-            document.getElementById("ledgerStatus").innerHTML = '<div class="status-message">📝 No transactions found. Add your first entry above!</div>';
-            return;
-          }
-          
-          document.getElementById("ledgerStatus").style.display = "none";
-          document.getElementById("ledgerTable").style.display = "table";
-          
-          ledgerData.forEach(entry => {
-            const row = document.createElement("tr");
-            row.className = entry.type === 'credit' ? 'credit-row' : 'debit-row';
-            
-            const date = new Date(entry.date);
-            const formattedDate = date.toLocaleDateString('en-IN', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            });
-            
-            const typeIcon = entry.type === 'credit' ? '💰' : '💸';
-            const amountClass = entry.type === 'credit' ? 'text-success' : 'text-danger';
-            
-            row.innerHTML = `
-              <td>${formattedDate}</td>
-              <td>${typeIcon} ${entry.type.charAt(0).toUpperCase() + entry.type.slice(1)}</td>
-              <td>${entry.item}</td>
-              <td class="amount-display ${amountClass}">₹${entry.amount.toFixed(2)}</td>
-            `;
-            tbody.appendChild(row);
-          });
-        })
-        .catch(error => {
-          console.error("Error fetching ledger:", error);
-          document.getElementById("ledgerStatus").innerHTML = showError(`Failed to load transactions: ${error.message}`);
-        });
-    }
-
-    function refreshData() {
-      fetchSummary();
-      fetchLedger();
-    }
-
-    // Enhanced function to open portal with auto-login
-    function openPortalWithAutoLogin() {
-      if (!currentUsername) {
-        alert("⚠️ Please login first to access SQAC portal.");
-        return;
-      }
-
-      // Method 1: Try to open with username in URL parameters
-      const portalUrl = `https://portal.sabeelulhidaya.info/login?username=${encodeURIComponent(currentUsername)}&auto_login=true&source=dashboard`;
-      
-      // Show a loading message
-      const button = document.querySelector('.sqac-btn');
-      const originalText = button.innerHTML;
-      button.innerHTML = '🔄 Opening Portal...';
-      button.disabled = true;
-
-      // Open the portal
-      const portalWindow = window.open(portalUrl, '_blank', 'noopener,noreferrer');
-      
-      // Reset button after a short delay
-      setTimeout(() => {
-        button.innerHTML = originalText;
-        button.disabled = false;
-      }, 2000);
-
-      // Method 2: Alternative approach using POST form (if the portal supports it)
-      // Uncomment and modify this section if your portal accepts POST requests for auto-login
-      /*
-      try {
-        const form = document.getElementById('autoLoginForm');
-        document.getElementById('autoUsername').value = currentUsername;
-        
-        // You might need to set a default password or get it from somewhere
-        // document.getElementById('autoPassword').value = 'default_password';
-        
-        form.submit();
-      } catch (error) {
-        console.error('Error with form submission:', error);
-        // Fallback to simple URL opening
-        window.open(portalUrl, '_blank');
-      }
-      */
-
-      // Method 3: Use localStorage to store username for the portal (if same domain)
-      // This will only work if both sites are on the same domain
-      try {
-        // Store the username for the portal to pick up
-        const userData = {
-          username: currentUsername,
-          timestamp: Date.now(),
-          source: 'student_dashboard'
-        };
-        
-        // Note: This won't work cross-domain, but keeping it as an example
-        if (window.location.hostname === 'portal.sabeelulhidaya.info' || 
-            window.location.hostname === 'sabeelulhidaya.info') {
-          localStorage.setItem('auto_login_data', JSON.stringify(userData));
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.set('user', username);
+            window.history.pushState({}, '', newUrl);
         }
-      } catch (error) {
-        console.log('Cross-domain storage not available:', error);
-      }
 
-      // Optional: Show success message
-      setTimeout(() => {
-        if (portalWindow && !portalWindow.closed) {
-          console.log('Portal opened successfully with username:', currentUsername);
+        function logout() {
+            currentUsername = null;
+            document.getElementById("usernameInput").value = "";
+            document.getElementById("totalCredit").innerText = "₹0";
+            document.getElementById("totalDebit").innerText = "₹0";
+            document.getElementById("balanceAmount").innerText = "0";
+            document.getElementById("ledgerBody").innerHTML = "";
+            document.getElementById("ledgerTable").style.display = "none";
+            document.getElementById("ledgerStatus").innerHTML = '<div class="loading">Loading transactions...</div>';
+
+            document.getElementById("loginSection").classList.remove("hidden");
+            document.getElementById("dashboardSection").classList.add("hidden");
+
+            const newUrl = new URL(window.location);
+            newUrl.searchParams.delete('user');
+            window.history.pushState({}, '', newUrl);
         }
-      }, 1000);
-    }
 
-    // Legacy function kept for compatibility
-    function openPortal() {
-      openPortalWithAutoLogin();
-    }
-
-    // Handle Enter key in login input
-    document.getElementById("usernameInput").addEventListener("keypress", function(e) {
-      if (e.key === "Enter") login();
-    });
-
-    // Initial setup - check if username is in URL
-    if (urlUsername && urlUsername.trim()) {
-      document.getElementById("usernameInput").value = urlUsername.trim();
-      login();
-    }
-
-    // Listen for messages from the portal window (if it supports postMessage)
-    window.addEventListener('message', function(event) {
-      // Security check - make sure message is from your portal
-      if (event.origin !== 'https://portal.sabeelulhidaya.info') {
-        return;
-      }
-      
-      // Handle different message types from the portal
-      if (event.data.type === 'login_status') {
-        console.log('Portal login status:', event.data.success);
-        if (event.data.success) {
-          console.log('User successfully logged in to portal');
+        /* Data Fetchers */
+        function fetchSummary() {
+            if (!currentUsername) return;
+            fetch(`${api}?action=get_summary&username=${encodeURIComponent(currentUsername)}`)
+                .then(r => r.json())
+                .then(d => {
+                    document.getElementById("totalCredit").innerText = "₹" + (d.totalCredit || 0).toFixed(2);
+                    document.getElementById("totalDebit").innerText = "₹" + (d.totalDebit || 0).toFixed(2);
+                    const bal = d.balance || 0;
+                    document.getElementById("balanceAmount").innerText = bal.toFixed(2);
+                    const card = document.getElementById("balanceCard");
+                    card.classList.remove("positive", "negative");
+                    if (bal >= 0) card.classList.add("positive"); else card.classList.add("negative");
+                })
+                .catch(console.error);
         }
-      }
-    });
-  </script>
+
+        function fetchLedger() {
+            if (!currentUsername) return;
+            fetch(`${api}?action=get_ledger&username=${encodeURIComponent(currentUsername)}`)
+                .then(r => r.json())
+                .then(d => {
+                    const body = document.getElementById("ledgerBody");
+                    body.innerHTML = "";
+                    const data = d.ledger || [];
+                    if (data.length === 0) {
+                        document.getElementById("ledgerStatus").innerHTML = '<div class="status-message">📝 No transactions found.</div>';
+                        return;
+                    }
+                    document.getElementById("ledgerStatus").style.display = "none";
+                    document.getElementById("ledgerTable").style.display = "table";
+                    data.forEach(e => {
+                        const tr = document.createElement("tr");
+                        tr.className = e.type === "credit" ? "credit-row" : "debit-row";
+                        tr.innerHTML = `
+                            <td>${new Date(e.date).toLocaleDateString("en-IN",{year:"numeric",month:"short",day:"numeric"})}</td>
+                            <td>${e.type === "credit" ? "💰" : "💸"} ${e.type}</td>
+                            <td>${e.item}</td>
+                            <td class="amount-display ${e.type === "credit" ? "text-success" : "text-danger"}">₹${e.amount.toFixed(2)}</td>
+                        `;
+                        body.appendChild(tr);
+                    });
+                })
+                .catch(console.error);
+        }
+
+        function refreshData() { fetchSummary(); fetchLedger(); }
+
+        /* Auto-login from URL */
+        const urlUsername = new URLSearchParams(window.location.search).get("user");
+        if (urlUsername) { document.getElementById("usernameInput").value = urlUsername; login(); }
+
+        document.getElementById("usernameInput").addEventListener("keypress", e => { if (e.key === "Enter") login(); });
+    </script>
 </body>
-
 </html>
-
