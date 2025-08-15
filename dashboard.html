@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-    <title>siteosphia</title>
-<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Inksphere/Swahwa/main/10149443.png">
+  <title>siteosphia</title>
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Inksphere/Swahwa/main/10149443.png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * {
@@ -11,54 +11,6 @@
       padding: 0;
       box-sizing: border-box;
     }
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f9f9f9;
-    padding: 50px;
-  }
-
-  .profile {
-    display: inline-block;
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
-
-  .profile img {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 4px solid orange;
-  }
-
-  .profile h2 {
-    margin: 15px 0 5px;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #0b2347;
-  }
-
-  .profile p {
-    font-size: 1rem;
-    color: #666;
-    margin: 0;
-  }
-</style>
-</head>
-<body>
-
-<div class="profile">
-  <img src="student.jpg" alt="Profile Photo">
-  <h2>MUHAMMED NASEEM.M</h2>
-  <p>Student</p>
-</div>
-
-</body>
-</html>
     
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -318,7 +270,7 @@
     .predefined-item {
       display: flex;
       align-items: center;
-      justify-content: between;
+      justify-content: space-between;
       padding: 5px 0;
       border-bottom: 1px solid #e9ecef;
     }
@@ -731,11 +683,7 @@
             <option value="amount-asc">💰 Amount (Low to High)</option>
             <option value="type">🏷️ Type</option>
           </select>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-
-<button onclick="exportData()" class="export-btn">💾 Export PDF</button>
-
+          <button onclick="exportData()" class="export-btn">💾 Export PDF</button>
         </div>
         <div id="ledgerStatus" class="loading">Loading transactions...</div>
         <table id="ledgerTable" style="display: none;">
@@ -755,6 +703,9 @@
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
   <script>
     let currentUsername = null;
     let debugMode = false;
@@ -763,8 +714,8 @@
     let currentPage = 1;
     let itemsPerPage = 10;
     let predefinedItems = [];
-    let currentItemInputMode = 'predefined'; // 'predefined', 'custom'
-    let receivedTransactions = new Set(); // Track which transactions have been received
+    let currentItemInputMode = 'predefined';
+    let receivedTransactions = new Set();
     const api = "https://script.google.com/macros/s/AKfycbwl2547hMsMHLi0l1e9xcq6Ue_eV9wgL4gVWyCIASTZZrY2VY-brzxsqVRsKtYSbRk2/exec";
 
     // Default predefined items
@@ -783,15 +734,18 @@
       'Emergency Expense'
     ];
 
-    // Load received transactions from localStorage
+    // Check for username in URL first
+    const urlUsername = new URLSearchParams(window.location.search).get("user");
+
+    // Load received transactions from local storage
     function loadReceivedTransactions() {
       if (currentUsername) {
-        const stored = localStorage.getItem(`receivedTransactions_${currentUsername}`);
-        receivedTransactions = new Set(stored ? JSON.parse(stored) : []);
+        const stored = JSON.parse(localStorage.getItem(`receivedTransactions_${currentUsername}`) || '[]');
+        receivedTransactions = new Set(stored);
       }
     }
 
-    // Save received transactions to localStorage
+    // Save received transactions to local storage
     function saveReceivedTransactions() {
       if (currentUsername) {
         localStorage.setItem(`receivedTransactions_${currentUsername}`, JSON.stringify([...receivedTransactions]));
@@ -1055,9 +1009,6 @@
       }
     }
 
-    // Check for username in URL first
-    const urlUsername = new URLSearchParams(window.location.search).get("user");
-    
     function showError(message) {
       return `<div class="error">❌ ${message}</div>`;
     }
@@ -1140,7 +1091,6 @@
         .then(res => {
           console.log("Summary response status:", res.status);
           
-          // Get response as text first to debug
           return res.text().then(text => {
             console.log("Summary raw response:", text);
             
@@ -1170,7 +1120,6 @@
             throw new Error(result.data.error);
           }
           
-          // Your backend returns: { totalCredit, totalDebit, balance }
           const totalCredit = result.data.totalCredit || 0;
           const totalDebit = result.data.totalDebit || 0;
           const balance = result.data.balance || 0;
@@ -1189,7 +1138,6 @@
           document.getElementById("totalDebit").innerText = "Error";
           updateBalanceDisplay(0);
           
-          // Show detailed error in console, simple message to user
           console.error("Detailed summary error:", error);
         });
     }
@@ -1213,7 +1161,6 @@
         .then(res => {
           console.log("Ledger response status:", res.status);
           
-          // Get response as text first to debug
           return res.text().then(text => {
             console.log("Ledger raw response:", text);
             
@@ -1246,7 +1193,6 @@
           const tbody = document.getElementById("ledgerBody");
           tbody.innerHTML = "";
           
-          // Your backend returns: { ledger: [...] }
           let ledgerData = result.data.ledger || [];
           
           console.log("Ledger data array:", ledgerData);
@@ -1305,7 +1251,7 @@
         
         if (toDate) {
           const to = new Date(toDate);
-          to.setHours(23, 59, 59, 999); // Include the entire end date
+          to.setHours(23, 59, 59, 999);
           if (entry.parsedDate > to) return false;
         }
 
@@ -1516,28 +1462,46 @@
         return;
       }
 
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
 
-      const headers = ["Date", "Type", "Description", "Amount", "Status"];
-      const rows = filteredData.map(entry => [
-        entry.parsedDate.toLocaleDateString('en-IN'),
-        entry.type,
-        entry.item || '',
-        entry.amount.toFixed(2),
-        receivedTransactions.has(entry.transactionId) ? 'Received' : (entry.type === 'debit' && !entry.item.startsWith('Received:') ? 'Pending' : '-')
-      ]);
+        // Header
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text(`Transaction Report - ${currentUsername}`, 20, 20);
 
-      doc.setFontSize(14);
-      doc.text(`${currentUsername} - Transactions`, 14, 15);
+        // Date
+        const currentDate = new Date().toLocaleDateString('en-IN');
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Generated on: ${currentDate}`, 20, 30);
 
-      doc.autoTable({
-        startY: 20,
-        head: [headers],
-        body: rows
-      });
+        // Prepare table data
+        const headers = ["Date", "Type", "Description", "Amount", "Status"];
+        const rows = filteredData.map(entry => [
+          entry.parsedDate.toLocaleDateString('en-IN'),
+          entry.type.charAt(0).toUpperCase() + entry.type.slice(1),
+          entry.item || '',
+          `₹${entry.amount.toFixed(2)}`,
+          receivedTransactions.has(entry.transactionId) ? 'Received' : (entry.type === 'debit' && !entry.item.startsWith('Received:') ? 'Pending' : '-')
+        ]);
 
-      doc.save(`${currentUsername}_transactions_${new Date().toISOString().split('T')[0]}.pdf`);
+        // Generate table
+        doc.autoTable({
+          startY: 40,
+          head: [headers],
+          body: rows,
+          styles: { fontSize: 8 },
+          headStyles: { fillColor: [102, 126, 234] }
+        });
+
+        // Save PDF
+        doc.save(`${currentUsername}_transactions_${new Date().toISOString().split('T')[0]}.pdf`);
+      } catch (error) {
+        console.error("Error exporting PDF:", error);
+        alert("Error generating PDF. Please try again.");
+      }
     }
 
     function addEntry() {
@@ -1561,25 +1525,17 @@
       }
 
       const action = type === "credit" ? "add_credit" : "add_debit";
-      
-      // Build the exact URL your backend expects
       const requestUrl = `${api}?action=${encodeURIComponent(action)}&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(item)}&amount=${encodeURIComponent(amount)}`;
       
-      console.log("=== ADD ENTRY DEBUG ===");
-      console.log("Username:", currentUsername);
-      console.log("Item:", item);
-      console.log("Amount:", amount);
-      console.log("Type:", type);
-      console.log("Action:", action);
+      console.log("Adding entry:", { username: currentUsername, item, amount, type, action });
       console.log("Request URL:", requestUrl);
       
       // Disable button during request
-      const button = event.target;
-      const originalText = button.innerText;
-      button.innerText = "Adding...";
-      button.disabled = true;
+      const addButton = document.querySelector('button[onclick="addEntry()"]');
+      const originalText = addButton.innerText;
+      addButton.innerText = "Adding...";
+      addButton.disabled = true;
 
-      // Use GET request as your backend only handles doGet()
       fetch(requestUrl, { 
         method: "GET",
         headers: {
@@ -1588,13 +1544,10 @@
       })
         .then(res => {
           console.log("Response status:", res.status);
-          console.log("Response headers:", res.headers);
           
-          // Get response as text first to see what we're getting
           return res.text().then(text => {
             console.log("Raw response text:", text);
             
-            // Try to parse as JSON
             try {
               const jsonData = JSON.parse(text);
               console.log("Parsed JSON data:", jsonData);
@@ -1609,24 +1562,21 @@
           console.log("Final result:", result);
           logDebug(requestUrl, result);
           
-          // Check if request was successful
           if (!result.success) {
             throw new Error(`HTTP ${result.success ? 'OK' : 'Error'}: ${result.raw}`);
           }
           
-          // Check if we got valid JSON response
           if (!result.data) {
             throw new Error(`Invalid JSON response: ${result.parseError || 'Unknown parsing error'}`);
           }
           
-          // Check for backend success indicators
           if (result.data.result === "success") {
             console.log("✅ Entry added successfully!");
             
             // Clear form
             clearCurrentItemInput();
             document.getElementById("amount").value = "";
-            document.getElementById("entryType").value = "credit"; // Reset to default
+            document.getElementById("entryType").value = "credit";
             
             // Refresh data after a short delay
             setTimeout(() => {
@@ -1649,7 +1599,6 @@
           
           let errorMessage = error.message;
           
-          // Provide helpful error messages
           if (errorMessage.includes("Failed to fetch")) {
             errorMessage = "Network error - check your internet connection or API URL";
           } else if (errorMessage.includes("JSON")) {
@@ -1660,8 +1609,8 @@
         })
         .finally(() => {
           // Re-enable button
-          button.innerText = originalText;
-          button.disabled = false;
+          addButton.innerText = originalText;
+          addButton.disabled = false;
         });
     }
 
@@ -1671,12 +1620,11 @@
       fetchLedger();
     }
 
-    // Handle Enter key in login input
+    // Event listeners
     document.getElementById("usernameInput").addEventListener("keypress", function(e) {
       if (e.key === "Enter") login();
     });
 
-    // Handle Enter key in form inputs
     document.getElementById("customItemInput").addEventListener("keypress", function(e) {
       if (e.key === "Enter") addEntry();
     });
@@ -1685,12 +1633,10 @@
       if (e.key === "Enter") addEntry();
     });
 
-    // Handle Enter key in new item input
     document.getElementById("newItemInput").addEventListener("keypress", function(e) {
       if (e.key === "Enter") addPredefinedItem();
     });
 
-    // Handle Enter key in filter inputs
     document.getElementById("filterDescription").addEventListener("keypress", function(e) {
       if (e.key === "Enter") applyFilters();
     });
@@ -1703,29 +1649,24 @@
       if (e.key === "Enter") applyFilters();
     });
 
-    // Auto-apply filters when sort changes
     document.getElementById("sortBy").addEventListener("change", function() {
       applyFiltersAndDisplay();
     });
 
-    // Initial setup - check if username is in URL
+    // Initial setup
     if (urlUsername && urlUsername.trim()) {
       document.getElementById("usernameInput").value = urlUsername.trim();
       login();
     }
 
-    // Add global error handler
+    // Global error handlers
     window.addEventListener('error', function(e) {
       console.error('Global error:', e.error);
     });
 
-    // Add unhandled promise rejection handler
     window.addEventListener('unhandledrejection', function(e) {
       console.error('Unhandled promise rejection:', e.reason);
     });
   </script>
 </body>
 </html>
-
-
-
