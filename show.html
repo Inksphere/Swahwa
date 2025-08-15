@@ -184,6 +184,29 @@
     </div>
 
     <script>
+/* ----------  LOGIN (with name mapping)  ---------- */
+function login() {
+    const username = document.getElementById("usernameInput").value.trim();
+    if (!username) { alert("⚠️ Please enter your AD.NO."); return; }
+
+    /* decide what to display */
+    let displayName = username;
+    if (studentData[username]) displayName = studentData[username];
+
+    currentUsername = username;
+    document.getElementById("studentName").innerText = displayName;   // shows the real name
+
+    document.getElementById("loginSection").classList.add("hidden");
+    document.getElementById("dashboardSection").classList.remove("hidden");
+
+    fetchSummary();
+    fetchLedger();
+
+    /* keep URL in sync */
+    const newUrl = new URL(window.location);
+    newUrl.searchParams.set('user', username);
+    window.history.pushState({}, '', newUrl);
+}
         /* ----------  MINIMAL JS TO MATCH ORIGINAL  ---------- */
          let currentUsername = null;
         let debugMode = false;
@@ -325,4 +348,5 @@
     </script>
 </body>
 </html>
+
 
