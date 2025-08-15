@@ -99,6 +99,89 @@
       cursor: not-allowed;
       transform: none;
     }
+
+    /* Student Profile Styles */
+    .student-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      padding: 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .profile-photo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #ff8a00;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fa;
+      font-size: 3rem;
+      color: #667eea;
+    }
+
+    .profile-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .student-name {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 0;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .student-role {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .profile-btn {
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      backdrop-filter: blur(10px);
+    }
+
+    .profile-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .profile-btn.danger {
+      background: rgba(220, 53, 69, 0.8);
+      border-color: rgba(220, 53, 69, 1);
+    }
+
+    .profile-btn.danger:hover {
+      background: rgba(220, 53, 69, 1);
+    }
     
     .user-info {
       text-align: center;
@@ -433,6 +516,19 @@
       .action-cell {
         white-space: normal;
       }
+
+      .profile-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .student-profile {
+        padding: 20px;
+      }
+
+      .student-name {
+        font-size: 1.5rem;
+      }
     }
     
     input, select, button {
@@ -568,6 +664,11 @@
       font-size: 12px;
       color: #495057;
     }
+
+    /* Special styles for negative balance - show amount in red without minus */
+    .balance-negative-amount {
+      color: #dc3545 !important;
+    }
   </style>
 </head>
 <body>
@@ -591,11 +692,16 @@
 
     <!-- Dashboard Section -->
     <div id="dashboardSection" class="hidden">
-      <div class="card">
-        <div class="user-info">
-          <span><strong>Welcome, </strong><span id="currentUser"></span>!</span>
-          <button class="logout-btn" onclick="logout()">🚪 Check Another</button>
-          <button onclick="window.location.href='admin-dashboard.html'">🏠Home</button>
+      <!-- Student Profile Card -->
+      <div class="student-profile">
+        <div class="profile-photo">
+          <span id="profileIcon">👤</span>
+        </div>
+        <h2 class="student-name" id="studentName">STUDENT NAME</h2>
+        <p class="student-role">Student</p>
+        <div class="profile-actions">
+          <button class="profile-btn danger" onclick="logout()">🚪 Check Another</button>
+          <button class="profile-btn" onclick="window.location.href='admin-dashboard.html'">🏠 Home</button>
         </div>
       </div>
 
@@ -718,6 +824,42 @@
     let receivedTransactions = new Set();
     const api = "https://script.google.com/macros/s/AKfycbwl2547hMsMHLi0l1e9xcq6Ue_eV9wgL4gVWyCIASTZZrY2VY-brzxsqVRsKtYSbRk2/exec";
 
+    // Student data mapping
+    const studentData = {
+      '1050': 'MUHAMMAD SINAN PC',
+      '1070': 'MUHAMMED MUSAMMIL B K',
+      '1074': 'MUAD .M',
+      '1058': 'MUHAMMED JALAL AT',
+      '1051': 'MUHAMMAD HISHAM T',
+      '1056': 'MUHAMMED SHADIN N.M.',
+      '1076': 'MUHAMMED MINHAJ KK',
+      '1071': 'SAYYID MOHAMMAD ZUHAIR A K',
+      '1075': 'MUHAMMED HASHIM P',
+      '1061': 'ANSHID M P',
+      '1072': 'SINAN TP',
+      '1078': 'MUHAMMED RABIEUE MK',
+      '1088': 'NAEEM K',
+      '1082': 'MUHAMMED SANEEN',
+      '1090': 'MUHAMMED BASSAM',
+      '1066': 'HASHIM K P',
+      '1063': 'RISHADH. T',
+      '1073': 'MUHAMMAD MUSTHAFA KK',
+      '1068': 'MUHAMMED UVAIS.EK',
+      '1053': 'AMEEN T',
+      '1040': 'MUHAMMAD RIFAD K',
+      '1059': 'AFSAL',
+      '1064': 'SHAMIL M',
+      '1013': 'SAHAD.K',
+      '1087': 'SHAMIL. A',
+      '1089': 'ADIL SHAH M',
+      '1084': 'ASIM M',
+      '1024': 'FADHIL KATTIPARUTHI',
+      '1008': 'MINHAJ',
+      '1086': 'NIDAL',
+      '1085': 'NAFIH',
+      '1014': 'MURSHID MK'
+    };
+
     // Default predefined items
     const defaultPredefinedItems = [
       'Fine',
@@ -736,6 +878,20 @@
 
     // Check for username in URL first
     const urlUsername = new URLSearchParams(window.location.search).get("user");
+
+    // Function to format student name without "Mohammed" prefix
+    function formatStudentName(name) {
+      if (!name) return name;
+      
+      // Remove "MOHAMMED" and "MUHAMMED" from the beginning
+      let formattedName = name
+        .replace(/^MOHAMMED\s+/i, '')
+        .replace(/^MUHAMMED\s+/i, '')
+        .replace(/^MUHAMMAD\s+/i, '')
+        .trim();
+      
+      return formattedName || name; // Return original if empty after removal
+    }
 
     // Load received transactions from local storage
     function loadReceivedTransactions() {
@@ -986,7 +1142,7 @@
       }
     }
 
-    // Update balance display with color coding
+    // Update balance display with color coding and special handling for negative amounts
     function updateBalanceDisplay(balance) {
       const balanceCard = document.getElementById('balanceCard');
       const balanceElement = document.getElementById('balanceAmountElement');
@@ -996,8 +1152,9 @@
       balanceCard.classList.remove('positive', 'negative');
       balanceElement.classList.remove('positive', 'negative');
       
-      // Update the amount
-      balanceAmountSpan.innerText = Number(balance).toFixed(2);
+      // For negative balances, show the absolute value in red
+      const displayAmount = balance < 0 ? Math.abs(balance) : balance;
+      balanceAmountSpan.innerText = Number(displayAmount).toFixed(2);
       
       // Add appropriate classes based on balance
       if (balance >= 0) {
@@ -1006,6 +1163,8 @@
       } else {
         balanceCard.classList.add('negative');
         balanceElement.classList.add('negative');
+        // Add special class for negative amount styling
+        balanceAmountSpan.classList.add('balance-negative-amount');
       }
     }
 
@@ -1026,8 +1185,17 @@
         return;
       }
 
+      // Check if it's a student ID and get the corresponding name
+      let displayName = username;
+      if (studentData[username]) {
+        displayName = studentData[username];
+      }
+
       currentUsername = username;
-      document.getElementById("currentUser").innerText = username;
+      
+      // Update profile display
+      const formattedName = formatStudentName(displayName);
+      document.getElementById("studentName").innerText = formattedName;
       
       document.getElementById("loginSection").classList.add("hidden");
       document.getElementById("dashboardSection").classList.remove("hidden");
@@ -1387,13 +1555,14 @@
       });
 
       const filteredBalance = filteredCredit - filteredDebit;
+      const balanceDisplay = filteredBalance < 0 ? Math.abs(filteredBalance) : filteredBalance;
 
       summaryDiv.innerHTML = `
         <strong>📊 Filtered Results:</strong> 
         ${filteredData.length} of ${allLedgerData.length} transactions | 
         Credit: <span class="text-success">₹${filteredCredit.toFixed(2)}</span> | 
         Debit: <span class="text-danger">₹${filteredDebit.toFixed(2)}</span> | 
-        Balance: <span class="${filteredBalance >= 0 ? 'text-success' : 'text-danger'}">₹${filteredBalance.toFixed(2)}</span>
+        Balance: <span class="${filteredBalance >= 0 ? 'text-success' : 'text-danger'}">₹${balanceDisplay.toFixed(2)}</span>
       `;
       summaryDiv.classList.add("show");
     }
