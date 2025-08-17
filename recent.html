@@ -5,199 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financial Menu</title>
     <style>
-        
-        // Fetch data from Google Sheets
-        async function fetchDataFromSheets() {
-            const loadingIndicator = document.getElementById('loading-indicator');
-            loadingIndicator.style.display = 'block';
-            
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL);
-                const data = await response.json();
-                
-                // Process the data based on your sheet structure
-                financialData = processSheetData(data);
-                financialData.lastUpdated = new Date();
-                
-                updateUI();
-                document.getElementById('last-updated').textContent = 
-                    `Last updated: ${financialData.lastUpdated.toLocaleString()}`;
-                
-            } catch (error) {
-                console.error('Error fetching data from Google Sheets:', error);
-                showError('Failed to load data from Google Sheets. Please check your connection.');
-            } finally {
-                loadingIndicator.style.display = 'none';
-            }
-        }
-        
-        function processSheetData(rawData) {
-            // Adjust this function based on your actual sheet structure
-            // Assuming the data comes as an array of objects with columns like:
-            // { date, description, amount, type, category, etc. }
-            
-            const credits = [];
-            const debits = [];
-            const allTransactions = [];
-            
-            if (Array.isArray(rawData)) {
-                rawData.forEach(row => {
-                    const transaction = {
-                        date: row.date || row.Date || '',
-                        description: row.description || row.Description || '',
-                        amount: parseFloat(row.amount || row.Amount || 0),
-                        type: row.type || row.Type || '',
-                        category: row.category || row.Category || '',
-                        timestamp: new Date(row.date || row.Date || Date.now())
-                    };
-                    
-                    allTransactions.push(transaction);
-                    
-                    if (transaction.type && transaction.type.toLowerCase().includes('credit')) {
-                        credits.push(transaction);
-                    } else if (transaction.type && transaction.type.toLowerCase().includes('debit')) {
-                        debits.push(transaction);
-                    } else if (transaction.amount > 0) {
-                        // If no type specified, assume positive amounts are credits
-                        transaction.type = 'Credit';
-                        credits.push(transaction);
-                    } else if (transaction.amount < 0) {
-                        // Negative amounts are debits
-                        transaction.type = 'Debit';
-                        transaction.amount = Math.abs(transaction.amount);
-                        debits.push(transaction);
-                    }
-                });
-            }
-            
-            return {
-                credits: credits.sort((a, b) => b.timestamp - a.timestamp),
-                debits: debits.sort((a, b) => b.timestamp - a.timestamp),
-                allTransactions: allTransactions.sort((a, b) => b.timestamp - a.timestamp)
-            };
-        }
-        
-        function updateUI() {
-            updateDebitSection();
-            updateCreditSection();
-            updateBalanceSection();
-            updateRecentSection();
-            updateMinusBalanceSection();
-        }
-        
-        function updateDebitSection() {
-            const totalDebits = financialData.debits.reduce((sum, item) => sum + item.amount, 0);
-            document.getElementById('debit-total').textContent = `${totalDebits.toFixed(2)}`;
-            
-            const debitList = document.getElementById('debit-list');
-            if (financialData.debits.length === 0) {
-                debitList.innerHTML = '<div class="add-item">No debit entries found.</div>';
-            } else {
-                debitList.innerHTML = financialData.debits.slice(0, 5).map(item => `
-                    <div class="add-item">
-                        <span>${item.description} - ${item.amount.toFixed(2)}</span>
-                        <div class="timestamp">Added ${getTimeAgo(item.timestamp)}</div>
-                    </div>
-                `).join('');
-            }
-        }
-        
-        function updateCreditSection() {
-            const totalCredits = financialData.credits.reduce((sum, item) => sum + item.amount, 0);
-            document.getElementById('credit-total').textContent = `${totalCredits.toFixed(2)}`;
-            
-            const creditList = document.getElementById('credit-list');
-            if (financialData.credits.length === 0) {
-                creditList.innerHTML = '<div class="add-item">No credit entries found.</div>';
-            } else {
-                creditList.innerHTML = financialData.credits.slice(0, 5).map(item => `
-                    <div class="add-item">
-                        <span>${item.description} - ${item.amount.toFixed(2)}</span>
-                        <div class="timestamp">Added ${getTimeAgo(item.timestamp)}</div>
-                    </div>
-                `).join('');
-            }
-        }
-        
-        function updateBalanceSection() {
-            const totalCredits = financialData.credits.reduce((sum, item) => sum + item.amount, 0);
-            const totalDebits = financialData.debits.reduce((sum, item) => sum + item.amount, 0);
-            const balance = totalCredits - totalDebits;
-            
-            const balanceIndicator = document.getElementById('balance-indicator');
-            balanceIndicator.textContent = `Current Balance: ${balance.toFixed(2)}`;
-            balanceIndicator.className = balance >= 0 ? 'balance-indicator balance-positive' : 'balance-indicator balance-negative';
-            
-            document.getElementById('balance-calculation').textContent = 
-                `Credits: ${totalCredits.toFixed(2)} - Debits: ${totalDebits.toFixed(2)} = Balance: ${balance.toFixed(2)}`;
-        }
-        
-        function updateRecentSection() {
-            const recentList = document.getElementById('recent-list');
-            if (financialData.allTransactions.length === 0) {
-                recentList.innerHTML = '<div class="add-item">No recent transactions found.</div>';
-            } else {
-                recentList.innerHTML = financialData.allTransactions.slice(0, 10).map(item => `
-                    <div class="add-item">
-                        <span><strong>${item.type}:</strong> ${item.description} - ${item.amount.toFixed(2)}</span>
-                        <div class="timestamp">Added ${getTimeAgo(item.timestamp)} via Google Sheets</div>
-                    </div>
-                `).join('');
-            }
-        }
-        
-        function updateMinusBalanceSection() {
-            const totalCredits = financialData.credits.reduce((sum, item) => sum + item.amount, 0);
-            const totalDebits = financialData.debits.reduce((sum, item) => sum + item.amount, 0);
-            const balance = totalCredits - totalDebits;
-            
-            const minusBalanceContent = document.getElementById('minus-balance-content');
-            
-            if (balance < 0) {
-                minusBalanceContent.innerHTML = `
-                    <div class="balance-indicator balance-negative">
-                        Alert: Current Balance is ${balance.toFixed(2)}
-                    </div>
-                    <p>Total Credits: ${totalCredits.toFixed(2)}</p>
-                    <p>Total Debits: ${totalDebits.toFixed(2)}</p>
-                    <p>Current Balance: ${balance.toFixed(2)}</p>
-                    <p style="color: #721c24; font-weight: bold;">⚠️ Account is overdrawn!</p>
-                `;
-            } else {
-                minusBalanceContent.innerHTML = `
-                    <div class="balance-indicator balance-positive">
-                        ✅ Balance is positive: ${balance.toFixed(2)}
-                    </div>
-                    <p>No minus balance alerts at this time.</p>
-                `;
-            }
-        }
-        
-        function getTimeAgo(timestamp) {
-            const now = new Date();
-            const diff = now - timestamp;
-            const minutes = Math.floor(diff / 60000);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-            
-            if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
-            if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-            if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-            return 'Just now';
-        }
-        
-        function showError(message) {
-            const errorDiv = document.createElement('div');
-            errorDiv.style.cssText = 'background: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #f5c6cb;';
-            errorDiv.textContent = message;
-            document.querySelector('.menu-container').prepend(errorDiv);
-            
-            setTimeout(() => errorDiv.remove(), 5000);
-        }
-        
-        function refreshData() {
-            fetchDataFromSheets();
-        }body {
+        body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
@@ -335,6 +143,21 @@
             color: #666;
             font-size: 0.9em;
         }
+
+        .loading-indicator {
+            display: none;
+            margin-top: 10px;
+            color: #666;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 <body>
@@ -353,23 +176,23 @@
             <h3>📤 Export Options</h3>
             <div class="export-options">
                 <button class="export-btn" onclick="refreshData()">🔄 Refresh Data</button>
-                <button class="export-btn" onclick="exportData('credit')">📊 Export Credit</button>
-                <button class="export-btn" onclick="exportData('debit')">📉 Export Debit</button>
-                <button class="export-btn" onclick="exportData('balance')">⚖️ Export Balance</button>
-                <button class="export-btn" onclick="exportData('minus-balance')">⚠️ Export Minus Balance</button>
-                <button class="export-btn" onclick="exportData('all')">📋 Export All Data</button>
+                <button class="export-btn" onclick="exportToPDF('credit')">📊 Export Credit PDF</button>
+                <button class="export-btn" onclick="exportToPDF('debit')">📉 Export Debit PDF</button>
+                <button class="export-btn" onclick="exportToPDF('balance')">⚖️ Export Balance PDF</button>
+                <button class="export-btn" onclick="exportToPDF('minus-balance')">⚠️ Export Minus Balance PDF</button>
+                <button class="export-btn" onclick="exportToPDF('all')">📋 Export All Data PDF</button>
             </div>
-            <div id="loading-indicator" style="display: none; margin-top: 10px; color: #666;">
+            <div id="loading-indicator" class="loading-indicator">
                 🔄 Loading data from Google Sheets...
             </div>
             <div id="last-updated" style="margin-top: 10px; font-size: 0.9em; color: #666;">
-                Last updated: Not loaded yet
+                Last updated: Using sample data
             </div>
         </div>
 
         <div id="debit" class="content-section">
             <h3>💸 Debit Total</h3>
-            <p>Total Debits: <strong id="debit-total">Loading...</strong></p>
+            <p>Total Debits: <strong id="debit-total">0.00</strong></p>
             <div class="recent-adds">
                 <h4>Recent Debit Entries:</h4>
                 <div id="debit-list">Loading debit entries...</div>
@@ -378,7 +201,7 @@
 
         <div id="credit" class="content-section">
             <h3>💰 Credit Total</h3>
-            <p>Total Credits: <strong id="credit-total">Loading...</strong></p>
+            <p>Total Credits: <strong id="credit-total">0.00</strong></p>
             <div class="recent-adds">
                 <h4>Recent Credit Entries:</h4>
                 <div id="credit-list">Loading credit entries...</div>
@@ -394,7 +217,7 @@
         </div>
 
         <div id="recent" class="content-section">
-            <h3>📋 Recent Adds from Google Sheets</h3>
+            <h3>📋 Recent Adds</h3>
             <div class="recent-adds">
                 <div id="recent-list">Loading recent transactions...</div>
             </div>
@@ -406,8 +229,10 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script>
-        // Google Sheets data
+        // Financial data storage
         let financialData = {
             credits: [],
             debits: [],
@@ -416,6 +241,265 @@
         };
         
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwl2547hMsMHLi0l1e9xcq6Ue_eV9wgL4gVWyCIASTZZrY2VY-brzxsqVRsKtYSbRk2/exec';
+
+        // Initialize by fetching from Google Sheets
+        function initializeData() {
+            // Start by fetching from Google Sheets immediately
+            fetchDataFromSheets();
+        }
+
+        // Fetch data from Google Sheets
+        async function fetchDataFromSheets() {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            loadingIndicator.style.display = 'block';
+            
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Received data from Google Sheets:', data);
+                
+                // Process the data based on your sheet structure
+                financialData = processSheetData(data);
+                financialData.lastUpdated = new Date();
+                
+                updateUI();
+                document.getElementById('last-updated').textContent = 
+                    `Last updated: ${financialData.lastUpdated.toLocaleString()} (from Google Sheets)`;
+                
+                if (financialData.allTransactions.length === 0) {
+                    showError('No data found in Google Sheets. Please check your sheet structure.');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching data from Google Sheets:', error);
+                showError(`Failed to load data from Google Sheets: ${error.message}`);
+                
+                // Initialize with empty data if Google Sheets fails
+                financialData = {
+                    credits: [],
+                    debits: [],
+                    allTransactions: [],
+                    lastUpdated: new Date()
+                };
+                updateUI();
+                document.getElementById('last-updated').textContent = 
+                    `Last updated: ${new Date().toLocaleString()} (Google Sheets unavailable)`;
+                    
+            } finally {
+                loadingIndicator.style.display = 'none';
+            }
+        }
+        
+        function processSheetData(rawData) {
+            const credits = [];
+            const debits = [];
+            const allTransactions = [];
+            
+            console.log('Processing raw data:', rawData);
+            
+            // Handle different possible data structures from Google Sheets
+            let dataArray = rawData;
+            
+            // If data is wrapped in an object with a data property
+            if (rawData.data && Array.isArray(rawData.data)) {
+                dataArray = rawData.data;
+            }
+            // If data has values property (typical Google Sheets API response)
+            else if (rawData.values && Array.isArray(rawData.values)) {
+                // Convert array of arrays to array of objects
+                const headers = rawData.values[0];
+                dataArray = rawData.values.slice(1).map(row => {
+                    const obj = {};
+                    headers.forEach((header, index) => {
+                        obj[header.toLowerCase()] = row[index] || '';
+                    });
+                    return obj;
+                });
+            }
+            
+            if (Array.isArray(dataArray)) {
+                dataArray.forEach(row => {
+                    // Handle various column name variations
+                    const transaction = {
+                        date: row.date || row.Date || row.DATE || '',
+                        description: row.description || row.Description || row.DESCRIPTION || row.desc || row.Desc || '',
+                        amount: parseFloat(row.amount || row.Amount || row.AMOUNT || 0),
+                        type: row.type || row.Type || row.TYPE || '',
+                        category: row.category || row.Category || row.CATEGORY || '',
+                        timestamp: new Date(row.date || row.Date || row.DATE || Date.now())
+                    };
+                    
+                    // Skip empty rows
+                    if (!transaction.description && transaction.amount === 0) {
+                        return;
+                    }
+                    
+                    allTransactions.push(transaction);
+                    
+                    // Determine if it's credit or debit
+                    const typeStr = transaction.type.toLowerCase();
+                    if (typeStr.includes('credit') || typeStr === 'cr' || typeStr === 'c') {
+                        transaction.type = 'Credit';
+                        credits.push(transaction);
+                    } else if (typeStr.includes('debit') || typeStr === 'dr' || typeStr === 'd') {
+                        transaction.type = 'Debit';
+                        debits.push(transaction);
+                    } else if (transaction.amount > 0) {
+                        // If no type specified, assume positive amounts are credits
+                        transaction.type = 'Credit';
+                        credits.push(transaction);
+                    } else if (transaction.amount < 0) {
+                        // Negative amounts are debits
+                        transaction.type = 'Debit';
+                        transaction.amount = Math.abs(transaction.amount);
+                        debits.push(transaction);
+                    } else {
+                        // Default to debit for zero or unclear amounts
+                        transaction.type = 'Debit';
+                        debits.push(transaction);
+                    }
+                });
+            }
+            
+            console.log('Processed transactions:', {
+                total: allTransactions.length,
+                credits: credits.length,
+                debits: debits.length
+            });
+            
+            return {
+                credits: credits.sort((a, b) => b.timestamp - a.timestamp),
+                debits: debits.sort((a, b) => b.timestamp - a.timestamp),
+                allTransactions: allTransactions.sort((a, b) => b.timestamp - a.timestamp)
+            };
+        }
+        
+        function updateUI() {
+            updateDebitSection();
+            updateCreditSection();
+            updateBalanceSection();
+            updateRecentSection();
+            updateMinusBalanceSection();
+        }
+        
+        function updateDebitSection() {
+            const totalDebits = financialData.debits.reduce((sum, item) => sum + item.amount, 0);
+            document.getElementById('debit-total').textContent = `${totalDebits.toFixed(2)}`;
+            
+            const debitList = document.getElementById('debit-list');
+            if (financialData.debits.length === 0) {
+                debitList.innerHTML = '<div class="add-item">No debit entries found.</div>';
+            } else {
+                debitList.innerHTML = financialData.debits.slice(0, 5).map(item => `
+                    <div class="add-item">
+                        <span>${item.description} - $${item.amount.toFixed(2)}</span>
+                        <div class="timestamp">Added ${getTimeAgo(item.timestamp)}</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function updateCreditSection() {
+            const totalCredits = financialData.credits.reduce((sum, item) => sum + item.amount, 0);
+            document.getElementById('credit-total').textContent = `${totalCredits.toFixed(2)}`;
+            
+            const creditList = document.getElementById('credit-list');
+            if (financialData.credits.length === 0) {
+                creditList.innerHTML = '<div class="add-item">No credit entries found.</div>';
+            } else {
+                creditList.innerHTML = financialData.credits.slice(0, 5).map(item => `
+                    <div class="add-item">
+                        <span>${item.description} - $${item.amount.toFixed(2)}</span>
+                        <div class="timestamp">Added ${getTimeAgo(item.timestamp)}</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function updateBalanceSection() {
+            const totalCredits = financialData.credits.reduce((sum, item) => sum + item.amount, 0);
+            const totalDebits = financialData.debits.reduce((sum, item) => sum + item.amount, 0);
+            const balance = totalCredits - totalDebits;
+            
+            const balanceIndicator = document.getElementById('balance-indicator');
+            balanceIndicator.textContent = `Current Balance: $${balance.toFixed(2)}`;
+            balanceIndicator.className = balance >= 0 ? 'balance-indicator balance-positive' : 'balance-indicator balance-negative';
+            
+            document.getElementById('balance-calculation').textContent = 
+                `Credits: $${totalCredits.toFixed(2)} - Debits: $${totalDebits.toFixed(2)} = Balance: $${balance.toFixed(2)}`;
+        }
+        
+        function updateRecentSection() {
+            const recentList = document.getElementById('recent-list');
+            if (financialData.allTransactions.length === 0) {
+                recentList.innerHTML = '<div class="add-item">No recent transactions found.</div>';
+            } else {
+                recentList.innerHTML = financialData.allTransactions.slice(0, 10).map(item => `
+                    <div class="add-item">
+                        <span><strong>${item.type}:</strong> ${item.description} - $${item.amount.toFixed(2)}</span>
+                        <div class="timestamp">Added ${getTimeAgo(item.timestamp)}</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function updateMinusBalanceSection() {
+            const totalCredits = financialData.credits.reduce((sum, item) => sum + item.amount, 0);
+            const totalDebits = financialData.debits.reduce((sum, item) => sum + item.amount, 0);
+            const balance = totalCredits - totalDebits;
+            
+            const minusBalanceContent = document.getElementById('minus-balance-content');
+            
+            if (balance < 0) {
+                minusBalanceContent.innerHTML = `
+                    <div class="balance-indicator balance-negative">
+                        Alert: Current Balance is $${balance.toFixed(2)}
+                    </div>
+                    <p>Total Credits: $${totalCredits.toFixed(2)}</p>
+                    <p>Total Debits: $${totalDebits.toFixed(2)}</p>
+                    <p>Current Balance: $${balance.toFixed(2)}</p>
+                    <p style="color: #721c24; font-weight: bold;">⚠️ Account is overdrawn!</p>
+                `;
+            } else {
+                minusBalanceContent.innerHTML = `
+                    <div class="balance-indicator balance-positive">
+                        ✅ Balance is positive: $${balance.toFixed(2)}
+                    </div>
+                    <p>No minus balance alerts at this time.</p>
+                `;
+            }
+        }
+        
+        function getTimeAgo(timestamp) {
+            const now = new Date();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+            if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+            return 'Just now';
+        }
+        
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = message;
+            document.querySelector('.menu-container').prepend(errorDiv);
+            
+            setTimeout(() => errorDiv.remove(), 5000);
+        }
+        
+        function refreshData() {
+            fetchDataFromSheets();
+        }
 
         function showSection(sectionId, event) {
             // Remove active class from all menu items
@@ -433,48 +517,174 @@
             document.getElementById(sectionId).classList.add('active');
         }
 
-        function exportData(type) {
+        function exportToPDF(type) {
             if (!financialData.allTransactions.length && !financialData.credits.length && !financialData.debits.length) {
                 alert('No data available to export. Please refresh data first.');
                 return;
             }
             
-            let dataToExport = '';
-            let filename = '';
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
             
             const totalCredits = financialData.credits.reduce((sum, item) => sum + item.amount, 0);
             const totalDebits = financialData.debits.reduce((sum, item) => sum + item.amount, 0);
             const balance = totalCredits - totalDebits;
             
+            // Header
+            doc.setFontSize(20);
+            doc.setTextColor(40, 40, 40);
+            
+            let title = '';
+            let filename = '';
+            
             switch(type) {
                 case 'credit':
-                    dataToExport = formatCSV(financialData.credits, 'Credits from Google Sheets');
-                    filename = 'credits_export.csv';
+                    title = 'Credit Report';
+                    filename = 'credits_report.pdf';
                     break;
                 case 'debit':
-                    dataToExport = formatCSV(financialData.debits, 'Debits from Google Sheets');
-                    filename = 'debits_export.csv';
+                    title = 'Debit Report';
+                    filename = 'debits_report.pdf';
                     break;
                 case 'balance':
-                    dataToExport = `Balance Summary from Google Sheets\nExport Date,${new Date().toLocaleString()}\n\nTotal Credits,${totalCredits.toFixed(2)}\nTotal Debits,${totalDebits.toFixed(2)}\nCurrent Balance,${balance.toFixed(2)}\nBalance Status,${balance >= 0 ? 'Positive' : 'NEGATIVE - OVERDRAWN'}`;
-                    filename = 'balance_export.csv';
+                    title = 'Balance Summary';
+                    filename = 'balance_report.pdf';
                     break;
                 case 'minus-balance':
-                    if (balance >= 0) {
-                        dataToExport = `Minus Balance Report\nExport Date,${new Date().toLocaleString()}\n\nStatus,No minus balance detected\nCurrent Balance,${balance.toFixed(2)}`;
-                    } else {
-                        dataToExport = `Minus Balance Alert Report\nExport Date,${new Date().toLocaleString()}\n\nStatus,ACCOUNT OVERDRAWN\nCurrent Balance,${balance.toFixed(2)}\nTotal Credits,${totalCredits.toFixed(2)}\nTotal Debits,${totalDebits.toFixed(2)}\nOverdraft Amount,${Math.abs(balance).toFixed(2)}`;
-                    }
-                    filename = 'minus_balance_report.csv';
+                    title = 'Minus Balance Alert Report';
+                    filename = 'minus_balance_report.pdf';
                     break;
                 case 'all':
-                    dataToExport = formatCSV(financialData.allTransactions, 'All Transactions from Google Sheets');
-                    filename = 'all_financial_data.csv';
+                    title = 'Complete Financial Report';
+                    filename = 'complete_financial_report.pdf';
                     break;
             }
             
-            downloadCSV(dataToExport, filename);
-            alert(`Exporting ${type} data from Google Sheets...`);
+            doc.text(title, 20, 20);
+            
+            // Date and summary info
+            doc.setFontSize(12);
+            doc.text(`Export Date: ${new Date().toLocaleString()}`, 20, 35);
+            doc.text(`Data Source: Google Sheets`, 20, 45);
+            doc.text(`Last Updated: ${financialData.lastUpdated ? financialData.lastUpdated.toLocaleString() : 'N/A'}`, 20, 55);
+            
+            let startY = 70;
+            
+            if (type === 'balance') {
+                // Balance summary
+                doc.setFontSize(14);
+                doc.setTextColor(0, 0, 0);
+                doc.text('Financial Summary', 20, startY);
+                
+                startY += 15;
+                doc.setFontSize(12);
+                doc.text(`Total Credits: ${totalCredits.toFixed(2)}`, 20, startY);
+                doc.text(`Total Debits: ${totalDebits.toFixed(2)}`, 20, startY + 10);
+                doc.text(`Current Balance: ${balance.toFixed(2)}`, 20, startY + 20);
+                doc.text(`Status: ${balance >= 0 ? 'POSITIVE BALANCE' : 'NEGATIVE BALANCE - OVERDRAWN'}`, 20, startY + 30);
+                
+                if (balance < 0) {
+                    doc.setTextColor(255, 0, 0);
+                    doc.text(`⚠️ ALERT: Account is overdrawn by ${Math.abs(balance).toFixed(2)}`, 20, startY + 45);
+                }
+                
+            } else if (type === 'minus-balance') {
+                // Minus balance alert
+                doc.setFontSize(14);
+                if (balance < 0) {
+                    doc.setTextColor(255, 0, 0);
+                    doc.text('⚠️ MINUS BALANCE ALERT', 20, startY);
+                    startY += 15;
+                    doc.setFontSize(12);
+                    doc.text(`Current Balance: ${balance.toFixed(2)}`, 20, startY);
+                    doc.text(`Total Credits: ${totalCredits.toFixed(2)}`, 20, startY + 10);
+                    doc.text(`Total Debits: ${totalDebits.toFixed(2)}`, 20, startY + 20);
+                    doc.text(`Overdraft Amount: ${Math.abs(balance).toFixed(2)}`, 20, startY + 30);
+                    doc.text('STATUS: ACCOUNT OVERDRAWN', 20, startY + 40);
+                } else {
+                    doc.setTextColor(0, 150, 0);
+                    doc.text('✅ NO MINUS BALANCE', 20, startY);
+                    startY += 15;
+                    doc.setFontSize(12);
+                    doc.text(`Current Balance: ${balance.toFixed(2)}`, 20, startY);
+                    doc.text('STATUS: Account balance is positive', 20, startY + 10);
+                }
+                
+            } else {
+                // Transaction tables
+                let dataToShow = [];
+                
+                switch(type) {
+                    case 'credit':
+                        dataToShow = financialData.credits;
+                        doc.setFontSize(14);
+                        doc.text(`Total Credits: ${totalCredits.toFixed(2)}`, 20, startY);
+                        startY += 10;
+                        break;
+                    case 'debit':
+                        dataToShow = financialData.debits;
+                        doc.setFontSize(14);
+                        doc.text(`Total Debits: ${totalDebits.toFixed(2)}`, 20, startY);
+                        startY += 10;
+                        break;
+                    case 'all':
+                        dataToShow = financialData.allTransactions;
+                        doc.setFontSize(14);
+                        doc.text(`Total Transactions: ${dataToShow.length}`, 20, startY);
+                        doc.text(`Balance: ${balance.toFixed(2)}`, 20, startY + 10);
+                        startY += 15;
+                        break;
+                }
+                
+                if (dataToShow.length > 0) {
+                    // Create table data
+                    const tableData = dataToShow.map(item => [
+                        item.timestamp ? item.timestamp.toLocaleDateString() : (item.date || 'N/A'),
+                        item.description || 'N/A',
+                        `${item.amount.toFixed(2)}`,
+                        item.type || 'N/A',
+                        item.category || 'N/A'
+                    ]);
+                    
+                    // Add table
+                    doc.autoTable({
+                        startY: startY + 10,
+                        head: [['Date', 'Description', 'Amount', 'Type', 'Category']],
+                        body: tableData,
+                        styles: {
+                            fontSize: 10,
+                            cellPadding: 3
+                        },
+                        headStyles: {
+                            fillColor: [102, 126, 234],
+                            textColor: 255
+                        },
+                        alternateRowStyles: {
+                            fillColor: [245, 245, 245]
+                        },
+                        columnStyles: {
+                            2: { halign: 'right' } // Right align amount column
+                        }
+                    });
+                } else {
+                    doc.setFontSize(12);
+                    doc.text('No transactions found.', 20, startY + 20);
+                }
+            }
+            
+            // Footer
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(10);
+                doc.setTextColor(128, 128, 128);
+                doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 40, doc.internal.pageSize.height - 10);
+                doc.text('Generated by Financial Dashboard', 20, doc.internal.pageSize.height - 10);
+            }
+            
+            // Save the PDF
+            doc.save(filename);
+            alert(`${title} exported successfully as PDF!`);
         }
 
         function formatCSV(data, title) {
@@ -508,9 +718,17 @@
             }
         }
 
-        // Show debit section by default
+        // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('.menu a').click();
+            // Initialize data from Google Sheets
+            initializeData();
+            
+            // Show debit section by default
+            const firstMenuLink = document.querySelector('.menu a');
+            if (firstMenuLink) {
+                firstMenuLink.classList.add('active');
+                document.getElementById('debit').classList.add('active');
+            }
         });
     </script>
 </body>
