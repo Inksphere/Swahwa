@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Dashboard - Multi-Sheet</title>
+    <title>Enhanced Financial Dashboard - Multi-Sheet</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -68,9 +68,92 @@
             font-weight: bold;
         }
 
+        .action-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .add-transaction-panel, .export-section {
+            background: #f1f3f4;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .add-transaction-panel h3, .export-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .add-btn {
+            background: linear-gradient(45deg, #51cf66 0%, #40c057 100%);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(81, 207, 102, 0.4);
+        }
+
+        .export-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .export-btn {
+            background: linear-gradient(45deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
         .navigation {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-bottom: 30px;
         }
@@ -99,41 +182,6 @@
             box-shadow: 0 4px 15px rgba(81, 207, 102, 0.4);
         }
 
-        .export-section {
-            background: #f1f3f4;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-
-        .export-section h3 {
-            margin-top: 0;
-            color: #333;
-        }
-
-        .export-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
-        }
-
-        .export-btn {
-            background: linear-gradient(45deg, #ff6b6b 0%, #ee5a52 100%);
-            color: white;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .export-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-        }
-
         .content-panel {
             display: none;
             background: #fff;
@@ -152,12 +200,18 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
         .summary-card {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 20px;
             border-radius: 10px;
-            margin-bottom: 20px;
             text-align: center;
         }
 
@@ -236,6 +290,13 @@
             text-align: center;
         }
 
+        .monthly-summary-chart {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
         @media (max-width: 768px) {
             .dashboard-container {
                 padding: 20px;
@@ -250,14 +311,18 @@
                 flex-direction: column;
                 gap: 10px;
             }
+
+            .action-section {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
         <div class="header">
-            <h1>📊 Financial Dashboard</h1>
-            <p>Multi-Sheet Google Sheets Integration</p>
+            <h1>📊 Enhanced Financial Dashboard</h1>
+            <p>Google Apps Script Integration with Real-time Updates</p>
         </div>
 
         <div class="status-bar">
@@ -274,86 +339,94 @@
             </div>
         </div>
 
-        <div class="export-section">
-            <h3>📤 Export Options</h3>
-            <div class="export-buttons">
-                <button class="export-btn" onclick="exportToPDF('credits')">💰 Export Credits</button>
-                <button class="export-btn" onclick="exportToPDF('debits')">💸 Export Debits</button>
-                <button class="export-btn" onclick="exportToPDF('students')">👥 Export Students</button>
-                <button class="export-btn" onclick="exportToPDF('balance')">⚖️ Export Balance</button>
-                <button class="export-btn" onclick="exportToPDF('summary')">📋 Export Summary</button>
-                <button class="export-btn" onclick="exportToPDF('all')">📄 Export All Data</button>
+        <div class="action-section">
+            <div class="add-transaction-panel">
+                <h3>➕ Add Transaction</h3>
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="item">Item/Description:</label>
+                    <input type="text" id="item" placeholder="Enter item description">
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="number" id="amount" step="0.01" placeholder="0.00">
+                </div>
+                <div class="form-buttons">
+                    <button class="add-btn" onclick="addTransaction('credit')">Add Credit</button>
+                    <button class="add-btn" onclick="addTransaction('debit')">Add Debit</button>
+                </div>
+            </div>
+
+            <div class="export-section">
+                <h3>📤 Export & Reports</h3>
+                <div class="export-buttons">
+                    <button class="export-btn" onclick="exportToPDF('balance')">⚖️ Balance</button>
+                    <button class="export-btn" onclick="exportToPDF('summary')">📋 Summary</button>
+                    <button class="export-btn" onclick="exportToPDF('monthly')">📅 Monthly</button>
+                    <button class="export-btn" onclick="exportToPDF('all')">📄 Complete</button>
+                </div>
             </div>
         </div>
 
         <div class="navigation">
-            <button class="nav-button active" onclick="showPanel('credits')">💰 Credits</button>
-            <button class="nav-button" onclick="showPanel('debits')">💸 Debits</button>
-            <button class="nav-button" onclick="showPanel('students')">👥 Students</button>
-            <button class="nav-button" onclick="showPanel('balance')">⚖️ Balance</button>
-            <button class="nav-button" onclick="showPanel('recent')">📋 Recent</button>
+            <button class="nav-button active" onclick="showPanel('overview')">📊 Overview</button>
+            <button class="nav-button" onclick="showPanel('transactions')">💳 Transactions</button>
+            <button class="nav-button" onclick="showPanel('monthly')">📅 Monthly</button>
+            <button class="nav-button" onclick="showPanel('ledger')">📖 User Ledger</button>
             <button class="nav-button" onclick="showPanel('alerts')">⚠️ Alerts</button>
         </div>
 
-        <!-- Credits Panel -->
-        <div id="credits-panel" class="content-panel active">
-            <h2>💰 Credit Transactions</h2>
-            <div class="summary-card">
-                <h3>Total Credits</h3>
-                <p class="amount" id="credits-total">$0.00</p>
-                <p id="credits-count">0 transactions</p>
-            </div>
-            <div id="credits-content">
-                <div class="no-data">Loading credit data...</div>
-            </div>
-        </div>
-
-        <!-- Debits Panel -->
-        <div id="debits-panel" class="content-panel">
-            <h2>💸 Debit Transactions</h2>
-            <div class="summary-card">
-                <h3>Total Debits</h3>
-                <p class="amount" id="debits-total">$0.00</p>
-                <p id="debits-count">0 transactions</p>
-            </div>
-            <div id="debits-content">
-                <div class="no-data">Loading debit data...</div>
-            </div>
-        </div>
-
-        <!-- Students Panel -->
-        <div id="students-panel" class="content-panel">
-            <h2>👥 Students</h2>
-            <div class="summary-card">
-                <h3>Total Students</h3>
-                <p class="amount" id="students-total">0</p>
-                <p id="students-status">Active students</p>
-            </div>
-            <div id="students-content">
-                <div class="no-data">Loading student data...</div>
-            </div>
-        </div>
-
-        <!-- Balance Panel -->
-        <div id="balance-panel" class="content-panel">
-            <h2>⚖️ Balance Overview</h2>
-            <div id="balance-summary">
-                <div class="summary-card" id="balance-card">
-                    <h3>Current Balance</h3>
-                    <p class="amount" id="balance-amount">$0.00</p>
-                    <p id="balance-status">Calculating...</p>
+        <!-- Overview Panel -->
+        <div id="overview-panel" class="content-panel active">
+            <h2>📊 Financial Overview</h2>
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Total Credits</h3>
+                    <p class="amount" id="overview-credits">$0.00</p>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Debits</h3>
+                    <p class="amount" id="overview-debits">$0.00</p>
+                </div>
+                <div class="summary-card balance-positive" id="overview-balance-card">
+                    <h3>Balance</h3>
+                    <p class="amount" id="overview-balance">$0.00</p>
                 </div>
             </div>
-            <div id="balance-breakdown">
-                <div class="no-data">Loading balance data...</div>
+            <div id="overview-content">
+                <div class="no-data">Loading overview data...</div>
             </div>
         </div>
 
-        <!-- Recent Panel -->
-        <div id="recent-panel" class="content-panel">
-            <h2>📋 Recent Transactions</h2>
-            <div id="recent-content">
-                <div class="no-data">Loading recent transactions...</div>
+        <!-- Transactions Panel -->
+        <div id="transactions-panel" class="content-panel">
+            <h2>💳 All Transactions</h2>
+            <div id="transactions-content">
+                <div class="no-data">Loading transactions...</div>
+            </div>
+        </div>
+
+        <!-- Monthly Summary Panel -->
+        <div id="monthly-panel" class="content-panel">
+            <h2>📅 Monthly Summary</h2>
+            <div id="monthly-content">
+                <div class="no-data">Loading monthly data...</div>
+            </div>
+        </div>
+
+        <!-- User Ledger Panel -->
+        <div id="ledger-panel" class="content-panel">
+            <h2>📖 User Ledger</h2>
+            <div class="form-group">
+                <label for="ledger-username">Select User:</label>
+                <input type="text" id="ledger-username" placeholder="Enter username">
+                <button class="add-btn" onclick="loadUserLedger()" style="margin-top: 10px; width: 200px;">Load Ledger</button>
+            </div>
+            <div id="ledger-content">
+                <div class="no-data">Enter username to view ledger</div>
             </div>
         </div>
 
@@ -371,23 +444,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
     <script>
-        // Configuration
+        // Configuration - UPDATE WITH YOUR ACTUAL GOOGLE APPS SCRIPT URL
         const CONFIG = {
-            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwl2547hMsMHLi0l1e9xcq6Ue_eV9wgL4gVWyCIASTZZrY2VY-brzxsqVRsKtYSbRk2/exec',
-            SHEETS: {
-                CREDITS: 'credit',
-                DEBITS: 'debit',
-                STUDENTS: 'students'
-            },
+            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
             RETRY_ATTEMPTS: 3,
             RETRY_DELAY: 1000
         };
 
         // Global data storage
         let appData = {
-            credits: [],
-            debits: [],
-            students: [],
+            allTotals: { totalCredit: 0, totalDebit: 0, balance: 0 },
+            monthlyData: {},
+            userLedger: [],
             lastUpdated: null,
             loading: false
         };
@@ -405,7 +473,9 @@
             return new Date(date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'short',
-                day: 'numeric'
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
         }
 
@@ -416,42 +486,107 @@
             
             document.querySelector('.dashboard-container').insertBefore(
                 messageDiv, 
-                document.querySelector('.navigation')
+                document.querySelector('.action-section')
             );
             
             setTimeout(() => messageDiv.remove(), 5000);
         }
 
-        // API Functions
-        async function fetchSheetData(sheetName, retryCount = 0) {
+        // API Functions using your Apps Script endpoints
+        async function apiCall(action, params = {}) {
             try {
-                const url = `${CONFIG.GOOGLE_SCRIPT_URL}?sheet=${sheetName}`;
-                console.log(`Fetching data from: ${url}`);
+                const url = new URL(CONFIG.GOOGLE_SCRIPT_URL);
+                url.searchParams.append('action', action);
                 
-                const response = await fetch(url);
+                Object.keys(params).forEach(key => {
+                    if (params[key] !== null && params[key] !== undefined) {
+                        url.searchParams.append(key, params[key]);
+                    }
+                });
+                
+                console.log(`Making API call: ${url.toString()}`);
+                
+                const response = await fetch(url.toString());
                 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 
                 const data = await response.json();
-                console.log(`${sheetName} data received:`, data);
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
                 
                 return data;
                 
             } catch (error) {
-                console.error(`Error fetching ${sheetName}:`, error);
-                
-                if (retryCount < CONFIG.RETRY_ATTEMPTS) {
-                    console.log(`Retrying ${sheetName} (attempt ${retryCount + 1}/${CONFIG.RETRY_ATTEMPTS})...`);
-                    await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY));
-                    return fetchSheetData(sheetName, retryCount + 1);
-                }
-                
+                console.error(`Error in ${action}:`, error);
                 throw error;
             }
         }
 
+        // Add transaction function
+        async function addTransaction(type) {
+            const username = document.getElementById('username').value.trim();
+            const item = document.getElementById('item').value.trim();
+            const amount = document.getElementById('amount').value.trim();
+
+            if (!username || !item || !amount) {
+                showMessage('Please fill in all fields', 'error');
+                return;
+            }
+
+            if (isNaN(amount) || parseFloat(amount) <= 0) {
+                showMessage('Please enter a valid amount', 'error');
+                return;
+            }
+
+            try {
+                const action = type === 'credit' ? 'add_credit' : 'add_debit';
+                const result = await apiCall(action, {
+                    username: username,
+                    item: item,
+                    amount: parseFloat(amount)
+                });
+
+                showMessage(`${type.charAt(0).toUpperCase() + type.slice(1)} added successfully!`, 'success');
+                
+                // Clear form
+                document.getElementById('username').value = '';
+                document.getElementById('item').value = '';
+                document.getElementById('amount').value = '';
+                
+                // Refresh data
+                refreshAllData();
+                
+            } catch (error) {
+                showMessage(`Failed to add ${type}: ${error.message}`, 'error');
+            }
+        }
+
+        // Load user ledger
+        async function loadUserLedger() {
+            const username = document.getElementById('ledger-username').value.trim();
+            
+            if (!username) {
+                showMessage('Please enter a username', 'error');
+                return;
+            }
+
+            try {
+                const result = await apiCall('get_ledger', { username: username });
+                appData.userLedger = result.ledger || [];
+                updateLedgerPanel();
+                
+            } catch (error) {
+                showMessage(`Failed to load ledger: ${error.message}`, 'error');
+                document.getElementById('ledger-content').innerHTML = 
+                    `<div class="error-message">Failed to load ledger for ${username}</div>`;
+            }
+        }
+
+        // Refresh all data
         async function refreshAllData() {
             if (appData.loading) {
                 showMessage('Already loading data, please wait...', 'info');
@@ -463,21 +598,20 @@
             document.getElementById('connection-status').className = 'loading';
 
             try {
-                // Fetch all sheets in parallel
-                const [creditsData, debitsData, studentsData] = await Promise.all([
-                    fetchSheetData(CONFIG.SHEETS.CREDITS),
-                    fetchSheetData(CONFIG.SHEETS.DEBITS),
-                    fetchSheetData(CONFIG.SHEETS.STUDENTS)
+                // Load all data using your Apps Script endpoints
+                const [totalsData, monthlyData] = await Promise.all([
+                    apiCall('get_all_totals'),
+                    apiCall('get_monthly_summary')
                 ]);
 
-                // Process the data
-                appData.credits = processTransactionData(creditsData, 'Credit');
-                appData.debits = processTransactionData(debitsData, 'Debit');
-                appData.students = processStudentData(studentsData);
+                appData.allTotals = totalsData;
+                appData.monthlyData = monthlyData;
                 appData.lastUpdated = new Date();
 
-                // Update UI
-                updateAllPanels();
+                // Update all panels
+                updateOverviewPanel();
+                updateMonthlyPanel();
+                updateAlertsPanel();
                 
                 document.getElementById('connection-status').textContent = '✅ Connected';
                 document.getElementById('connection-status').className = 'loaded';
@@ -496,287 +630,127 @@
             }
         }
 
-        // Data Processing Functions
-        function processTransactionData(rawData, type) {
-            const transactions = [];
+        // Update UI panels
+        function updateOverviewPanel() {
+            const { totalCredit, totalDebit, balance } = appData.allTotals;
             
-            let dataArray = rawData;
+            document.getElementById('overview-credits').textContent = formatCurrency(totalCredit);
+            document.getElementById('overview-debits').textContent = formatCurrency(totalDebit);
+            document.getElementById('overview-balance').textContent = formatCurrency(balance);
             
-            // Handle Google Sheets API response format
-            if (rawData.values && Array.isArray(rawData.values)) {
-                if (rawData.values.length < 2) return transactions;
-                
-                const headers = rawData.values[0].map(h => h.toLowerCase());
-                dataArray = rawData.values.slice(1).map(row => {
-                    const obj = {};
-                    headers.forEach((header, index) => {
-                        obj[header] = row[index] || '';
-                    });
-                    return obj;
-                });
-            }
-
-            if (Array.isArray(dataArray)) {
-                dataArray.forEach((row, index) => {
-                    const transaction = {
-                        id: `${type.toLowerCase()}_${index}`,
-                        date: row.date || row.Date || row.DATE || '',
-                        description: row.description || row.Description || row.desc || '',
-                        amount: parseFloat(row.amount || row.Amount || 0),
-                        type: type,
-                        category: row.category || row.Category || '',
-                        student: row.student || row.Student || row.student_name || '',
-                        notes: row.notes || row.Notes || '',
-                        timestamp: new Date(row.date || Date.now())
-                    };
-
-                    if (transaction.description || transaction.amount > 0) {
-                        transactions.push(transaction);
-                    }
-                });
-            }
-
-            return transactions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        }
-
-        function processStudentData(rawData) {
-            const students = [];
-            
-            let dataArray = rawData;
-            
-            if (rawData.values && Array.isArray(rawData.values)) {
-                if (rawData.values.length < 2) return students;
-                
-                const headers = rawData.values[0].map(h => h.toLowerCase());
-                dataArray = rawData.values.slice(1).map(row => {
-                    const obj = {};
-                    headers.forEach((header, index) => {
-                        obj[header] = row[index] || '';
-                    });
-                    return obj;
-                });
-            }
-
-            if (Array.isArray(dataArray)) {
-                dataArray.forEach((row, index) => {
-                    const student = {
-                        id: `student_${index}`,
-                        name: row.name || row.Name || row.student_name || '',
-                        studentId: row.student_id || row.id || row.ID || '',
-                        email: row.email || row.Email || '',
-                        phone: row.phone || row.Phone || row.contact || '',
-                        course: row.course || row.Course || '',
-                        batch: row.batch || row.Batch || '',
-                        status: row.status || row.Status || 'Active',
-                        joinDate: row.join_date || row.joinDate || ''
-                    };
-
-                    if (student.name || student.studentId) {
-                        students.push(student);
-                    }
-                });
-            }
-
-            return students;
-        }
-
-        // UI Update Functions
-        function updateAllPanels() {
-            updateCreditsPanel();
-            updateDebitsPanel();
-            updateStudentsPanel();
-            updateBalancePanel();
-            updateRecentPanel();
-            updateAlertsPanel();
-        }
-
-        function updateCreditsPanel() {
-            const total = appData.credits.reduce((sum, item) => sum + item.amount, 0);
-            const count = appData.credits.length;
-            
-            document.getElementById('credits-total').textContent = formatCurrency(total);
-            document.getElementById('credits-count').textContent = `${count} transactions`;
-            
-            const content = document.getElementById('credits-content');
-            
-            if (count === 0) {
-                content.innerHTML = '<div class="no-data">No credit transactions found</div>';
-                return;
-            }
-            
-            const table = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th>Amount</th>
-                            <th>Student</th>
-                            <th>Category</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${appData.credits.map(item => `
-                            <tr>
-                                <td>${formatDate(item.date)}</td>
-                                <td>${item.description}</td>
-                                <td>${formatCurrency(item.amount)}</td>
-                                <td>${item.student || 'N/A'}</td>
-                                <td>${item.category || 'N/A'}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            
-            content.innerHTML = table;
-        }
-
-        function updateDebitsPanel() {
-            const total = appData.debits.reduce((sum, item) => sum + item.amount, 0);
-            const count = appData.debits.length;
-            
-            document.getElementById('debits-total').textContent = formatCurrency(total);
-            document.getElementById('debits-count').textContent = `${count} transactions`;
-            
-            const content = document.getElementById('debits-content');
-            
-            if (count === 0) {
-                content.innerHTML = '<div class="no-data">No debit transactions found</div>';
-                return;
-            }
-            
-            const table = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th>Amount</th>
-                            <th>Student</th>
-                            <th>Category</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${appData.debits.map(item => `
-                            <tr>
-                                <td>${formatDate(item.date)}</td>
-                                <td>${item.description}</td>
-                                <td>${formatCurrency(item.amount)}</td>
-                                <td>${item.student || 'N/A'}</td>
-                                <td>${item.category || 'N/A'}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            
-            content.innerHTML = table;
-        }
-
-        function updateStudentsPanel() {
-            const count = appData.students.length;
-            const activeCount = appData.students.filter(s => s.status.toLowerCase() === 'active').length;
-            
-            document.getElementById('students-total').textContent = count;
-            document.getElementById('students-status').textContent = `${activeCount} active students`;
-            
-            const content = document.getElementById('students-content');
-            
-            if (count === 0) {
-                content.innerHTML = '<div class="no-data">No students found</div>';
-                return;
-            }
-            
-            const table = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Student ID</th>
-                            <th>Email</th>
-                            <th>Course</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${appData.students.map(student => `
-                            <tr>
-                                <td>${student.name}</td>
-                                <td>${student.studentId || 'N/A'}</td>
-                                <td>${student.email || 'N/A'}</td>
-                                <td>${student.course || 'N/A'}</td>
-                                <td><span style="color: ${student.status.toLowerCase() === 'active' ? 'green' : 'red'}">${student.status}</span></td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            
-            content.innerHTML = table;
-        }
-
-        function updateBalancePanel() {
-            const totalCredits = appData.credits.reduce((sum, item) => sum + item.amount, 0);
-            const totalDebits = appData.debits.reduce((sum, item) => sum + item.amount, 0);
-            const balance = totalCredits - totalDebits;
-            
-            document.getElementById('balance-amount').textContent = formatCurrency(balance);
-            document.getElementById('balance-status').textContent = 
-                balance >= 0 ? 'Positive Balance' : 'Negative Balance';
-            
-            const balanceCard = document.getElementById('balance-card');
+            const balanceCard = document.getElementById('overview-balance-card');
             balanceCard.className = balance >= 0 ? 'summary-card balance-positive' : 'summary-card balance-negative';
             
-            const breakdown = `
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
-                    <div style="background: #51cf66; color: white; padding: 20px; border-radius: 10px; text-align: center;">
-                        <h4 style="margin: 0;">Total Credits</h4>
-                        <p style="font-size: 1.5rem; margin: 10px 0;">${formatCurrency(totalCredits)}</p>
-                        <p style="margin: 0;">${appData.credits.length} transactions</p>
+            const content = document.getElementById('overview-content');
+            content.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+                        <h4 style="margin: 0 0 10px 0; color: #333;">Financial Status</h4>
+                        <p style="font-size: 1.2rem; margin: 5px 0; color: ${balance >= 0 ? '#51cf66' : '#ff6b6b'}">
+                            ${balance >= 0 ? '✅ Positive Balance' : '⚠️ Negative Balance'}
+                        </p>
+                        <p style="margin: 5px 0; color: #666;">
+                            Net: ${formatCurrency(Math.abs(balance))}
+                        </p>
                     </div>
-                    <div style="background: #ff6b6b; color: white; padding: 20px; border-radius: 10px; text-align: center;">
-                        <h4 style="margin: 0;">Total Debits</h4>
-                        <p style="font-size: 1.5rem; margin: 10px 0;">${formatCurrency(totalDebits)}</p>
-                        <p style="margin: 0;">${appData.debits.length} transactions</p>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center;">
+                        <h4 style="margin: 0 0 10px 0; color: #333;">Quick Stats</h4>
+                        <p style="margin: 5px 0; color: #666;">Credits vs Debits Ratio</p>
+                        <p style="font-size: 1.2rem; color: #667eea;">
+                            ${totalDebit > 0 ? (totalCredit / totalDebit).toFixed(2) : '∞'} : 1
+                        </p>
                     </div>
                 </div>
             `;
-            
-            document.getElementById('balance-breakdown').innerHTML = breakdown;
         }
 
-        function updateRecentPanel() {
-            const allTransactions = [...appData.credits, ...appData.debits]
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-                .slice(0, 20);
+        function updateMonthlyPanel() {
+            const content = document.getElementById('monthly-content');
             
-            const content = document.getElementById('recent-content');
-            
-            if (allTransactions.length === 0) {
-                content.innerHTML = '<div class="no-data">No recent transactions found</div>';
+            if (!appData.monthlyData || Object.keys(appData.monthlyData).length === 0) {
+                content.innerHTML = '<div class="no-data">No monthly data available</div>';
                 return;
             }
+
+            let monthlyHTML = '<div class="monthly-summary-chart">';
             
+            Object.entries(appData.monthlyData).forEach(([month, items]) => {
+                const monthTotal = Object.values(items).reduce((sum, amount) => sum + amount, 0);
+                
+                monthlyHTML += `
+                    <div style="margin-bottom: 30px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h3 style="margin: 0 0 15px 0; color: #333;">${month} - Total: ${formatCurrency(monthTotal)}</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                `;
+                
+                Object.entries(items).forEach(([item, amount]) => {
+                    monthlyHTML += `
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                            <h4 style="margin: 0 0 5px 0; color: #555;">${item}</h4>
+                            <p style="font-size: 1.3rem; margin: 0; color: #667eea; font-weight: bold;">${formatCurrency(amount)}</p>
+                        </div>
+                    `;
+                });
+                
+                monthlyHTML += '</div></div>';
+            });
+            
+            monthlyHTML += '</div>';
+            content.innerHTML = monthlyHTML;
+        }
+
+        function updateLedgerPanel() {
+            const content = document.getElementById('ledger-content');
+            
+            if (!appData.userLedger || appData.userLedger.length === 0) {
+                content.innerHTML = '<div class="no-data">No transactions found for this user</div>';
+                return;
+            }
+
+            let totalCredits = 0;
+            let totalDebits = 0;
+
+            appData.userLedger.forEach(entry => {
+                if (entry.type === 'credit') {
+                    totalCredits += entry.amount;
+                } else {
+                    totalDebits += entry.amount;
+                }
+            });
+
+            const userBalance = totalCredits - totalDebits;
+
             const table = `
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3>User Credits</h3>
+                        <p class="amount">${formatCurrency(totalCredits)}</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>User Debits</h3>
+                        <p class="amount">${formatCurrency(totalDebits)}</p>
+                    </div>
+                    <div class="summary-card ${userBalance >= 0 ? 'balance-positive' : 'balance-negative'}">
+                        <h3>User Balance</h3>
+                        <p class="amount">${formatCurrency(userBalance)}</p>
+                    </div>
+                </div>
                 <table class="data-table">
                     <thead>
                         <tr>
                             <th>Date</th>
                             <th>Type</th>
-                            <th>Description</th>
+                            <th>Item</th>
                             <th>Amount</th>
-                            <th>Student</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${allTransactions.map(item => `
+                        ${appData.userLedger.map(entry => `
                             <tr>
-                                <td>${formatDate(item.date)}</td>
-                                <td><span style="color: ${item.type === 'Credit' ? 'green' : 'red'}">${item.type}</span></td>
-                                <td>${item.description}</td>
-                                <td>${formatCurrency(item.amount)}</td>
-                                <td>${item.student || 'N/A'}</td>
+                                <td>${formatDate(entry.date)}</td>
+                                <td><span style="color: ${entry.type === 'credit' ? 'green' : 'red'}">${entry.type.toUpperCase()}</span></td>
+                                <td>${entry.item}</td>
+                                <td>${formatCurrency(entry.amount)}</td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -788,12 +762,9 @@
 
         function updateAlertsPanel() {
             const alerts = [];
+            const { balance } = appData.allTotals;
             
             // Check for negative balance
-            const totalCredits = appData.credits.reduce((sum, item) => sum + item.amount, 0);
-            const totalDebits = appData.debits.reduce((sum, item) => sum + item.amount, 0);
-            const balance = totalCredits - totalDebits;
-            
             if (balance < 0) {
                 alerts.push({
                     type: 'danger',
@@ -801,30 +772,28 @@
                     message: `Current balance is ${formatCurrency(balance)}. Account is overdrawn.`
                 });
             }
-            
-            // Check for inactive students
-            const inactiveStudents = appData.students.filter(s => s.status.toLowerCase() !== 'active').length;
-            if (inactiveStudents > 0) {
-                alerts.push({
-                    type: 'warning',
-                    title: 'Inactive Students',
-                    message: `${inactiveStudents} students are currently inactive.`
-                });
-            }
-            
-            // Check for recent large transactions
-            const largeTransactions = [...appData.credits, ...appData.debits]
-                .filter(t => t.amount > 1000)
-                .filter(t => (Date.now() - new Date(t.timestamp)) < 7 * 24 * 60 * 60 * 1000);
-            
-            if (largeTransactions.length > 0) {
+
+            // Check for large monthly expenses
+            Object.entries(appData.monthlyData).forEach(([month, items]) => {
+                const monthTotal = Object.values(items).reduce((sum, amount) => sum + amount, 0);
+                if (monthTotal > 5000) {
+                    alerts.push({
+                        type: 'warning',
+                        title: 'High Monthly Activity',
+                        message: `${month} has unusually high activity: ${formatCurrency(monthTotal)}`
+                    });
+                }
+            });
+
+            // Positive alerts
+            if (balance > 10000) {
                 alerts.push({
                     type: 'info',
-                    title: 'Large Transactions',
-                    message: `${largeTransactions.length} transactions over $1,000 in the past week.`
+                    title: 'High Balance',
+                    message: `Excellent! Current balance is ${formatCurrency(balance)}`
                 });
             }
-            
+
             const content = document.getElementById('alerts-content');
             
             if (alerts.length === 0) {
@@ -887,30 +856,20 @@
             doc.setFontSize(20);
             doc.setTextColor(40, 40, 40);
             
-            const totalCredits = appData.credits.reduce((sum, item) => sum + item.amount, 0);
-            const totalDebits = appData.debits.reduce((sum, item) => sum + item.amount, 0);
-            const balance = totalCredits - totalDebits;
+            const { totalCredit, totalDebit, balance } = appData.allTotals;
             
             let title = '';
             let filename = '';
             
             // Determine report type
             switch(reportType) {
-                case 'credits':
-                    title = 'Credits Report';
-                    filename = 'credits-report.pdf';
-                    break;
-                case 'debits':
-                    title = 'Debits Report';
-                    filename = 'debits-report.pdf';
-                    break;
-                case 'students':
-                    title = 'Students Report';
-                    filename = 'students-report.pdf';
-                    break;
                 case 'balance':
                     title = 'Balance Report';
                     filename = 'balance-report.pdf';
+                    break;
+                case 'monthly':
+                    title = 'Monthly Summary Report';
+                    filename = 'monthly-summary.pdf';
                     break;
                 case 'summary':
                     title = 'Financial Summary';
@@ -932,24 +891,20 @@
             doc.setFontSize(12);
             doc.setTextColor(100, 100, 100);
             doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 45);
-            doc.text(`Data Source: Google Sheets`, 20, 55);
+            doc.text(`Data Source: Google Apps Script`, 20, 55);
             doc.text(`Last Updated: ${appData.lastUpdated ? appData.lastUpdated.toLocaleString() : 'Never'}`, 20, 65);
             
             let yPosition = 85;
             
             // Generate content based on report type
-            if (reportType === 'credits') {
-                generateCreditsReport(doc, yPosition);
-            } else if (reportType === 'debits') {
-                generateDebitsReport(doc, yPosition);
-            } else if (reportType === 'students') {
-                generateStudentsReport(doc, yPosition);
-            } else if (reportType === 'balance') {
-                generateBalanceReport(doc, yPosition, totalCredits, totalDebits, balance);
+            if (reportType === 'balance') {
+                generateBalanceReport(doc, yPosition, totalCredit, totalDebit, balance);
+            } else if (reportType === 'monthly') {
+                generateMonthlyReport(doc, yPosition);
             } else if (reportType === 'summary') {
-                generateSummaryReport(doc, yPosition, totalCredits, totalDebits, balance);
+                generateSummaryReport(doc, yPosition, totalCredit, totalDebit, balance);
             } else if (reportType === 'all') {
-                generateCompleteReport(doc, yPosition, totalCredits, totalDebits, balance);
+                generateCompleteReport(doc, yPosition, totalCredit, totalDebit, balance);
             }
             
             // Add footer
@@ -959,7 +914,7 @@
                 doc.setFontSize(10);
                 doc.setTextColor(128);
                 doc.text(`Page ${i} of ${pageCount}`, 190, 285, { align: 'right' });
-                doc.text('Generated by Financial Dashboard', 20, 285);
+                doc.text('Generated by Enhanced Financial Dashboard', 20, 285);
             }
             
             // Save the PDF
@@ -967,93 +922,13 @@
             showMessage(`${title} exported successfully!`, 'success');
         }
 
-        function generateCreditsReport(doc, startY) {
-            doc.setFontSize(14);
-            doc.setTextColor(0, 0, 0);
-            doc.text(`Total Credits: ${formatCurrency(appData.credits.reduce((sum, item) => sum + item.amount, 0))}`, 20, startY);
-            doc.text(`Transaction Count: ${appData.credits.length}`, 20, startY + 15);
-            
-            if (appData.credits.length > 0) {
-                const tableData = appData.credits.map(item => [
-                    formatDate(item.date),
-                    item.description,
-                    formatCurrency(item.amount),
-                    item.student || 'N/A',
-                    item.category || 'N/A'
-                ]);
-                
-                doc.autoTable({
-                    startY: startY + 30,
-                    head: [['Date', 'Description', 'Amount', 'Student', 'Category']],
-                    body: tableData,
-                    styles: { fontSize: 10, cellPadding: 3 },
-                    headStyles: { fillColor: [102, 126, 234] },
-                    alternateRowStyles: { fillColor: [245, 245, 245] },
-                    columnStyles: { 2: { halign: 'right' } }
-                });
-            }
-        }
-
-        function generateDebitsReport(doc, startY) {
-            doc.setFontSize(14);
-            doc.setTextColor(0, 0, 0);
-            doc.text(`Total Debits: ${formatCurrency(appData.debits.reduce((sum, item) => sum + item.amount, 0))}`, 20, startY);
-            doc.text(`Transaction Count: ${appData.debits.length}`, 20, startY + 15);
-            
-            if (appData.debits.length > 0) {
-                const tableData = appData.debits.map(item => [
-                    formatDate(item.date),
-                    item.description,
-                    formatCurrency(item.amount),
-                    item.student || 'N/A',
-                    item.category || 'N/A'
-                ]);
-                
-                doc.autoTable({
-                    startY: startY + 30,
-                    head: [['Date', 'Description', 'Amount', 'Student', 'Category']],
-                    body: tableData,
-                    styles: { fontSize: 10, cellPadding: 3 },
-                    headStyles: { fillColor: [102, 126, 234] },
-                    alternateRowStyles: { fillColor: [245, 245, 245] },
-                    columnStyles: { 2: { halign: 'right' } }
-                });
-            }
-        }
-
-        function generateStudentsReport(doc, startY) {
-            doc.setFontSize(14);
-            doc.setTextColor(0, 0, 0);
-            doc.text(`Total Students: ${appData.students.length}`, 20, startY);
-            doc.text(`Active Students: ${appData.students.filter(s => s.status.toLowerCase() === 'active').length}`, 20, startY + 15);
-            
-            if (appData.students.length > 0) {
-                const tableData = appData.students.map(student => [
-                    student.name,
-                    student.studentId || 'N/A',
-                    student.email || 'N/A',
-                    student.course || 'N/A',
-                    student.status
-                ]);
-                
-                doc.autoTable({
-                    startY: startY + 30,
-                    head: [['Name', 'Student ID', 'Email', 'Course', 'Status']],
-                    body: tableData,
-                    styles: { fontSize: 10, cellPadding: 3 },
-                    headStyles: { fillColor: [102, 126, 234] },
-                    alternateRowStyles: { fillColor: [245, 245, 245] }
-                });
-            }
-        }
-
-        function generateBalanceReport(doc, startY, totalCredits, totalDebits, balance) {
+        function generateBalanceReport(doc, startY, totalCredit, totalDebit, balance) {
             doc.setFontSize(14);
             doc.setTextColor(0, 0, 0);
             
             doc.text('Financial Overview', 20, startY);
-            doc.text(`Total Credits: ${formatCurrency(totalCredits)}`, 20, startY + 20);
-            doc.text(`Total Debits: ${formatCurrency(totalDebits)}`, 20, startY + 35);
+            doc.text(`Total Credits: ${formatCurrency(totalCredit)}`, 20, startY + 20);
+            doc.text(`Total Debits: ${formatCurrency(totalDebit)}`, 20, startY + 35);
             doc.text(`Current Balance: ${formatCurrency(balance)}`, 20, startY + 50);
             doc.text(`Status: ${balance >= 0 ? 'POSITIVE' : 'NEGATIVE - OVERDRAWN'}`, 20, startY + 65);
             
@@ -1063,8 +938,54 @@
             }
         }
 
-        function generateSummaryReport(doc, startY, totalCredits, totalDebits, balance) {
-            generateBalanceReport(doc, startY, totalCredits, totalDebits, balance);
+        function generateMonthlyReport(doc, startY) {
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+            doc.text('Monthly Summary', 20, startY);
+            
+            let currentY = startY + 20;
+            
+            if (Object.keys(appData.monthlyData).length === 0) {
+                doc.text('No monthly data available', 20, currentY);
+                return;
+            }
+            
+            Object.entries(appData.monthlyData).forEach(([month, items]) => {
+                const monthTotal = Object.values(items).reduce((sum, amount) => sum + amount, 0);
+                
+                if (currentY > 250) {
+                    doc.addPage();
+                    currentY = 30;
+                }
+                
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`${month} - Total: ${formatCurrency(monthTotal)}`, 20, currentY);
+                currentY += 15;
+                
+                // Create table data for this month
+                const tableData = Object.entries(items).map(([item, amount]) => [
+                    item,
+                    formatCurrency(amount)
+                ]);
+                
+                doc.autoTable({
+                    startY: currentY,
+                    head: [['Item', 'Amount']],
+                    body: tableData,
+                    styles: { fontSize: 10, cellPadding: 3 },
+                    headStyles: { fillColor: [102, 126, 234] },
+                    alternateRowStyles: { fillColor: [245, 245, 245] },
+                    columnStyles: { 1: { halign: 'right' } },
+                    margin: { left: 30 }
+                });
+                
+                currentY = doc.lastAutoTable.finalY + 20;
+            });
+        }
+
+        function generateSummaryReport(doc, startY, totalCredit, totalDebit, balance) {
+            generateBalanceReport(doc, startY, totalCredit, totalDebit, balance);
             
             // Add summary statistics
             doc.setTextColor(0, 0, 0);
@@ -1072,50 +993,31 @@
             let currentY = startY + 110;
             
             doc.text('Summary Statistics:', 20, currentY);
-            doc.text(`• Total Transactions: ${appData.credits.length + appData.debits.length}`, 30, currentY + 15);
-            doc.text(`• Credit Transactions: ${appData.credits.length}`, 30, currentY + 30);
-            doc.text(`• Debit Transactions: ${appData.debits.length}`, 30, currentY + 45);
-            doc.text(`• Total Students: ${appData.students.length}`, 30, currentY + 60);
-            doc.text(`• Active Students: ${appData.students.filter(s => s.status.toLowerCase() === 'active').length}`, 30, currentY + 75);
+            
+            const monthCount = Object.keys(appData.monthlyData).length;
+            const totalItems = Object.values(appData.monthlyData).reduce((total, month) => 
+                total + Object.keys(month).length, 0
+            );
+            
+            doc.text(`• Months with Data: ${monthCount}`, 30, currentY + 15);
+            doc.text(`• Total Item Categories: ${totalItems}`, 30, currentY + 30);
+            doc.text(`• Credit/Debit Ratio: ${totalDebit > 0 ? (totalCredit / totalDebit).toFixed(2) : '∞'} : 1`, 30, currentY + 45);
         }
 
-        function generateCompleteReport(doc, startY, totalCredits, totalDebits, balance) {
-            // This would be a comprehensive report with all data
-            generateSummaryReport(doc, startY, totalCredits, totalDebits, balance);
+        function generateCompleteReport(doc, startY, totalCredit, totalDebit, balance) {
+            // Generate summary first
+            generateSummaryReport(doc, startY, totalCredit, totalDebit, balance);
             
-            // Add recent transactions
-            const recentTransactions = [...appData.credits, ...appData.debits]
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-                .slice(0, 10);
-            
-            if (recentTransactions.length > 0) {
+            // Add new page for monthly details
+            if (Object.keys(appData.monthlyData).length > 0) {
                 doc.addPage();
-                doc.setFontSize(14);
-                doc.text('Recent Transactions (Last 10)', 20, 30);
-                
-                const tableData = recentTransactions.map(item => [
-                    formatDate(item.date),
-                    item.type,
-                    item.description,
-                    formatCurrency(item.amount),
-                    item.student || 'N/A'
-                ]);
-                
-                doc.autoTable({
-                    startY: 45,
-                    head: [['Date', 'Type', 'Description', 'Amount', 'Student']],
-                    body: tableData,
-                    styles: { fontSize: 10, cellPadding: 3 },
-                    headStyles: { fillColor: [102, 126, 234] },
-                    alternateRowStyles: { fillColor: [245, 245, 245] },
-                    columnStyles: { 3: { halign: 'right' } }
-                });
+                generateMonthlyReport(doc, 30);
             }
         }
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Financial Dashboard Initialized');
+            console.log('Enhanced Financial Dashboard Initialized');
             
             // Load data on startup
             refreshAllData();
@@ -1127,6 +1029,14 @@
                     refreshAllData();
                 }
             }, 5 * 60 * 1000);
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'r') {
+                    e.preventDefault();
+                    refreshAllData();
+                }
+            });
         });
 
         // Global error handler
@@ -1142,7 +1052,101 @@
         });
 
         window.addEventListener('offline', function() {
-            showMessage('Connection lost. Using cached data.', 'warning');
+            showMessage('Connection lost. Using cached data.', 'error');
+        });
+
+        // Add some utility functions for better UX
+        function clearTransactionForm() {
+            document.getElementById('username').value = '';
+            document.getElementById('item').value = '';
+            document.getElementById('amount').value = '';
+        }
+
+        function validateTransactionInput() {
+            const username = document.getElementById('username').value.trim();
+            const item = document.getElementById('item').value.trim();
+            const amount = document.getElementById('amount').value.trim();
+
+            const errors = [];
+            
+            if (!username) errors.push('Username is required');
+            if (!item) errors.push('Item description is required');
+            if (!amount) errors.push('Amount is required');
+            if (amount && (isNaN(amount) || parseFloat(amount) <= 0)) {
+                errors.push('Amount must be a positive number');
+            }
+
+            return errors;
+        }
+
+        // Enhanced add transaction with validation
+        async function addTransaction(type) {
+            const errors = validateTransactionInput();
+            
+            if (errors.length > 0) {
+                showMessage(errors.join(', '), 'error');
+                return;
+            }
+
+            const username = document.getElementById('username').value.trim();
+            const item = document.getElementById('item').value.trim();
+            const amount = parseFloat(document.getElementById('amount').value.trim());
+
+            // Show loading state
+            const buttons = document.querySelectorAll('.add-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                btn.textContent = 'Processing...';
+            });
+
+            try {
+                const action = type === 'credit' ? 'add_credit' : 'add_debit';
+                const result = await apiCall(action, {
+                    username: username,
+                    item: item,
+                    amount: amount
+                });
+
+                showMessage(`${type.charAt(0).toUpperCase() + type.slice(1)} of ${formatCurrency(amount)} added successfully!`, 'success');
+                
+                // Clear form
+                clearTransactionForm();
+                
+                // Refresh data
+                setTimeout(() => refreshAllData(), 1000);
+                
+            } catch (error) {
+                showMessage(`Failed to add ${type}: ${error.message}`, 'error');
+            } finally {
+                // Reset button states
+                buttons.forEach(btn => {
+                    btn.disabled = false;
+                });
+                buttons[0].textContent = 'Add Credit';
+                buttons[1].textContent = 'Add Debit';
+            }
+        }
+
+        // Add Enter key support for forms
+        document.addEventListener('DOMContentLoaded', function() {
+            // Transaction form
+            ['username', 'item', 'amount'].forEach(id => {
+                document.getElementById(id).addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        // Default to credit transaction on Enter
+                        addTransaction('credit');
+                    }
+                });
+            });
+
+            // Ledger form
+            document.getElementById('ledger-username').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    loadUserLedger();
+                }
+            });
         });
     </script>
 </body>
