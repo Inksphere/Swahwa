@@ -882,7 +882,7 @@
         <!-- Login Section -->
         <div id="loginSection" class="card login-card">
             <div class="card-header">
-                <div class="card-icon">👋</div>
+                <div class="card-icon"></div>
                 <h3>Welcome! Please Enter Your AD.NO</h3>
             </div>
             <div class="login-form">
@@ -907,8 +907,8 @@
                 <h2 class="student-name" id="studentName">STUDENT NAME</h2>
                 <p class="student-role">Student Dashboard</p>
                 <div class="profile-actions">
-                    <button class="profile-btn danger" onclick="logout()">🚪 Check Another</button>
-                    <button class="profile-btn" onclick="window.location.href='admin-dashboard.html'">🏠 Home</button>
+                    <button class="profile-btn danger" onclick="logout()">Check Another</button>
+                    <button class="profile-btn" onclick="window.location.href='admin-dashboard.html'">Home</button>
                 </div>
             </div>
 
@@ -916,7 +916,7 @@
                 <!-- Financial Summary Card -->
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-icon">💰</div>
+                        <div class="card-icon"></div>
                         <h3>Financial Summary</h3>
                     </div>
                     <p>Track your financial activities and current balance.</p>
@@ -935,7 +935,7 @@
                         </div>
                     </div>
                     <div style="margin-top: 16px;">
-                        <button class="btn btn-success" onclick="refreshData()">🔄 Refresh Data</button>
+                        <button class="btn btn-success" onclick="refreshData()">Refresh Data</button>
                     </div>
                 </div>
 
@@ -948,8 +948,8 @@
                     <p>Record your income and expenses quickly.</p>
                     <div class="form-grid">
                         <select id="entryType">
-                            <option value="credit">💰 Credit</option>
-                            <option value="debit">💸 Debit</option>
+                            <option value="credit">Credit</option>
+                            <option value="debit">Debit</option>
                         </select>
                         
                         <div class="item-input-container">
@@ -966,7 +966,7 @@
                             <input type="text" id="customItemInput" placeholder="Enter custom description" style="display: none;">
                             
                             <div id="manageItemsSection" class="new-item-section">
-                                <h4>📝 Manage Predefined Items</h4>
+                                <h4>Manage Predefined Items</h4>
                                 <div class="new-item-form">
                                     <input type="text" id="newItemInput" placeholder="New item name">
                                     <button type="button" class="btn btn-info" onclick="addPredefinedItem()">➕ Add</button>
@@ -990,8 +990,8 @@
                     <div class="filter-grid">
                         <select id="filterType">
                             <option value="">All Types</option>
-                            <option value="credit">💰 Credit Only</option>
-                            <option value="debit">💸 Debit Only</option>
+                            <option value="credit">Credit Only</option>
+                            <option value="debit">Debit Only</option>
                         </select>
                         <input type="text" id="filterDescription" placeholder="Search description...">
                         <input type="date" id="filterDateFrom" placeholder="From Date">
@@ -1007,19 +1007,19 @@
                 <!-- Transaction Ledger Card -->
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-icon">📄</div>
+                        <div class="card-icon"></div>
                         <h3>Transaction Ledger</h3>
                     </div>
                     <p>View and manage your complete transaction history.</p>
                     <div class="controls-section">
                         <select id="sortBy">
-                            <option value="date-desc">📅 Date (Newest First)</option>
+                            <option value="date-desc">📅Date (Newest First)</option>
                             <option value="date-asc">📅 Date (Oldest First)</option>
-                            <option value="amount-desc">💰 Amount (High to Low)</option>
-                            <option value="amount-asc">💰 Amount (Low to High)</option>
-                            <option value="type">🏷️ Type</option>
+                            <option value="amount-desc">Amount (High to Low)</option>
+                            <option value="amount-asc">Amount (Low to High)</option>
+                            <option value="type">Type</option>
                         </select>
-                        <button class="btn btn-success" onclick="exportData()">💾 Export PDF</button>
+                        <button class="btn btn-success" onclick="exportData()">Export PDF</button>
                     </div>
                     
                     <div id="ledgerStatus" class="loading">Loading transactions...</div>
@@ -1825,7 +1825,7 @@
                     if (isReceived) {
                         actionContent = '<span style="color: #28a745; font-weight: 600;">✅ Received</span>';
                     } else {
-                        actionContent = `<button class="received-btn" onclick="markAsReceived('${entry.transactionId}', ${amount}, '${item.replace(/'/g, "\\'")}', this)">💰 Received</button>`;
+                        actionContent = `<button class="received-btn" onclick="markAsReceived('${entry.transactionId}', ${amount}, '${item.replace(/'/g, "\\'")}', this)">Received</button>`;
                     }
                 } else if (entry.type === 'credit') {
                     actionContent = '<span style="color: #6c757d;">—</span>';
@@ -2243,5 +2243,6 @@
     </script>
 </body>
 </html>
+
 
 
