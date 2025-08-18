@@ -881,6 +881,7 @@
         
         <!-- Login Section -->
       <!-- Login Section -->
+<!-- Login Section -->
 <div id="loginSection" class="card login-card">
     <div class="card-header">
         <div class="card-icon">👋</div>
@@ -1424,7 +1425,8 @@
             return `<div class="error">❌ ${message}</div>`;
         }
 
-      function login() {
+   // Replace the login function (remove the duplicate one)
+function login() {
     const usernameInput = document.getElementById("usernameInput");
     const loginError = document.getElementById("loginError");
     const username = usernameInput.value.trim();
@@ -1435,24 +1437,32 @@
         return;
     }
 
-    const allowedIds = Object.keys(studentData);
-    if (!allowedIds.includes(username)) {
-        loginError.innerHTML = `❌ Invalid AD.NO.<br><small>Allowed: ${allowedIds.join(', ')}</small>`;
+    // Check if username exists in studentData
+    if (!studentData[username]) {
+        const allowedIds = Object.keys(studentData).join(', ');
+        loginError.innerHTML = `❌ Invalid AD.NO.<br><small>Allowed: ${allowedIds}</small>`;
         loginError.style.display = "block";
         return;
     }
 
+    // Successful login
     currentUsername = username;
     const displayName = studentData[username];
+    
+    // Update UI
     document.getElementById("studentName").innerText = formatStudentName(displayName);
     document.getElementById("loginSection").classList.add("hidden");
     document.getElementById("dashboardSection").classList.remove("hidden");
 
+    // Initialize user-specific data
     initializePredefinedItems();
     loadReceivedTransactions();
+    
+    // Fetch user data
     fetchSummary();
     fetchLedger();
 
+    // Update URL
     try {
         const newUrl = new URL(window.location);
         newUrl.searchParams.set('user', username);
@@ -1462,46 +1472,62 @@
     }
 }
 
-            // Check if it's a student ID and get the corresponding name
-            let displayName = username;
-            if (studentData[username]) {
-                displayName = studentData[username];
-            }
-
-            currentUsername = username;
-            
-            // Update profile display
-            const formattedName = formatStudentName(displayName);
-            const studentNameElement = document.getElementById("studentName");
-            if (studentNameElement) {
-                studentNameElement.innerText = formattedName;
-            }
-            
-            const loginSection = document.getElementById("loginSection");
-            const dashboardSection = document.getElementById("dashboardSection");
-            
-            if (loginSection) loginSection.classList.add("hidden");
-            if (dashboardSection) dashboardSection.classList.remove("hidden");
-            
-            // Initialize predefined items for this user
-            initializePredefinedItems();
-            
-            // Load received transactions for this user
-            loadReceivedTransactions();
-            
-            fetchSummary();
-            fetchLedger();
-            
-            // Update URL
-            try {
-                const newUrl = new URL(window.location);
-                newUrl.searchParams.set('user', username);
-                window.history.pushState({}, '', newUrl);
-            } catch (error) {
-                console.warn("Error updating URL:", error);
-            }
+// Fix the initializeApp function
+function initializeApp() {
+    setupEventListeners();
+    
+    // Check for username in URL and auto-login
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlUsername = urlParams.get('user');
+    
+    if (urlUsername && urlUsername.trim()) {
+        const usernameInput = document.getElementById("usernameInput");
+        if (usernameInput) {
+            usernameInput.value = urlUsername.trim();
+            // Add a small delay to ensure DOM is ready
+            setTimeout(() => {
+                login();
+            }, 100);
         }
+    }
+}
 
+// Ensure studentData is properly defined (it looks correct in your code)
+// Make sure this is at the global scope
+window.studentData = {
+    '1050': 'MUHAMMAD SINAN PC',
+    '1070': 'MUHAMMED MUSAMMIL B K',
+    '1074': 'MUAD .M',
+    '1058': 'MUHAMMED JALAL AT',
+    '1051': 'MUHAMMAD HISHAM T',
+    '1056': 'MUHAMMED SHADIN N.M.',
+    '1076': 'MUHAMMED MINHAJ KK',
+    '1071': 'SAYYID MOHAMMAD ZUHAIR A K',
+    '1075': 'MUHAMMED HASHIM P',
+    '1061': 'ANSHID M P',
+    '1072': 'SINAN TP',
+    '1078': 'MUHAMMED RABIEUE MK',
+    '1088': 'NAEEM K',
+    '1082': 'MUHAMMED SANEEN',
+    '1090': 'MUHAMMED BASSAM',
+    '1066': 'HASHIM K P',
+    '1063': 'RISHADH. T',
+    '1073': 'MUHAMMAD MUSTHAFA KK',
+    '1068': 'MUHAMMED UVAIS.EK',
+    '1053': 'AMEEN T',
+    '1040': 'MUHAMMAD RIFAD K',
+    '1059': 'AFSAL',
+    '1064': 'SHAMIL M',
+    '1013': 'SAHAD.K',
+    '1087': 'SHAMIL. A',
+    '1089': 'ADIL SHAH M',
+    '1084': 'ASIM M',
+    '1024': 'FADHIL KATTIPARUTHI',
+    '1008': 'MINHAJ',
+    '1086': 'NIDAL',
+    '1085': 'NAFIH',
+    '1014': 'MURSHID MK'
+};
         function logout() {
             currentUsername = null;
             
@@ -2270,6 +2296,7 @@
     </script>
 </body>
 </html>
+
 
 
 
