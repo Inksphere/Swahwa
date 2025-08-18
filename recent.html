@@ -416,6 +416,34 @@
             font-size: 14px;
         }
 
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .connection-status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .connection-status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .connection-status.testing {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
         @media (max-width: 768px) {
             .dashboard-container {
                 padding: 20px;
@@ -445,21 +473,25 @@
 <body>
     <div class="dashboard-container">
         <div class="header">
-            <a href="index.html" class="home-button">🏠 Home</a>
+            <a href="#" class="home-button" onclick="location.reload()">🏠 Home</a>
             <h1>📊 Financial Dashboard</h1>
-            <p>View Reports & Analytics - Google Apps Script Integration</p>
+            <p>View Reports & Analytics - Connected to Your Google Apps Script</p>
         </div>
 
-        <!-- Configuration Section -->
-        <div class="config-section" id="config-section">
+        <!-- Connection Status -->
+        <div id="connection-status" class="connection-status disconnected">
+            <span>🔄 Connecting to your Google Apps Script...</span>
+        </div>
+
+        <!-- Configuration Section (Hidden after successful connection) -->
+        <div class="config-section" id="config-section" style="display: none;">
             <h3>⚙️ Configuration & Connection</h3>
-            <p>Please configure your Google Apps Script URL:</p>
+            <p>Google Apps Script URL:</p>
             <input type="text" id="script-url" class="config-input" 
-                   placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
-                   value="">
+                   value="https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec"
+                   readonly>
             <div style="margin-top: 10px;">
                 <button class="test-connection" onclick="testConnection()">🔍 Test Connection</button>
-                <button class="test-connection" onclick="saveConfig()">💾 Save Config</button>
                 <button class="test-connection" onclick="showDebugInfo()">🐛 Show Debug</button>
             </div>
             <div id="connection-result"></div>
@@ -471,7 +503,7 @@
 
         <div class="status-bar">
             <div class="status-item">
-                <span id="connection-status" class="loading">🔄 Not Connected</span>
+                <span id="app-status" class="loading">🔄 Loading...</span>
             </div>
             <div class="status-item">
                 <span id="last-updated">Last Updated: Never</span>
@@ -520,7 +552,8 @@
             </div>
             <div id="overview-content">
                 <div class="no-data">
-                    Please configure your Google Apps Script URL above and test the connection.
+                    <div class="loading-spinner"></div>
+                    Loading financial overview...
                 </div>
             </div>
         </div>
@@ -558,7 +591,8 @@
 
             <div id="transactions-content">
                 <div class="no-data">
-                    Please configure connection and load data first.
+                    <div class="loading-spinner"></div>
+                    Loading transactions...
                 </div>
             </div>
         </div>
@@ -568,7 +602,8 @@
             <h2>📅 Monthly Summary</h2>
             <div id="monthly-content">
                 <div class="no-data">
-                    Please configure connection and load data first.
+                    <div class="loading-spinner"></div>
+                    Loading monthly summary...
                 </div>
             </div>
         </div>
@@ -591,7 +626,8 @@
             <h2>⚠️ Alerts & Notifications</h2>
             <div id="alerts-content">
                 <div class="no-data">
-                    Please configure connection and load data first.
+                    <div class="loading-spinner"></div>
+                    Loading alerts...
                 </div>
             </div>
         </div>
@@ -602,14 +638,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
     <script>
-        // Configuration
+        // Pre-configured with your Google Apps Script URL
         let CONFIG = {
-            GOOGLE_SCRIPT_URL: '',
+            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec',
             RETRY_ATTEMPTS: 3,
             RETRY_DELAY: 1000
         };
 
-        // Global data storage with caching
+        // Global data storage
         let appData = {
             allTotals: { totalCredit: 0, totalDebit: 0, balance: 0 },
             allTransactions: [],
@@ -628,7 +664,6 @@
             const logEntry = { timestamp, message, data };
             appData.debugInfo.push(logEntry);
             
-            // Keep only last 50 entries
             if (appData.debugInfo.length > 50) {
                 appData.debugInfo = appData.debugInfo.slice(-50);
             }
@@ -636,65 +671,44 @@
             console.log(`[${timestamp}] ${message}`, data || '');
         }
 
-        // Configuration functions
-        function saveConfig() {
-            const url = document.getElementById('script-url').value.trim();
-            if (!url) {
-                showMessage('Please enter a Google Apps Script URL', 'error');
-                return;
-            }
+        // Show connection status
+        function updateConnectionStatus(status, message) {
+            const statusDiv = document.getElementById('connection-status');
+            statusDiv.className = `connection-status ${status}`;
+            statusDiv.innerHTML = `<span>${message}</span>`;
             
-            CONFIG.GOOGLE_SCRIPT_URL = url;
-            localStorage.setItem('financial_dashboard_config', JSON.stringify(CONFIG));
-            showMessage('Configuration saved!', 'success');
-            debugLog('Configuration saved', { url });
-        }
-
-        function loadConfig() {
-            try {
-                const saved = localStorage.getItem('financial_dashboard_config');
-                if (saved) {
-                    const config = JSON.parse(saved);
-                    CONFIG = { ...CONFIG, ...config };
-                    document.getElementById('script-url').value = CONFIG.GOOGLE_SCRIPT_URL || '';
-                    debugLog('Configuration loaded', CONFIG);
-                }
-            } catch (error) {
-                debugLog('Error loading configuration', error);
+            const appStatus = document.getElementById('app-status');
+            if (status === 'connected') {
+                appStatus.textContent = '✅ Connected';
+                appStatus.className = 'loaded';
+            } else if (status === 'testing') {
+                appStatus.textContent = '🔄 Testing...';
+                appStatus.className = 'loading';
+            } else {
+                appStatus.textContent = '❌ Disconnected';
+                appStatus.className = 'loading';
             }
         }
 
+        // Test connection to your Apps Script
         async function testConnection() {
-            const url = document.getElementById('script-url').value.trim();
-            if (!url) {
-                showMessage('Please enter a Google Apps Script URL first', 'error');
-                return;
-            }
-
-            CONFIG.GOOGLE_SCRIPT_URL = url;
-            const resultDiv = document.getElementById('connection-result');
-            resultDiv.innerHTML = '<div class="warning-message">🔄 Testing connection...</div>';
-
+            updateConnectionStatus('testing', '🔄 Testing connection to your Google Apps Script...');
+            
             try {
-                debugLog('Testing connection', { url });
+                debugLog('Testing connection to Apps Script');
                 
-                // Test with a simple ping
-                const testUrl = new URL(url);
+                const testUrl = new URL(CONFIG.GOOGLE_SCRIPT_URL);
                 testUrl.searchParams.append('action', 'ping');
                 
                 const response = await fetch(testUrl.toString(), {
                     method: 'GET',
                     mode: 'cors',
-                    cache: 'no-cache',
-                    headers: {
-                        'Accept': 'application/json'
-                    }
+                    cache: 'no-cache'
                 });
 
                 debugLog('Response received', { 
                     status: response.status, 
-                    statusText: response.statusText,
-                    headers: Array.from(response.headers.entries())
+                    statusText: response.statusText
                 });
 
                 if (!response.ok) {
@@ -702,60 +716,79 @@
                 }
 
                 const data = await response.json();
-                debugLog('Response data', data);
+                debugLog('Connection test successful', data);
 
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                resultDiv.innerHTML = '<div class="success-message">✅ Connection successful! Script is responding.</div>';
-                document.getElementById('connection-status').textContent = '✅ Connected';
-                document.getElementById('connection-status').className = 'loaded';
+                updateConnectionStatus('connected', '✅ Successfully connected to your Google Apps Script!');
                 
-                // Hide config section after successful connection
-                document.getElementById('config-section').style.display = 'none';
+                // Auto-load data after successful connection
+                setTimeout(refreshAllData, 1000);
+                
+                return true;
                 
             } catch (error) {
                 debugLog('Connection test failed', error);
                 
-                let errorMessage = 'Connection failed: ' + error.message;
+                let errorMessage = '❌ Connection failed: ' + error.message;
+                errorMessage += '<br><br>🔍 Please ensure your Google Apps Script is:';
+                errorMessage += '<br>• Deployed as a web app';
+                errorMessage += '<br>• Set to "Execute as: Me"';
+                errorMessage += '<br>• Set to "Who has access: Anyone"';
                 
-                // Provide specific guidance based on error type
-                if (error.message.includes('Failed to fetch')) {
-                    errorMessage += '\n\n🔍 Troubleshooting:\n';
-                    errorMessage += '• Check if the URL is correct\n';
-                    errorMessage += '• Ensure the Google Apps Script is deployed as a web app\n';
-                    errorMessage += '• Verify permissions are set to "Anyone" or "Anyone with link"\n';
-                    errorMessage += '• Check if CORS is properly configured';
-                } else if (error.message.includes('CORS')) {
-                    errorMessage += '\n\n🔍 CORS Issue: Your script may not be configured to accept cross-origin requests.';
+                updateConnectionStatus('disconnected', errorMessage);
+                return false;
+            }
+        }
+
+        // API call function
+        async function apiCall(action, params = {}) {
+            if (!CONFIG.GOOGLE_SCRIPT_URL) {
+                throw new Error('Google Apps Script URL not configured');
+            }
+
+            let lastError;
+            debugLog(`API call: ${action}`, params);
+            
+            for (let attempt = 1; attempt <= CONFIG.RETRY_ATTEMPTS; attempt++) {
+                try {
+                    const url = new URL(CONFIG.GOOGLE_SCRIPT_URL);
+                    url.searchParams.append('action', action);
+                    
+                    Object.keys(params).forEach(key => {
+                        if (params[key] !== null && params[key] !== undefined) {
+                            url.searchParams.append(key, params[key]);
+                        }
+                    });
+                    
+                    const response = await fetch(url.toString(), {
+                        method: 'GET',
+                        mode: 'cors',
+                        cache: 'no-cache'
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    debugLog(`API response for ${action}`, data);
+                    
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+                    
+                    return data;
+                    
+                } catch (error) {
+                    debugLog(`Attempt ${attempt} failed for ${action}`, error.message);
+                    lastError = error;
+                    
+                    if (attempt < CONFIG.RETRY_ATTEMPTS) {
+                        await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY * attempt));
+                    }
                 }
-
-                resultDiv.innerHTML = `<div class="error-message">${errorMessage}</div>`;
-                document.getElementById('connection-status').textContent = '❌ Connection Failed';
-                document.getElementById('connection-status').className = 'loading';
             }
-        }
-
-        function showDebugInfo() {
-            const debugPanel = document.getElementById('debug-panel');
-            const debugContent = document.getElementById('debug-content');
             
-            if (debugPanel.style.display === 'none') {
-                debugPanel.style.display = 'block';
-                updateDebugDisplay();
-            } else {
-                debugPanel.style.display = 'none';
-            }
-        }
-
-        function updateDebugDisplay() {
-            const debugContent = document.getElementById('debug-content');
-            const debugText = appData.debugInfo.map(entry => 
-                `[${entry.timestamp}] ${entry.message}${entry.data ? '\n' + JSON.stringify(entry.data, null, 2) : ''}`
-            ).join('\n\n');
-            
-            debugContent.textContent = debugText || 'No debug information available';
+            throw lastError;
         }
 
         // Utility Functions
@@ -791,107 +824,76 @@
             setTimeout(() => messageDiv.remove(), 5000);
         }
 
-        // Enhanced API Functions with detailed error reporting
-        async function apiCall(action, params = {}, useCache = false) {
-            if (!CONFIG.GOOGLE_SCRIPT_URL) {
-                throw new Error('Google Apps Script URL not configured. Please configure it first.');
+        // Load all data
+        async function refreshAllData() {
+            if (appData.loading) {
+                showMessage('Already loading data, please wait...', 'info');
+                return;
             }
 
-            const cacheKey = `${action}_${JSON.stringify(params)}`;
-            
-            // Check cache first if enabled
-            if (useCache && appData.cache.has(cacheKey)) {
-                const cached = appData.cache.get(cacheKey);
-                if (Date.now() - cached.timestamp < 30000) { // 30 second cache
-                    debugLog('Using cached data for ' + action);
-                    return cached.data;
-                }
-            }
+            appData.loading = true;
+            updateConnectionStatus('testing', '🔄 Loading data from your Google Apps Script...');
 
-            let lastError;
-            debugLog(`Starting API call: ${action}`, params);
-            
-            for (let attempt = 1; attempt <= CONFIG.RETRY_ATTEMPTS; attempt++) {
-                try {
-                    const url = new URL(CONFIG.GOOGLE_SCRIPT_URL);
-                    url.searchParams.append('action', action);
-                    
-                    Object.keys(params).forEach(key => {
-                        if (params[key] !== null && params[key] !== undefined) {
-                            url.searchParams.append(key, params[key]);
-                        }
-                    });
-                    
-                    debugLog(`API call attempt ${attempt}: ${action}`, { url: url.toString() });
-                    
-                    const response = await fetch(url.toString(), {
-                        method: 'GET',
-                        mode: 'cors',
-                        cache: 'no-cache',
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
-                    
-                    debugLog('Response received', { 
-                        status: response.status, 
-                        statusText: response.statusText 
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    
-                    const data = await response.json();
-                    debugLog('API response data', data);
-                    
-                    if (data.error) {
-                        throw new Error(data.error);
-                    }
-                    
-                    // Cache successful responses
-                    if (useCache) {
-                        appData.cache.set(cacheKey, {
-                            data: data,
-                            timestamp: Date.now()
-                        });
-                        debugLog('Response cached', { cacheKey });
-                    }
-                    
-                    return data;
-                    
-                } catch (error) {
-                    debugLog(`Attempt ${attempt} failed for ${action}`, { 
-                        error: error.message,
-                        stack: error.stack 
-                    });
-                    lastError = error;
-                    
-                    if (attempt < CONFIG.RETRY_ATTEMPTS) {
-                        await new Promise(resolve => setTimeout(resolve, CONFIG.RETRY_DELAY * attempt));
-                    }
+            try {
+                // Load data in parallel
+                const [totalsResult, monthlyResult, transactionsResult] = await Promise.all([
+                    apiCall('get_all_totals').catch(err => ({ error: err.message })),
+                    apiCall('get_monthly_summary').catch(err => ({ error: err.message })),
+                    apiCall('get_all_transactions').catch(err => ({ error: err.message }))
+                ]);
+
+                // Process results
+                if (!totalsResult.error) {
+                    appData.allTotals = totalsResult;
+                    debugLog('Totals loaded', totalsResult);
                 }
+
+                if (!monthlyResult.error) {
+                    appData.monthlyData = monthlyResult;
+                    debugLog('Monthly data loaded', monthlyResult);
+                }
+
+                if (!transactionsResult.error) {
+                    appData.allTransactions = transactionsResult.transactions || [];
+                    appData.filteredTransactions = [...appData.allTransactions];
+                    debugLog('Transactions loaded', { count: appData.allTransactions.length });
+                }
+
+                appData.lastUpdated = new Date();
+
+                // Update UI
+                updateOverviewPanel();
+                updateTransactionsPanel();
+                updateMonthlyPanel();
+                updateAlertsPanel();
+                
+                updateConnectionStatus('connected', '✅ Data loaded successfully from your Google Apps Script!');
+                document.getElementById('last-updated').textContent = 
+                    `Last Updated: ${appData.lastUpdated.toLocaleString()}`;
+
+                showMessage('Data refreshed successfully!', 'success');
+
+            } catch (error) {
+                debugLog('Error refreshing data', error);
+                updateConnectionStatus('disconnected', '❌ Failed to load data: ' + error.message);
+                showMessage(`Failed to load data: ${error.message}`, 'error');
+            } finally {
+                appData.loading = false;
             }
-            
-            throw lastError;
         }
 
-        // Load all transactions with time ordering
+        // Load all transactions
         async function loadAllTransactions() {
             try {
-                debugLog('Loading all transactions');
-                const result = await apiCall('get_all_transactions', {}, true);
-                
-                // Ensure transactions are sorted by date (newest first)
+                const result = await apiCall('get_all_transactions');
                 appData.allTransactions = (result.transactions || []).sort((a, b) => {
                     const dateA = new Date(a.date || a.timestamp || 0);
                     const dateB = new Date(b.date || b.timestamp || 0);
-                    return dateB - dateA; // Descending order (newest first)
+                    return dateB - dateA;
                 });
                 
                 appData.filteredTransactions = [...appData.allTransactions];
                 updateTransactionsPanel();
-                debugLog('Transactions loaded successfully', { count: appData.allTransactions.length });
                 
             } catch (error) {
                 debugLog('Error loading transactions', error);
@@ -907,34 +909,18 @@
             const dateToFilter = document.getElementById('date-to-filter').value;
             const searchFilter = document.getElementById('transaction-search').value.toLowerCase();
 
-            debugLog('Applying transaction filters', {
-                type: typeFilter,
-                dateFrom: dateFromFilter,
-                dateTo: dateToFilter,
-                search: searchFilter
-            });
+            debugLog('Applying filters', { type: typeFilter, dateFrom: dateFromFilter, dateTo: dateToFilter, search: searchFilter });
 
             appData.filteredTransactions = appData.allTransactions.filter(transaction => {
-                // Type filter
-                if (typeFilter !== 'all' && transaction.type !== typeFilter) {
-                    return false;
-                }
+                if (typeFilter !== 'all' && transaction.type !== typeFilter) return false;
 
-                // Date filters
                 const transactionDate = new Date(transaction.date || transaction.timestamp);
-                if (dateFromFilter && transactionDate < new Date(dateFromFilter)) {
-                    return false;
-                }
-                if (dateToFilter && transactionDate > new Date(dateToFilter + 'T23:59:59')) {
-                    return false;
-                }
+                if (dateFromFilter && transactionDate < new Date(dateFromFilter)) return false;
+                if (dateToFilter && transactionDate > new Date(dateToFilter + 'T23:59:59')) return false;
 
-                // Search filter
                 if (searchFilter) {
                     const searchText = `${transaction.item || ''} ${transaction.description || ''} ${transaction.username || ''}`.toLowerCase();
-                    if (!searchText.includes(searchFilter)) {
-                        return false;
-                    }
+                    if (!searchText.includes(searchFilter)) return false;
                 }
 
                 return true;
@@ -944,7 +930,7 @@
             showMessage(`Found ${appData.filteredTransactions.length} transactions`, 'success');
         }
 
-        // Load user ledger with improved error handling
+        // Load user ledger
         async function loadUserLedger() {
             const username = document.getElementById('ledger-username').value.trim();
             
@@ -957,10 +943,7 @@
             content.innerHTML = '<div class="no-data"><div class="loading-spinner"></div>Loading ledger...</div>';
 
             try {
-                debugLog('Loading user ledger', { username });
                 const result = await apiCall('get_ledger', { username: username });
-                
-                // Sort ledger entries by date (newest first)
                 appData.userLedger = (result.ledger || []).sort((a, b) => {
                     const dateA = new Date(a.date || a.timestamp || 0);
                     const dateB = new Date(b.date || b.timestamp || 0);
@@ -968,10 +951,6 @@
                 });
                 
                 updateLedgerPanel();
-                debugLog('User ledger loaded successfully', { 
-                    username, 
-                    entries: appData.userLedger.length 
-                });
                 
             } catch (error) {
                 debugLog('Error loading user ledger', { username, error });
@@ -980,79 +959,7 @@
             }
         }
 
-        // Enhanced refresh function with parallel loading
-        async function refreshAllData() {
-            if (appData.loading) {
-                showMessage('Already loading data, please wait...', 'info');
-                return;
-            }
-
-            if (!CONFIG.GOOGLE_SCRIPT_URL) {
-                showMessage('Please configure Google Apps Script URL first', 'error');
-                return;
-            }
-
-            appData.loading = true;
-            const statusElement = document.getElementById('connection-status');
-            statusElement.textContent = '🔄 Loading...';
-            statusElement.className = 'loading';
-
-            debugLog('Starting data refresh');
-
-            try {
-                // Load all data in parallel for better performance
-                const dataPromises = [
-                    apiCall('get_all_totals').catch(err => ({ error: err.message })),
-                    apiCall('get_monthly_summary').catch(err => ({ error: err.message })),
-                    loadAllTransactions().catch(err => {
-                        debugLog('Transaction loading failed during refresh', err);
-                        return { error: err.message };
-                    })
-                ];
-
-                const [totalsResult, monthlyResult] = await Promise.all(dataPromises);
-
-                // Process results
-                if (!totalsResult.error) {
-                    appData.allTotals = totalsResult;
-                    debugLog('Totals loaded', totalsResult);
-                } else {
-                    debugLog('Failed to load totals', totalsResult.error);
-                }
-
-                if (!monthlyResult.error) {
-                    appData.monthlyData = monthlyResult;
-                    debugLog('Monthly data loaded', monthlyResult);
-                } else {
-                    debugLog('Failed to load monthly data', monthlyResult.error);
-                }
-
-                appData.lastUpdated = new Date();
-
-                // Update UI
-                updateOverviewPanel();
-                updateMonthlyPanel();
-                updateAlertsPanel();
-                
-                statusElement.textContent = '✅ Connected';
-                statusElement.className = 'loaded';
-                document.getElementById('last-updated').textContent = 
-                    `Last Updated: ${appData.lastUpdated.toLocaleString()}`;
-
-                showMessage('Data refreshed successfully!', 'success');
-                debugLog('Data refresh completed successfully');
-
-            } catch (error) {
-                debugLog('Error refreshing data', error);
-                statusElement.textContent = '❌ Error';
-                statusElement.className = 'loading';
-                showMessage(`Failed to load data: ${error.message}`, 'error');
-            } finally {
-                appData.loading = false;
-            }
-        }
-
-        // Update UI panels with loading states
+        // Update UI panels
         function updateOverviewPanel() {
             const { totalCredit, totalDebit, balance } = appData.allTotals;
             
@@ -1140,7 +1047,6 @@
 
             let monthlyHTML = '<div class="monthly-summary-chart">';
             
-            // Sort months chronologically
             const sortedMonths = Object.keys(appData.monthlyData).sort((a, b) => new Date(b) - new Date(a));
             
             sortedMonths.forEach(month => {
@@ -1238,7 +1144,6 @@
             const alerts = [];
             const { balance, totalCredit, totalDebit } = appData.allTotals;
             
-            // Check for negative balance
             if (balance < 0) {
                 alerts.push({
                     type: 'danger',
@@ -1247,7 +1152,6 @@
                 });
             }
 
-            // Check for large monthly expenses
             Object.entries(appData.monthlyData).forEach(([month, items]) => {
                 const monthTotal = Object.values(items).reduce((sum, amount) => sum + amount, 0);
                 if (monthTotal > 50000) {
@@ -1259,7 +1163,6 @@
                 }
             });
 
-            // Check for recent large transactions
             const recentTransactions = appData.allTransactions.filter(t => {
                 const transactionDate = new Date(t.date || t.timestamp);
                 const daysDiff = (Date.now() - transactionDate.getTime()) / (1000 * 3600 * 24);
@@ -1274,7 +1177,6 @@
                 });
             }
 
-            // Positive alerts
             if (balance > 100000) {
                 alerts.push({
                     type: 'success',
@@ -1283,7 +1185,6 @@
                 });
             }
 
-            // Low activity alert
             if (appData.allTransactions.length === 0) {
                 alerts.push({
                     type: 'warning',
@@ -1331,33 +1232,25 @@
 
         // Navigation Functions
         function showPanel(panelName) {
-            // Remove active class from all buttons
             document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
-            
-            // Hide all panels
             document.querySelectorAll('.content-panel').forEach(panel => panel.classList.remove('active'));
             
-            // Show selected panel
             const targetPanel = document.getElementById(`${panelName}-panel`);
             if (targetPanel) {
                 targetPanel.classList.add('active');
-                
-                // Add active class to clicked button
                 event.target.classList.add('active');
                 
-                // Load panel-specific data if needed
                 if (panelName === 'transactions' && appData.allTransactions.length === 0) {
                     loadAllTransactions();
                 }
             }
         }
 
-        // Enhanced PDF Export Functions
+        // PDF Export Functions
         function exportToPDF(reportType) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Set up document
             doc.setFontSize(20);
             doc.setTextColor(40, 40, 40);
             
@@ -1366,7 +1259,6 @@
             let title = '';
             let filename = '';
             
-            // Determine report type
             switch(reportType) {
                 case 'balance':
                     title = 'Balance Report';
@@ -1389,10 +1281,8 @@
                     filename = 'financial-report.pdf';
             }
             
-            // Add header
             doc.text(title, 20, 30);
             
-            // Add metadata
             doc.setFontSize(12);
             doc.setTextColor(100, 100, 100);
             doc.text(`Generated: ${new Date().toLocaleString()}`, 20, 45);
@@ -1401,171 +1291,48 @@
             
             let yPosition = 85;
             
-            // Generate content based on report type
-            if (reportType === 'balance') {
-                generateBalanceReport(doc, yPosition, totalCredit, totalDebit, balance);
-            } else if (reportType === 'monthly') {
-                generateMonthlyReport(doc, yPosition);
-            } else if (reportType === 'summary') {
-                generateSummaryReport(doc, yPosition, totalCredit, totalDebit, balance);
-            } else if (reportType === 'all') {
-                generateCompleteReport(doc, yPosition, totalCredit, totalDebit, balance);
+            if (reportType === 'balance' || reportType === 'summary' || reportType === 'all') {
+                doc.setFontSize(14);
+                doc.setTextColor(0, 0, 0);
+                doc.text('Financial Overview', 20, yPosition);
+                doc.text(`Total Credits: ${formatCurrency(totalCredit)}`, 20, yPosition + 20);
+                doc.text(`Total Debits: ${formatCurrency(totalDebit)}`, 20, yPosition + 35);
+                doc.text(`Current Balance: ${formatCurrency(balance)}`, 20, yPosition + 50);
+                doc.text(`Status: ${balance >= 0 ? 'POSITIVE' : 'NEGATIVE - OVERDRAWN'}`, 20, yPosition + 65);
+                doc.text(`Total Transactions: ${appData.allTransactions.length}`, 20, yPosition + 80);
             }
             
-            // Add footer
-            const pageCount = doc.internal.getNumberOfPages();
-            for (let i = 1; i <= pageCount; i++) {
-                doc.setPage(i);
-                doc.setFontSize(10);
-                doc.setTextColor(128);
-                doc.text(`Page ${i} of ${pageCount}`, 190, 285, { align: 'right' });
-                doc.text('Generated by Financial Dashboard', 20, 285);
-            }
-            
-            // Save the PDF
             doc.save(filename);
             showMessage(`${title} exported successfully!`, 'success');
         }
 
-        function generateBalanceReport(doc, startY, totalCredit, totalDebit, balance) {
-            doc.setFontSize(14);
-            doc.setTextColor(0, 0, 0);
+        // Debug functions
+        function showDebugInfo() {
+            const debugPanel = document.getElementById('debug-panel');
+            const debugContent = document.getElementById('debug-content');
             
-            doc.text('Financial Overview', 20, startY);
-            doc.text(`Total Credits: ${formatCurrency(totalCredit)}`, 20, startY + 20);
-            doc.text(`Total Debits: ${formatCurrency(totalDebit)}`, 20, startY + 35);
-            doc.text(`Current Balance: ${formatCurrency(balance)}`, 20, startY + 50);
-            doc.text(`Status: ${balance >= 0 ? 'POSITIVE' : 'NEGATIVE - OVERDRAWN'}`, 20, startY + 65);
-            doc.text(`Total Transactions: ${appData.allTransactions.length}`, 20, startY + 80);
-            
-            if (balance < 0) {
-                doc.setTextColor(255, 0, 0);
-                doc.text(`ALERT: Account overdrawn by ${formatCurrency(Math.abs(balance))}`, 20, startY + 100);
+            if (debugPanel.style.display === 'none') {
+                debugPanel.style.display = 'block';
+                updateDebugDisplay();
+            } else {
+                debugPanel.style.display = 'none';
             }
         }
 
-        function generateMonthlyReport(doc, startY) {
-            doc.setFontSize(14);
-            doc.setTextColor(0, 0, 0);
-            doc.text('Monthly Summary', 20, startY);
+        function updateDebugDisplay() {
+            const debugContent = document.getElementById('debug-content');
+            const debugText = appData.debugInfo.map(entry => 
+                `[${entry.timestamp}] ${entry.message}${entry.data ? '\n' + JSON.stringify(entry.data, null, 2) : ''}`
+            ).join('\n\n');
             
-            let currentY = startY + 20;
-            
-            if (Object.keys(appData.monthlyData).length === 0) {
-                doc.text('No monthly data available', 20, currentY);
-                return;
-            }
-            
-            Object.entries(appData.monthlyData).forEach(([month, items]) => {
-                const monthTotal = Object.values(items).reduce((sum, amount) => sum + amount, 0);
-                
-                if (currentY > 250) {
-                    doc.addPage();
-                    currentY = 30;
-                }
-                
-                doc.setFontSize(12);
-                doc.setTextColor(0, 0, 0);
-                doc.text(`${month} - Total: ${formatCurrency(monthTotal)}`, 20, currentY);
-                currentY += 15;
-                
-                // Create table data for this month
-                const tableData = Object.entries(items).map(([item, amount]) => [
-                    item,
-                    formatCurrency(amount)
-                ]);
-                
-                doc.autoTable({
-                    startY: currentY,
-                    head: [['Item', 'Amount']],
-                    body: tableData,
-                    styles: { fontSize: 10, cellPadding: 3 },
-                    headStyles: { fillColor: [102, 126, 234] },
-                    alternateRowStyles: { fillColor: [245, 245, 245] },
-                    columnStyles: { 1: { halign: 'right' } },
-                    margin: { left: 30 }
-                });
-                
-                currentY = doc.lastAutoTable.finalY + 20;
-            });
-        }
-
-        function generateSummaryReport(doc, startY, totalCredit, totalDebit, balance) {
-            generateBalanceReport(doc, startY, totalCredit, totalDebit, balance);
-            
-            // Add summary statistics
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(12);
-            let currentY = startY + 130;
-            
-            doc.text('Summary Statistics:', 20, currentY);
-            
-            const monthCount = Object.keys(appData.monthlyData).length;
-            const totalItems = Object.values(appData.monthlyData).reduce((total, month) => 
-                total + Object.keys(month).length, 0
-            );
-            
-            doc.text(`• Months with Data: ${monthCount}`, 30, currentY + 15);
-            doc.text(`• Total Item Categories: ${totalItems}`, 30, currentY + 30);
-            doc.text(`• Credit/Debit Ratio: ${totalDebit > 0 ? (totalCredit / totalDebit).toFixed(2) : '∞'} : 1`, 30, currentY + 45);
-            doc.text(`• Recent Transactions (7 days): ${appData.allTransactions.filter(t => {
-                const date = new Date(t.date || t.timestamp);
-                return (Date.now() - date.getTime()) / (1000 * 3600 * 24) <= 7;
-            }).length}`, 30, currentY + 60);
-        }
-
-        function generateCompleteReport(doc, startY, totalCredit, totalDebit, balance) {
-            // Generate summary first
-            generateSummaryReport(doc, startY, totalCredit, totalDebit, balance);
-            
-            // Add new page for monthly details
-            if (Object.keys(appData.monthlyData).length > 0) {
-                doc.addPage();
-                generateMonthlyReport(doc, 30);
-            }
-            
-            // Add recent transactions
-            if (appData.allTransactions.length > 0) {
-                doc.addPage();
-                doc.setFontSize(14);
-                doc.text('Recent Transactions (Last 20)', 20, 30);
-                
-                const recentTransactions = appData.allTransactions.slice(0, 20);
-                const tableData = recentTransactions.map(t => [
-                    formatDate(t.date || t.timestamp),
-                    t.type?.toUpperCase() || 'N/A',
-                    t.username || 'N/A',
-                    t.item || 'N/A',
-                    formatCurrency(t.amount || 0)
-                ]);
-                
-                doc.autoTable({
-                    startY: 50,
-                    head: [['Date', 'Type', 'User', 'Item', 'Amount']],
-                    body: tableData,
-                    styles: { fontSize: 9, cellPadding: 2 },
-                    headStyles: { fillColor: [102, 126, 234] },
-                    alternateRowStyles: { fillColor: [245, 245, 245] },
-                    columnStyles: { 
-                        0: { cellWidth: 35 },
-                        1: { cellWidth: 20, halign: 'center' },
-                        2: { cellWidth: 30 },
-                        3: { cellWidth: 40 },
-                        4: { cellWidth: 30, halign: 'right' }
-                    }
-                });
-            }
+            debugContent.textContent = debugText || 'No debug information available';
         }
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Financial Dashboard Initialized');
-            debugLog('Dashboard initialized');
+            debugLog('Financial Dashboard initialized with pre-configured Apps Script');
             
-            // Load configuration
-            loadConfig();
-            
-            // Set default date filters to last 30 days
+            // Set default date filters
             const today = new Date();
             const thirtyDaysAgo = new Date(today);
             thirtyDaysAgo.setDate(today.getDate() - 30);
@@ -1573,29 +1340,18 @@
             document.getElementById('date-from-filter').value = thirtyDaysAgo.toISOString().split('T')[0];
             document.getElementById('date-to-filter').value = today.toISOString().split('T')[0];
             
-            // Only load data if URL is configured
-            if (CONFIG.GOOGLE_SCRIPT_URL) {
-                document.getElementById('config-section').style.display = 'none';
-                refreshAllData();
-                
-                // Auto-refresh every 5 minutes if connected
-                setInterval(() => {
-                    if (!appData.loading && CONFIG.GOOGLE_SCRIPT_URL) {
-                        debugLog('Auto-refresh triggered');
-                        refreshAllData();
-                    }
-                }, 5 * 60 * 1000);
-            }
+            // Test connection and load data
+            testConnection();
             
-            // Add keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                if (e.ctrlKey && e.key === 'r') {
-                    e.preventDefault();
+            // Auto-refresh every 5 minutes
+            setInterval(() => {
+                if (!appData.loading) {
+                    debugLog('Auto-refresh triggered');
                     refreshAllData();
                 }
-            });
+            }, 5 * 60 * 1000);
             
-            // Add Enter key support for forms
+            // Event listeners
             document.getElementById('ledger-username').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -1603,27 +1359,14 @@
                 }
             });
 
-            document.getElementById('script-url').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    testConnection();
-                }
-            });
-
-            // Add real-time search for transactions
-            document.getElementById('transaction-search').addEventListener('input', debounce(applyTransactionFilters, 300));
-            
-            // Add filter change listeners
+            document.getElementById('transaction-search').addEventListener('input', debounceFunction(applyTransactionFilters, 300));
             document.getElementById('transaction-type-filter').addEventListener('change', applyTransactionFilters);
             document.getElementById('date-from-filter').addEventListener('change', applyTransactionFilters);
             document.getElementById('date-to-filter').addEventListener('change', applyTransactionFilters);
-            
-            // Update debug display periodically
-            setInterval(updateDebugDisplay, 5000);
         });
 
-        // Utility function for debouncing search
-        function debounce(func, wait) {
+        // Utility function for debouncing
+        function debounceFunction(func, wait) {
             let timeout;
             return function executedFunction(...args) {
                 const later = () => {
@@ -1633,253 +1376,6 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(later, wait);
             };
-        }
-
-        // Global error handler
-        window.addEventListener('error', function(e) {
-            debugLog('Global error', { message: e.message, filename: e.filename, lineno: e.lineno });
-            showMessage('An unexpected error occurred. Check debug info for details.', 'error');
-        });
-
-        // Handle network connectivity
-        window.addEventListener('online', function() {
-            debugLog('Network connection restored');
-            showMessage('Connection restored. Refreshing data...', 'success');
-            if (CONFIG.GOOGLE_SCRIPT_URL) {
-                refreshAllData();
-            }
-        });
-
-        window.addEventListener('offline', function() {
-            debugLog('Network connection lost');
-            showMessage('Connection lost. Using cached data.', 'warning');
-        });
-
-        // Enhanced connection diagnostics
-        function diagnoseConnection() {
-            const issues = [];
-            
-            if (!CONFIG.GOOGLE_SCRIPT_URL) {
-                issues.push('❌ Google Apps Script URL not configured');
-            } else {
-                try {
-                    new URL(CONFIG.GOOGLE_SCRIPT_URL);
-                    issues.push('✅ URL format is valid');
-                } catch {
-                    issues.push('❌ Invalid URL format');
-                }
-                
-                if (!CONFIG.GOOGLE_SCRIPT_URL.includes('script.google.com')) {
-                    issues.push('⚠️ URL doesn\'t appear to be a Google Apps Script URL');
-                }
-                
-                if (!CONFIG.GOOGLE_SCRIPT_URL.includes('/exec')) {
-                    issues.push('⚠️ URL should end with /exec for web app deployment');
-                }
-            }
-            
-            if (!navigator.onLine) {
-                issues.push('❌ No internet connection');
-            } else {
-                issues.push('✅ Internet connection available');
-            }
-            
-            return issues;
-        }
-
-        // Add connection diagnostic to test function
-        function testConnectionWithDiagnostics() {
-            const issues = diagnoseConnection();
-            const resultDiv = document.getElementById('connection-result');
-            
-            let diagnosticsHTML = '<div class="warning-message"><h4>Connection Diagnostics:</h4><ul>';
-            issues.forEach(issue => {
-                diagnosticsHTML += `<li>${issue}</li>`;
-            });
-            diagnosticsHTML += '</ul></div>';
-            
-            resultDiv.innerHTML = diagnosticsHTML;
-            
-            // Only proceed with actual test if basic checks pass
-            const hasErrors = issues.some(issue => issue.includes('❌'));
-            if (!hasErrors) {
-                testConnection();
-            }
-        }
-
-        // Service Worker registration for offline support
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                // Note: You would need to create a service worker file for full offline support
-                debugLog('Service Worker support detected');
-            });
-        }
-
-        // Performance monitoring
-        function measurePerformance(label, fn) {
-            return async function(...args) {
-                const start = performance.now();
-                try {
-                    const result = await fn.apply(this, args);
-                    const end = performance.now();
-                    debugLog(`Performance: ${label}`, { duration: `${(end - start).toFixed(2)}ms` });
-                    return result;
-                } catch (error) {
-                    const end = performance.now();
-                    debugLog(`Performance: ${label} (failed)`, { 
-                        duration: `${(end - start).toFixed(2)}ms`, 
-                        error: error.message 
-                    });
-                    throw error;
-                }
-            };
-        }
-
-        // Wrap API calls with performance monitoring
-        const originalApiCall = apiCall;
-        apiCall = measurePerformance('API Call', originalApiCall);
-
-        // Add retry with exponential backoff for critical operations
-        async function retryWithBackoff(fn, maxRetries = 3) {
-            let delay = 1000;
-            let lastError;
-            
-            for (let i = 0; i < maxRetries; i++) {
-                try {
-                    return await fn();
-                } catch (error) {
-                    lastError = error;
-                    if (i === maxRetries - 1) break;
-                    
-                    debugLog(`Retry attempt ${i + 1} failed, waiting ${delay}ms`, error.message);
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2; // Exponential backoff
-                }
-            }
-            
-            throw lastError;
-        }
-
-        // Connection health check
-        async function checkConnectionHealth() {
-            if (!CONFIG.GOOGLE_SCRIPT_URL) return false;
-            
-            try {
-                const result = await apiCall('ping');
-                debugLog('Connection health check passed', result);
-                return true;
-            } catch (error) {
-                debugLog('Connection health check failed', error);
-                return false;
-            }
-        }
-
-        // Periodic health checks
-        setInterval(async () => {
-            if (CONFIG.GOOGLE_SCRIPT_URL && !appData.loading) {
-                const isHealthy = await checkConnectionHealth();
-                const statusElement = document.getElementById('connection-status');
-                
-                if (!isHealthy && statusElement.classList.contains('loaded')) {
-                    statusElement.textContent = '⚠️ Connection Issues';
-                    statusElement.className = 'loading';
-                    showMessage('Connection issues detected. Data may be stale.', 'warning');
-                }
-            }
-        }, 2 * 60 * 1000); // Check every 2 minutes
-
-        // Data validation helpers
-        function validateTransactionData(transactions) {
-            if (!Array.isArray(transactions)) {
-                throw new Error('Transactions data must be an array');
-            }
-            
-            const validatedTransactions = transactions.filter(t => {
-                const hasRequiredFields = t.amount !== undefined && t.type;
-                if (!hasRequiredFields) {
-                    debugLog('Invalid transaction found', t);
-                }
-                return hasRequiredFields;
-            });
-            
-            debugLog('Transaction validation', {
-                total: transactions.length,
-                valid: validatedTransactions.length,
-                invalid: transactions.length - validatedTransactions.length
-            });
-            
-            return validatedTransactions;
-        }
-
-        // Enhanced error reporting
-        function reportError(context, error, additionalInfo = {}) {
-            const errorReport = {
-                context,
-                message: error.message,
-                stack: error.stack,
-                timestamp: new Date().toISOString(),
-                userAgent: navigator.userAgent,
-                url: window.location.href,
-                additionalInfo
-            };
-            
-            debugLog(`Error in ${context}`, errorReport);
-            
-            // In a production environment, you might send this to an error reporting service
-            console.error('Detailed error report:', errorReport);
-        }
-
-        // Export debug information
-        function exportDebugInfo() {
-            const debugData = {
-                config: CONFIG,
-                debugLogs: appData.debugInfo,
-                appData: {
-                    transactionCount: appData.allTransactions.length,
-                    monthlyDataKeys: Object.keys(appData.monthlyData),
-                    lastUpdated: appData.lastUpdated,
-                    loading: appData.loading
-                },
-                browserInfo: {
-                    userAgent: navigator.userAgent,
-                    language: navigator.language,
-                    cookieEnabled: navigator.cookieEnabled,
-                    onLine: navigator.onLine
-                },
-                timestamp: new Date().toISOString()
-            };
-            
-            const blob = new Blob([JSON.stringify(debugData, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `financial-dashboard-debug-${Date.now()}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showMessage('Debug information exported successfully!', 'success');
-        }
-
-        // Add export debug button to the debug panel
-        function updateDebugDisplay() {
-            const debugContent = document.getElementById('debug-content');
-            const debugText = appData.debugInfo.map(entry => 
-                `[${entry.timestamp}] ${entry.message}${entry.data ? '\n' + JSON.stringify(entry.data, null, 2) : ''}`
-            ).join('\n\n');
-            
-            debugContent.innerHTML = `
-                <div style="margin-bottom: 10px;">
-                    <button onclick="exportDebugInfo()" style="background: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">
-                        📤 Export Debug Info
-                    </button>
-                    <button onclick="appData.debugInfo = []; updateDebugDisplay();" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; margin-left: 5px;">
-                        🗑️ Clear Logs
-                    </button>
-                </div>
-                <pre>${debugText || 'No debug information available'}</pre>
-            `;
         }
     </script>
 </body>
