@@ -880,22 +880,27 @@
         <h1 class="main-title">📘 Student Financial Dashboard</h1>
         
         <!-- Login Section -->
-        <div id="loginSection" class="card login-card">
-            <div class="card-header">
-                <div class="card-icon"></div>
-                <h3>Welcome! Please Enter Your AD.NO</h3>
-            </div>
-            <div class="login-form">
-                <input type="text" id="usernameInput" placeholder="Enter your name or AD.NO" maxlength="50">
-                <button class="btn btn-primary" onclick="login()">Login</button>
-                <button class="btn btn-info" onclick="window.location.href='admin-dashboard.html'">Login</button>
-            </div>
-            <div id="debugInfo" class="debug-info" style="display: none;">
-                <div>API URL: <span id="apiUrl"></span></div>
-                <div>Last Request: <span id="lastRequest"></span></div>
-                <div>Last Response: <span id="lastResponse"></span></div>
-            </div>
-        </div>
+      <!-- Login Section -->
+<div id="loginSection" class="card login-card">
+    <div class="card-header">
+        <div class="card-icon">👋</div>
+        <h3>Welcome! Please Login</h3>
+    </div>
+    <div class="login-form">
+        <input type="text" id="usernameInput" placeholder="Enter AD.NO (e.g., 1050)" maxlength="4" pattern="\d{4}" inputmode="numeric">
+        <button class="btn btn-primary" onclick="login()">🔑 Student Login</button>
+    </div>
+    <div style="margin-top: 16px; text-align: center;">
+        <p style="font-size: 12px; color: #666; margin-bottom: 8px;">Admin Access:</p>
+        <button class="btn btn-info" onclick="window.location.href='admin-dashboard.html'" style="margin-top: 0;">⚙️ Admin Dashboard</button>
+    </div>
+    <div id="loginError" class="error" style="display: none; margin-top: 12px;"></div>
+    <div id="debugInfo" class="debug-info" style="display: none;">
+        <div>API URL: <span id="apiUrl"></span></div>
+        <div>Last Request: <span id="lastRequest"></span></div>
+        <div>Last Response: <span id="lastResponse"></span></div>
+    </div>
+</div>
 
         <!-- Dashboard Section -->
         <div id="dashboardSection" class="hidden">
@@ -1419,21 +1424,43 @@
             return `<div class="error">❌ ${message}</div>`;
         }
 
-        function login() {
-            const usernameInput = document.getElementById("usernameInput");
-            if (!usernameInput) return;
-            
-            const username = usernameInput.value.trim();
-            
-            if (!username) {
-                alert("⚠️ Please enter your name.");
-                return;
-            }
+      function login() {
+    const usernameInput = document.getElementById("usernameInput");
+    const loginError = document.getElementById("loginError");
+    const username = usernameInput.value.trim();
 
-            if (username.length < 2) {
-                alert("⚠️ Please enter a valid name (at least 2 characters).");
-                return;
-            }
+    if (!username) {
+        loginError.innerHTML = "⚠️ Please enter your AD.NO.";
+        loginError.style.display = "block";
+        return;
+    }
+
+    const allowedIds = Object.keys(studentData);
+    if (!allowedIds.includes(username)) {
+        loginError.innerHTML = `❌ Invalid AD.NO.<br><small>Allowed: ${allowedIds.join(', ')}</small>`;
+        loginError.style.display = "block";
+        return;
+    }
+
+    currentUsername = username;
+    const displayName = studentData[username];
+    document.getElementById("studentName").innerText = formatStudentName(displayName);
+    document.getElementById("loginSection").classList.add("hidden");
+    document.getElementById("dashboardSection").classList.remove("hidden");
+
+    initializePredefinedItems();
+    loadReceivedTransactions();
+    fetchSummary();
+    fetchLedger();
+
+    try {
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('user', username);
+        window.history.pushState({}, '', newUrl);
+    } catch (error) {
+        console.warn("Error updating URL:", error);
+    }
+}
 
             // Check if it's a student ID and get the corresponding name
             let displayName = username;
@@ -2243,6 +2270,7 @@
     </script>
 </body>
 </html>
+
 
 
 
