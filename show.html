@@ -939,47 +939,6 @@
                     </div>
                 </div>
 
-                <!-- Add New Entry Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">➕</div>
-                        <h3>Add New Entry</h3>
-                    </div>
-                    <p>Record your income and expenses quickly.</p>
-                    <div class="form-grid">
-                        <select id="entryType">
-                            <option value="credit">Credit</option>
-                            <option value="debit">Debit</option>
-                        </select>
-                        
-                        <div class="item-input-container">
-                            <div class="item-selector">
-                                <button type="button" class="item-toggle active" id="predefinedToggle" onclick="toggleItemInput('predefined')">📋 From List</button>
-                                <button type="button" class="item-toggle" id="customToggle" onclick="toggleItemInput('custom')">✏️ Custom</button>
-                                <button type="button" class="item-toggle" id="manageToggle" onclick="toggleManageItems()">⚙️ Manage</button>
-                            </div>
-                            
-                            <select id="predefinedItemSelect">
-                                <option value="">Select an item...</option>
-                            </select>
-                            
-                            <input type="text" id="customItemInput" placeholder="Enter custom description" style="display: none;">
-                            
-                            <div id="manageItemsSection" class="new-item-section">
-                                <h4>Manage Predefined Items</h4>
-                                <div class="new-item-form">
-                                    <input type="text" id="newItemInput" placeholder="New item name">
-                                    <button type="button" class="btn btn-info" onclick="addPredefinedItem()">➕ Add</button>
-                                </div>
-                                <div id="predefinedItemsList" class="predefined-items"></div>
-                            </div>
-                        </div>
-                        
-                        <input type="number" id="amount" placeholder="Amount (₹)" step="0.01" min="0">
-                        <button class="btn btn-primary" onclick="addEntry()">Add Entry</button>
-                    </div>
-                </div>
-
                 <!-- Filter & Search Card -->
                 <div class="card">
                     <div class="card-header">
@@ -1311,23 +1270,6 @@
         // Generate unique transaction ID
         function generateTransactionId(entry) {
             return `${entry.date || 'nodate'}_${entry.type || 'notype'}_${entry.item || 'noitem'}_${entry.amount || 0}`;
-        }
-
-        // Handle received button click
-        function markAsReceived(transactionId, amount, description, buttonElement) {
-            if (receivedTransactions.has(transactionId)) {
-                alert("This transaction has already been marked as received!");
-                return;
-            }
-
-            if (confirm(`Mark as received: ₹${amount} for "${description}"?\n\nThis will add ₹${amount} to your balance as credit.`)) {
-                // Disable button and show processing
-                buttonElement.disabled = true;
-                buttonElement.innerText = 'Processing...';
-
-                // Add credit entry for the received amount
-                addReceivedCredit(amount, description, transactionId, buttonElement);
-            }
         }
 
         // Add credit for received transaction
@@ -1819,27 +1761,6 @@
                 const item = entry.item || 'No description';
                 const type = (entry.type || 'unknown').charAt(0).toUpperCase() + (entry.type || 'unknown').slice(1);
                 
-                // Create action cell content
-                let actionContent = '';
-                if (entry.type === 'debit' && !entry.item.startsWith('Received:')) {
-                    if (isReceived) {
-                        actionContent = '<span style="color: #28a745; font-weight: 600;">✅ Received</span>';
-                    } else {
-                        actionContent = `<button class="received-btn" onclick="markAsReceived('${entry.transactionId}', ${amount}, '${item.replace(/'/g, "\\'")}', this)">Received</button>`;
-                    }
-                } else if (entry.type === 'credit') {
-                    actionContent = '<span style="color: #6c757d;">—</span>';
-                }
-                
-                row.innerHTML = `
-                    <td>${formattedDate}</td>
-                    <td>${typeIcon} ${type}</td>
-                    <td>${item}</td>
-                    <td class="amount-display ${amountClass}">₹${amount.toFixed(2)}</td>
-                    <td class="action-cell">${actionContent}</td>
-                `;
-                ledgerBody.appendChild(row);
-            });
 
             // Update pagination controls
             updatePaginationControls();
@@ -1999,127 +1920,7 @@
             }
         }
 
-        function addEntry() {
-            if (!currentUsername) {
-                alert("⚠️ Please login first.");
-                return;
-            }
-
-            const item = getCurrentItemDescription();
-            const amountInput = document.getElementById("amount");
-            const entryType = document.getElementById("entryType");
-            
-            if (!amountInput || !entryType) {
-                alert("⚠️ Form elements not found.");
-                return;
-            }
-            
-            const amount = amountInput.value.trim();
-            const type = entryType.value;
-
-            if (!item || !amount) {
-                alert("⚠️ Please fill in both description and amount.");
-                return;
-            }
-
-            if (isNaN(amount) || parseFloat(amount) <= 0) {
-                alert("⚠️ Please enter a valid positive amount.");
-                return;
-            }
-
-            const action = type === "credit" ? "add_credit" : "add_debit";
-            const requestUrl = `${api}?action=${encodeURIComponent(action)}&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(item)}&amount=${encodeURIComponent(amount)}`;
-            
-            console.log("Adding entry:", { username: currentUsername, item, amount, type, action });
-            console.log("Request URL:", requestUrl);
-            
-            // Disable button during request
-            const addButton = document.querySelector('button[onclick="addEntry()"]');
-            if (addButton) {
-                const originalText = addButton.innerText;
-                addButton.innerText = "Adding...";
-                addButton.disabled = true;
-
-                fetch(requestUrl, { 
-                    method: "GET",
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(res => {
-                    console.log("Response status:", res.status);
-                    
-                    return res.text().then(text => {
-                        console.log("Raw response text:", text);
-                        
-                        try {
-                            const jsonData = JSON.parse(text);
-                            console.log("Parsed JSON data:", jsonData);
-                            return { success: res.ok, data: jsonData, raw: text };
-                        } catch (parseError) {
-                            console.error("JSON parse error:", parseError);
-                            return { success: res.ok, data: null, raw: text, parseError: parseError.message };
-                        }
-                    });
-                })
-                .then(result => {
-                    console.log("Final result:", result);
-                    logDebug(requestUrl, result);
-                    
-                    if (!result.success) {
-                        throw new Error(`HTTP ${result.success ? 'OK' : 'Error'}: ${result.raw}`);
-                    }
-                    
-                    if (!result.data) {
-                        throw new Error(`Invalid JSON response: ${result.parseError || 'Unknown parsing error'}`);
-                    }
-                    
-                    if (result.data.result === "success") {
-                        console.log("✅ Entry added successfully!");
-                        
-                        // Clear form
-                        clearCurrentItemInput();
-                        amountInput.value = "";
-                        entryType.value = "credit";
-                        
-                        // Refresh data after a short delay
-                        setTimeout(() => {
-                            console.log("Refreshing data...");
-                            fetchSummary();
-                            fetchLedger();
-                        }, 500);
-                        
-                        alert(`✅ ${type.charAt(0).toUpperCase() + type.slice(1)} of ₹${amount} for "${item}" added successfully!`);
-                        
-                    } else if (result.data.error) {
-                        throw new Error(`Backend error: ${result.data.error}`);
-                    } else {
-                        throw new Error(`Unexpected response format: ${JSON.stringify(result.data)}`);
-                    }
-                })
-                .catch(error => {
-                    console.error("❌ Error adding entry:", error);
-                    logDebug(requestUrl, { error: error.message });
-                    
-                    let errorMessage = error.message;
-                    
-                    if (errorMessage.includes("Failed to fetch")) {
-                        errorMessage = "Network error - check your internet connection or API URL";
-                    } else if (errorMessage.includes("JSON")) {
-                        errorMessage = "Invalid response format from server";
-                    }
-                    
-                    alert(`❌ Failed to add entry: ${errorMessage}\n\nCheck the console (F12) for detailed error information.`);
-                })
-                .finally(() => {
-                    // Re-enable button
-                    addButton.innerText = originalText;
-                    addButton.disabled = false;
-                });
-            }
-        }
-
-        function refreshData() {
+       function refreshData() {
             console.log("Refreshing data...");
             fetchSummary();
             fetchLedger();
@@ -2243,6 +2044,7 @@
     </script>
 </body>
 </html>
+
 
 
 
