@@ -1186,29 +1186,6 @@
             }
         }
 
-        // Add new predefined item
-        function addPredefinedItem() {
-            const input = document.getElementById('newItemInput');
-            const itemName = input.value.trim();
-            
-            if (!itemName) {
-                alert('⚠️ Please enter an item name.');
-                return;
-            }
-            
-            if (predefinedItems.includes(itemName)) {
-                alert('⚠️ This item already exists in the list.');
-                return;
-            }
-            
-            predefinedItems.push(itemName);
-            savePredefinedItems();
-            updatePredefinedItemsUI();
-            input.value = '';
-            
-            alert(`✅ "${itemName}" added to predefined items!`);
-        }
-
         // Remove predefined item
         function removePredefinedItem(index) {
             const itemName = predefinedItems[index];
@@ -2044,6 +2021,7 @@
     </script>
 </body>
 </html>
+
 
 
 
