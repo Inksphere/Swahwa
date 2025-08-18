@@ -92,6 +92,45 @@
             font-weight: bold;
         }
 
+        .config-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .config-section h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+
+        .config-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .test-connection {
+            background: linear-gradient(45deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .test-connection:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4);
+        }
+
         .export-section {
             background: #f1f3f4;
             padding: 20px;
@@ -270,6 +309,28 @@
             text-align: center;
         }
 
+        .warning-message {
+            background: #ffd43b;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
         .monthly-summary-chart {
             margin-top: 20px;
             padding: 20px;
@@ -389,9 +450,28 @@
             <p>View Reports & Analytics - Google Apps Script Integration</p>
         </div>
 
+        <!-- Configuration Section -->
+        <div class="config-section" id="config-section">
+            <h3>⚙️ Configuration & Connection</h3>
+            <p>Please configure your Google Apps Script URL:</p>
+            <input type="text" id="script-url" class="config-input" 
+                   placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"
+                   value="">
+            <div style="margin-top: 10px;">
+                <button class="test-connection" onclick="testConnection()">🔍 Test Connection</button>
+                <button class="test-connection" onclick="saveConfig()">💾 Save Config</button>
+                <button class="test-connection" onclick="showDebugInfo()">🐛 Show Debug</button>
+            </div>
+            <div id="connection-result"></div>
+            <div id="debug-panel" style="display: none;">
+                <h4>Debug Information:</h4>
+                <div id="debug-content" class="debug-info"></div>
+            </div>
+        </div>
+
         <div class="status-bar">
             <div class="status-item">
-                <span id="connection-status" class="loading">🔄 Connecting...</span>
+                <span id="connection-status" class="loading">🔄 Not Connected</span>
             </div>
             <div class="status-item">
                 <span id="last-updated">Last Updated: Never</span>
@@ -440,8 +520,7 @@
             </div>
             <div id="overview-content">
                 <div class="no-data">
-                    <div class="loading-spinner"></div>
-                    Loading overview data...
+                    Please configure your Google Apps Script URL above and test the connection.
                 </div>
             </div>
         </div>
@@ -479,8 +558,7 @@
 
             <div id="transactions-content">
                 <div class="no-data">
-                    <div class="loading-spinner"></div>
-                    Loading transactions...
+                    Please configure connection and load data first.
                 </div>
             </div>
         </div>
@@ -490,8 +568,7 @@
             <h2>📅 Monthly Summary</h2>
             <div id="monthly-content">
                 <div class="no-data">
-                    <div class="loading-spinner"></div>
-                    Loading monthly data...
+                    Please configure connection and load data first.
                 </div>
             </div>
         </div>
@@ -514,8 +591,7 @@
             <h2>⚠️ Alerts & Notifications</h2>
             <div id="alerts-content">
                 <div class="no-data">
-                    <div class="loading-spinner"></div>
-                    Checking for alerts...
+                    Please configure connection and load data first.
                 </div>
             </div>
         </div>
@@ -526,9 +602,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
     <script>
-        // Configuration - UPDATE WITH YOUR ACTUAL GOOGLE APPS SCRIPT URL
-        const CONFIG = {
-            GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec',
+        // Configuration
+        let CONFIG = {
+            GOOGLE_SCRIPT_URL: '',
             RETRY_ATTEMPTS: 3,
             RETRY_DELAY: 1000
         };
@@ -542,8 +618,145 @@
             userLedger: [],
             lastUpdated: null,
             loading: false,
-            cache: new Map()
+            cache: new Map(),
+            debugInfo: []
         };
+
+        // Debug logging
+        function debugLog(message, data = null) {
+            const timestamp = new Date().toISOString();
+            const logEntry = { timestamp, message, data };
+            appData.debugInfo.push(logEntry);
+            
+            // Keep only last 50 entries
+            if (appData.debugInfo.length > 50) {
+                appData.debugInfo = appData.debugInfo.slice(-50);
+            }
+            
+            console.log(`[${timestamp}] ${message}`, data || '');
+        }
+
+        // Configuration functions
+        function saveConfig() {
+            const url = document.getElementById('script-url').value.trim();
+            if (!url) {
+                showMessage('Please enter a Google Apps Script URL', 'error');
+                return;
+            }
+            
+            CONFIG.GOOGLE_SCRIPT_URL = url;
+            localStorage.setItem('financial_dashboard_config', JSON.stringify(CONFIG));
+            showMessage('Configuration saved!', 'success');
+            debugLog('Configuration saved', { url });
+        }
+
+        function loadConfig() {
+            try {
+                const saved = localStorage.getItem('financial_dashboard_config');
+                if (saved) {
+                    const config = JSON.parse(saved);
+                    CONFIG = { ...CONFIG, ...config };
+                    document.getElementById('script-url').value = CONFIG.GOOGLE_SCRIPT_URL || '';
+                    debugLog('Configuration loaded', CONFIG);
+                }
+            } catch (error) {
+                debugLog('Error loading configuration', error);
+            }
+        }
+
+        async function testConnection() {
+            const url = document.getElementById('script-url').value.trim();
+            if (!url) {
+                showMessage('Please enter a Google Apps Script URL first', 'error');
+                return;
+            }
+
+            CONFIG.GOOGLE_SCRIPT_URL = url;
+            const resultDiv = document.getElementById('connection-result');
+            resultDiv.innerHTML = '<div class="warning-message">🔄 Testing connection...</div>';
+
+            try {
+                debugLog('Testing connection', { url });
+                
+                // Test with a simple ping
+                const testUrl = new URL(url);
+                testUrl.searchParams.append('action', 'ping');
+                
+                const response = await fetch(testUrl.toString(), {
+                    method: 'GET',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                debugLog('Response received', { 
+                    status: response.status, 
+                    statusText: response.statusText,
+                    headers: Array.from(response.headers.entries())
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                debugLog('Response data', data);
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                resultDiv.innerHTML = '<div class="success-message">✅ Connection successful! Script is responding.</div>';
+                document.getElementById('connection-status').textContent = '✅ Connected';
+                document.getElementById('connection-status').className = 'loaded';
+                
+                // Hide config section after successful connection
+                document.getElementById('config-section').style.display = 'none';
+                
+            } catch (error) {
+                debugLog('Connection test failed', error);
+                
+                let errorMessage = 'Connection failed: ' + error.message;
+                
+                // Provide specific guidance based on error type
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage += '\n\n🔍 Troubleshooting:\n';
+                    errorMessage += '• Check if the URL is correct\n';
+                    errorMessage += '• Ensure the Google Apps Script is deployed as a web app\n';
+                    errorMessage += '• Verify permissions are set to "Anyone" or "Anyone with link"\n';
+                    errorMessage += '• Check if CORS is properly configured';
+                } else if (error.message.includes('CORS')) {
+                    errorMessage += '\n\n🔍 CORS Issue: Your script may not be configured to accept cross-origin requests.';
+                }
+
+                resultDiv.innerHTML = `<div class="error-message">${errorMessage}</div>`;
+                document.getElementById('connection-status').textContent = '❌ Connection Failed';
+                document.getElementById('connection-status').className = 'loading';
+            }
+        }
+
+        function showDebugInfo() {
+            const debugPanel = document.getElementById('debug-panel');
+            const debugContent = document.getElementById('debug-content');
+            
+            if (debugPanel.style.display === 'none') {
+                debugPanel.style.display = 'block';
+                updateDebugDisplay();
+            } else {
+                debugPanel.style.display = 'none';
+            }
+        }
+
+        function updateDebugDisplay() {
+            const debugContent = document.getElementById('debug-content');
+            const debugText = appData.debugInfo.map(entry => 
+                `[${entry.timestamp}] ${entry.message}${entry.data ? '\n' + JSON.stringify(entry.data, null, 2) : ''}`
+            ).join('\n\n');
+            
+            debugContent.textContent = debugText || 'No debug information available';
+        }
 
         // Utility Functions
         function formatCurrency(amount) {
@@ -566,7 +779,8 @@
 
         function showMessage(message, type = 'info') {
             const messageDiv = document.createElement('div');
-            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
+            messageDiv.className = type === 'error' ? 'error-message' : 
+                                 type === 'warning' ? 'warning-message' : 'success-message';
             messageDiv.textContent = message;
             
             document.querySelector('.dashboard-container').insertBefore(
@@ -577,19 +791,25 @@
             setTimeout(() => messageDiv.remove(), 5000);
         }
 
-        // Enhanced API Functions with retry logic and caching
+        // Enhanced API Functions with detailed error reporting
         async function apiCall(action, params = {}, useCache = false) {
+            if (!CONFIG.GOOGLE_SCRIPT_URL) {
+                throw new Error('Google Apps Script URL not configured. Please configure it first.');
+            }
+
             const cacheKey = `${action}_${JSON.stringify(params)}`;
             
             // Check cache first if enabled
             if (useCache && appData.cache.has(cacheKey)) {
                 const cached = appData.cache.get(cacheKey);
                 if (Date.now() - cached.timestamp < 30000) { // 30 second cache
+                    debugLog('Using cached data for ' + action);
                     return cached.data;
                 }
             }
 
             let lastError;
+            debugLog(`Starting API call: ${action}`, params);
             
             for (let attempt = 1; attempt <= CONFIG.RETRY_ATTEMPTS; attempt++) {
                 try {
@@ -602,11 +822,20 @@
                         }
                     });
                     
-                    console.log(`API call attempt ${attempt}: ${action}`);
+                    debugLog(`API call attempt ${attempt}: ${action}`, { url: url.toString() });
                     
                     const response = await fetch(url.toString(), {
                         method: 'GET',
-                        cache: 'no-cache'
+                        mode: 'cors',
+                        cache: 'no-cache',
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+                    
+                    debugLog('Response received', { 
+                        status: response.status, 
+                        statusText: response.statusText 
                     });
                     
                     if (!response.ok) {
@@ -614,6 +843,7 @@
                     }
                     
                     const data = await response.json();
+                    debugLog('API response data', data);
                     
                     if (data.error) {
                         throw new Error(data.error);
@@ -625,12 +855,16 @@
                             data: data,
                             timestamp: Date.now()
                         });
+                        debugLog('Response cached', { cacheKey });
                     }
                     
                     return data;
                     
                 } catch (error) {
-                    console.error(`Attempt ${attempt} failed for ${action}:`, error);
+                    debugLog(`Attempt ${attempt} failed for ${action}`, { 
+                        error: error.message,
+                        stack: error.stack 
+                    });
                     lastError = error;
                     
                     if (attempt < CONFIG.RETRY_ATTEMPTS) {
@@ -645,6 +879,7 @@
         // Load all transactions with time ordering
         async function loadAllTransactions() {
             try {
+                debugLog('Loading all transactions');
                 const result = await apiCall('get_all_transactions', {}, true);
                 
                 // Ensure transactions are sorted by date (newest first)
@@ -656,9 +891,10 @@
                 
                 appData.filteredTransactions = [...appData.allTransactions];
                 updateTransactionsPanel();
+                debugLog('Transactions loaded successfully', { count: appData.allTransactions.length });
                 
             } catch (error) {
-                console.error('Error loading transactions:', error);
+                debugLog('Error loading transactions', error);
                 document.getElementById('transactions-content').innerHTML = 
                     `<div class="error-message">Failed to load transactions: ${error.message}</div>`;
             }
@@ -670,6 +906,13 @@
             const dateFromFilter = document.getElementById('date-from-filter').value;
             const dateToFilter = document.getElementById('date-to-filter').value;
             const searchFilter = document.getElementById('transaction-search').value.toLowerCase();
+
+            debugLog('Applying transaction filters', {
+                type: typeFilter,
+                dateFrom: dateFromFilter,
+                dateTo: dateToFilter,
+                search: searchFilter
+            });
 
             appData.filteredTransactions = appData.allTransactions.filter(transaction => {
                 // Type filter
@@ -714,6 +957,7 @@
             content.innerHTML = '<div class="no-data"><div class="loading-spinner"></div>Loading ledger...</div>';
 
             try {
+                debugLog('Loading user ledger', { username });
                 const result = await apiCall('get_ledger', { username: username });
                 
                 // Sort ledger entries by date (newest first)
@@ -724,8 +968,13 @@
                 });
                 
                 updateLedgerPanel();
+                debugLog('User ledger loaded successfully', { 
+                    username, 
+                    entries: appData.userLedger.length 
+                });
                 
             } catch (error) {
+                debugLog('Error loading user ledger', { username, error });
                 showMessage(`Failed to load ledger: ${error.message}`, 'error');
                 content.innerHTML = `<div class="error-message">Failed to load ledger for ${username}: ${error.message}</div>`;
             }
@@ -738,17 +987,27 @@
                 return;
             }
 
+            if (!CONFIG.GOOGLE_SCRIPT_URL) {
+                showMessage('Please configure Google Apps Script URL first', 'error');
+                return;
+            }
+
             appData.loading = true;
             const statusElement = document.getElementById('connection-status');
             statusElement.textContent = '🔄 Loading...';
             statusElement.className = 'loading';
+
+            debugLog('Starting data refresh');
 
             try {
                 // Load all data in parallel for better performance
                 const dataPromises = [
                     apiCall('get_all_totals').catch(err => ({ error: err.message })),
                     apiCall('get_monthly_summary').catch(err => ({ error: err.message })),
-                    loadAllTransactions().catch(err => console.error('Transaction loading failed:', err))
+                    loadAllTransactions().catch(err => {
+                        debugLog('Transaction loading failed during refresh', err);
+                        return { error: err.message };
+                    })
                 ];
 
                 const [totalsResult, monthlyResult] = await Promise.all(dataPromises);
@@ -756,10 +1015,16 @@
                 // Process results
                 if (!totalsResult.error) {
                     appData.allTotals = totalsResult;
+                    debugLog('Totals loaded', totalsResult);
+                } else {
+                    debugLog('Failed to load totals', totalsResult.error);
                 }
 
                 if (!monthlyResult.error) {
                     appData.monthlyData = monthlyResult;
+                    debugLog('Monthly data loaded', monthlyResult);
+                } else {
+                    debugLog('Failed to load monthly data', monthlyResult.error);
                 }
 
                 appData.lastUpdated = new Date();
@@ -775,9 +1040,10 @@
                     `Last Updated: ${appData.lastUpdated.toLocaleString()}`;
 
                 showMessage('Data refreshed successfully!', 'success');
+                debugLog('Data refresh completed successfully');
 
             } catch (error) {
-                console.error('Error refreshing data:', error);
+                debugLog('Error refreshing data', error);
                 statusElement.textContent = '❌ Error';
                 statusElement.className = 'loading';
                 showMessage(`Failed to load data: ${error.message}`, 'error');
@@ -1294,6 +1560,10 @@
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Financial Dashboard Initialized');
+            debugLog('Dashboard initialized');
+            
+            // Load configuration
+            loadConfig();
             
             // Set default date filters to last 30 days
             const today = new Date();
@@ -1303,16 +1573,19 @@
             document.getElementById('date-from-filter').value = thirtyDaysAgo.toISOString().split('T')[0];
             document.getElementById('date-to-filter').value = today.toISOString().split('T')[0];
             
-            // Load data on startup
-            refreshAllData();
-            
-            // Auto-refresh every 2 minutes (reduced for better UX)
-            setInterval(() => {
-                if (!appData.loading) {
-                    console.log('Auto-refreshing data...');
-                    refreshAllData();
-                }
-            }, 2 * 60 * 1000);
+            // Only load data if URL is configured
+            if (CONFIG.GOOGLE_SCRIPT_URL) {
+                document.getElementById('config-section').style.display = 'none';
+                refreshAllData();
+                
+                // Auto-refresh every 5 minutes if connected
+                setInterval(() => {
+                    if (!appData.loading && CONFIG.GOOGLE_SCRIPT_URL) {
+                        debugLog('Auto-refresh triggered');
+                        refreshAllData();
+                    }
+                }, 5 * 60 * 1000);
+            }
             
             // Add keyboard shortcuts
             document.addEventListener('keydown', function(e) {
@@ -1330,6 +1603,13 @@
                 }
             });
 
+            document.getElementById('script-url').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    testConnection();
+                }
+            });
+
             // Add real-time search for transactions
             document.getElementById('transaction-search').addEventListener('input', debounce(applyTransactionFilters, 300));
             
@@ -1337,6 +1617,9 @@
             document.getElementById('transaction-type-filter').addEventListener('change', applyTransactionFilters);
             document.getElementById('date-from-filter').addEventListener('change', applyTransactionFilters);
             document.getElementById('date-to-filter').addEventListener('change', applyTransactionFilters);
+            
+            // Update debug display periodically
+            setInterval(updateDebugDisplay, 5000);
         });
 
         // Utility function for debouncing search
@@ -1354,26 +1637,249 @@
 
         // Global error handler
         window.addEventListener('error', function(e) {
-            console.error('Global error:', e.error);
-            showMessage('An unexpected error occurred. Please refresh the page.', 'error');
+            debugLog('Global error', { message: e.message, filename: e.filename, lineno: e.lineno });
+            showMessage('An unexpected error occurred. Check debug info for details.', 'error');
         });
 
         // Handle network connectivity
         window.addEventListener('online', function() {
+            debugLog('Network connection restored');
             showMessage('Connection restored. Refreshing data...', 'success');
-            refreshAllData();
+            if (CONFIG.GOOGLE_SCRIPT_URL) {
+                refreshAllData();
+            }
         });
 
         window.addEventListener('offline', function() {
-            showMessage('Connection lost. Using cached data.', 'error');
+            debugLog('Network connection lost');
+            showMessage('Connection lost. Using cached data.', 'warning');
         });
 
-        // Service Worker for caching (optional)
+        // Enhanced connection diagnostics
+        function diagnoseConnection() {
+            const issues = [];
+            
+            if (!CONFIG.GOOGLE_SCRIPT_URL) {
+                issues.push('❌ Google Apps Script URL not configured');
+            } else {
+                try {
+                    new URL(CONFIG.GOOGLE_SCRIPT_URL);
+                    issues.push('✅ URL format is valid');
+                } catch {
+                    issues.push('❌ Invalid URL format');
+                }
+                
+                if (!CONFIG.GOOGLE_SCRIPT_URL.includes('script.google.com')) {
+                    issues.push('⚠️ URL doesn\'t appear to be a Google Apps Script URL');
+                }
+                
+                if (!CONFIG.GOOGLE_SCRIPT_URL.includes('/exec')) {
+                    issues.push('⚠️ URL should end with /exec for web app deployment');
+                }
+            }
+            
+            if (!navigator.onLine) {
+                issues.push('❌ No internet connection');
+            } else {
+                issues.push('✅ Internet connection available');
+            }
+            
+            return issues;
+        }
+
+        // Add connection diagnostic to test function
+        function testConnectionWithDiagnostics() {
+            const issues = diagnoseConnection();
+            const resultDiv = document.getElementById('connection-result');
+            
+            let diagnosticsHTML = '<div class="warning-message"><h4>Connection Diagnostics:</h4><ul>';
+            issues.forEach(issue => {
+                diagnosticsHTML += `<li>${issue}</li>`;
+            });
+            diagnosticsHTML += '</ul></div>';
+            
+            resultDiv.innerHTML = diagnosticsHTML;
+            
+            // Only proceed with actual test if basic checks pass
+            const hasErrors = issues.some(issue => issue.includes('❌'));
+            if (!hasErrors) {
+                testConnection();
+            }
+        }
+
+        // Service Worker registration for offline support
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                // Register service worker for offline support
-                // navigator.serviceWorker.register('/sw.js'); // Uncomment if you have a service worker
+                // Note: You would need to create a service worker file for full offline support
+                debugLog('Service Worker support detected');
             });
+        }
+
+        // Performance monitoring
+        function measurePerformance(label, fn) {
+            return async function(...args) {
+                const start = performance.now();
+                try {
+                    const result = await fn.apply(this, args);
+                    const end = performance.now();
+                    debugLog(`Performance: ${label}`, { duration: `${(end - start).toFixed(2)}ms` });
+                    return result;
+                } catch (error) {
+                    const end = performance.now();
+                    debugLog(`Performance: ${label} (failed)`, { 
+                        duration: `${(end - start).toFixed(2)}ms`, 
+                        error: error.message 
+                    });
+                    throw error;
+                }
+            };
+        }
+
+        // Wrap API calls with performance monitoring
+        const originalApiCall = apiCall;
+        apiCall = measurePerformance('API Call', originalApiCall);
+
+        // Add retry with exponential backoff for critical operations
+        async function retryWithBackoff(fn, maxRetries = 3) {
+            let delay = 1000;
+            let lastError;
+            
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    return await fn();
+                } catch (error) {
+                    lastError = error;
+                    if (i === maxRetries - 1) break;
+                    
+                    debugLog(`Retry attempt ${i + 1} failed, waiting ${delay}ms`, error.message);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2; // Exponential backoff
+                }
+            }
+            
+            throw lastError;
+        }
+
+        // Connection health check
+        async function checkConnectionHealth() {
+            if (!CONFIG.GOOGLE_SCRIPT_URL) return false;
+            
+            try {
+                const result = await apiCall('ping');
+                debugLog('Connection health check passed', result);
+                return true;
+            } catch (error) {
+                debugLog('Connection health check failed', error);
+                return false;
+            }
+        }
+
+        // Periodic health checks
+        setInterval(async () => {
+            if (CONFIG.GOOGLE_SCRIPT_URL && !appData.loading) {
+                const isHealthy = await checkConnectionHealth();
+                const statusElement = document.getElementById('connection-status');
+                
+                if (!isHealthy && statusElement.classList.contains('loaded')) {
+                    statusElement.textContent = '⚠️ Connection Issues';
+                    statusElement.className = 'loading';
+                    showMessage('Connection issues detected. Data may be stale.', 'warning');
+                }
+            }
+        }, 2 * 60 * 1000); // Check every 2 minutes
+
+        // Data validation helpers
+        function validateTransactionData(transactions) {
+            if (!Array.isArray(transactions)) {
+                throw new Error('Transactions data must be an array');
+            }
+            
+            const validatedTransactions = transactions.filter(t => {
+                const hasRequiredFields = t.amount !== undefined && t.type;
+                if (!hasRequiredFields) {
+                    debugLog('Invalid transaction found', t);
+                }
+                return hasRequiredFields;
+            });
+            
+            debugLog('Transaction validation', {
+                total: transactions.length,
+                valid: validatedTransactions.length,
+                invalid: transactions.length - validatedTransactions.length
+            });
+            
+            return validatedTransactions;
+        }
+
+        // Enhanced error reporting
+        function reportError(context, error, additionalInfo = {}) {
+            const errorReport = {
+                context,
+                message: error.message,
+                stack: error.stack,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                url: window.location.href,
+                additionalInfo
+            };
+            
+            debugLog(`Error in ${context}`, errorReport);
+            
+            // In a production environment, you might send this to an error reporting service
+            console.error('Detailed error report:', errorReport);
+        }
+
+        // Export debug information
+        function exportDebugInfo() {
+            const debugData = {
+                config: CONFIG,
+                debugLogs: appData.debugInfo,
+                appData: {
+                    transactionCount: appData.allTransactions.length,
+                    monthlyDataKeys: Object.keys(appData.monthlyData),
+                    lastUpdated: appData.lastUpdated,
+                    loading: appData.loading
+                },
+                browserInfo: {
+                    userAgent: navigator.userAgent,
+                    language: navigator.language,
+                    cookieEnabled: navigator.cookieEnabled,
+                    onLine: navigator.onLine
+                },
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(debugData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `financial-dashboard-debug-${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showMessage('Debug information exported successfully!', 'success');
+        }
+
+        // Add export debug button to the debug panel
+        function updateDebugDisplay() {
+            const debugContent = document.getElementById('debug-content');
+            const debugText = appData.debugInfo.map(entry => 
+                `[${entry.timestamp}] ${entry.message}${entry.data ? '\n' + JSON.stringify(entry.data, null, 2) : ''}`
+            ).join('\n\n');
+            
+            debugContent.innerHTML = `
+                <div style="margin-bottom: 10px;">
+                    <button onclick="exportDebugInfo()" style="background: #17a2b8; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">
+                        📤 Export Debug Info
+                    </button>
+                    <button onclick="appData.debugInfo = []; updateDebugDisplay();" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px; margin-left: 5px;">
+                        🗑️ Clear Logs
+                    </button>
+                </div>
+                <pre>${debugText || 'No debug information available'}</pre>
+            `;
         }
     </script>
 </body>
