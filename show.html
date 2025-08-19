@@ -84,38 +84,6 @@
             font-size: 14px;
         }
 
-        /* Login Card Styles */
-        .login-card {
-            max-width: 450px;
-            margin: 50px auto;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.98);
-        }
-
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .login-form input {
-            padding: 15px 20px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 16px;
-            text-align: center;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.9);
-        }
-
-        .login-form input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            transform: scale(1.02);
-        }
-
         /* Student Profile Header */
         .profile-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -316,31 +284,6 @@
             z-index: 1;
         }
 
-        /* Filter Grid */
-        .filter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            align-items: end;
-            margin-bottom: 20px;
-        }
-
-        .filter-summary {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-            display: none;
-            color: #1565c0;
-            border-left: 4px solid #2196f3;
-            font-size: 13px;
-            box-shadow: 0 3px 10px rgba(33, 150, 243, 0.2);
-        }
-
-        .filter-summary.show {
-            display: block;
-        }
-
         /* Button Styles */
         .btn {
             padding: 12px 20px;
@@ -391,12 +334,6 @@
             box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
         }
 
-        .btn-warning {
-            background: linear-gradient(45deg, #ff7043 0%, #ff5722 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 112, 67, 0.4);
-        }
-
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
@@ -406,24 +343,6 @@
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
-        }
-
-        /* Input Styles */
-        input, select {
-            padding: 12px 16px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.9);
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-            transform: scale(1.02);
         }
 
         /* Table Styles */
@@ -489,51 +408,6 @@
             font-size: 14px;
         }
 
-        /* Pagination */
-        .pagination-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 25px;
-            flex-wrap: wrap;
-        }
-
-        .pagination-btn {
-            padding: 10px 15px;
-            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pagination-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .pagination-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .pagination-btn.active {
-            background: linear-gradient(45deg, #4caf50 0%, #66bb6a 100%);
-        }
-
-        .pagination-info {
-            color: #666;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
         /* Utility Classes */
         .hidden {
             display: none;
@@ -570,14 +444,6 @@
         .dashboard-content {
             display: grid;
             gap: 25px;
-        }
-
-        .controls-section {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
         }
 
         /* Mobile Optimizations */
@@ -645,43 +511,11 @@
                 font-size: 20px;
             }
 
-            .filter-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
             .btn {
                 padding: 15px 20px;
                 font-size: 13px;
                 width: 100%;
                 margin-bottom: 10px;
-            }
-
-            .controls-section {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .controls-section > * {
-                width: 100%;
-            }
-
-            table {
-                font-size: 11px;
-            }
-
-            th, td {
-                padding: 10px 8px;
-            }
-
-            .pagination-controls {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .pagination-btn {
-                padding: 12px 15px;
-                font-size: 13px;
             }
 
             .dashboard-content {
@@ -692,83 +526,6 @@
             .table-container {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
-            }
-
-            /* Input improvements for mobile */
-            input, select {
-                padding: 15px;
-                font-size: 16px; /* Prevents zoom on iOS */
-                border-radius: 12px;
-            }
-
-            .login-form input {
-                font-size: 16px;
-                padding: 18px;
-            }
-
-            /* Button improvements for mobile */
-            .btn {
-                min-height: 44px; /* Better touch target */
-                font-size: 14px;
-            }
-        }
-
-        /* Extra small devices */
-        @media (max-width: 480px) {
-            body {
-                padding: 5px;
-            }
-
-            .main-title {
-                font-size: 1.3rem;
-            }
-
-            .card {
-                padding: 12px;
-                border-radius: 10px;
-            }
-
-            .profile-header {
-                padding: 15px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
-
-            .stat-item {
-                padding: 15px 10px;
-            }
-
-            .stat-number {
-                font-size: 16px;
-            }
-
-            table {
-                font-size: 10px;
-            }
-
-            th, td {
-                padding: 8px 6px;
-            }
-        }
-
-        /* Landscape orientation optimization for mobile */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .profile-actions {
-                flex-direction: row;
-                justify-content: center;
-            }
-
-            .profile-btn {
-                width: auto;
-                flex: 1;
-                max-width: 200px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
             }
         }
     </style>
@@ -784,7 +541,7 @@
                 <div class="profile-photo">
                     <span id="profileIcon">👤</span>
                 </div>
-                <h2 class="student-name" id="studentName">STUDENT NAME</h2>
+                <h2 class="student-name" id="studentName">Loading...</h2>
                 <p class="student-role">Financial Overview Dashboard</p>
                 <div class="profile-actions">
                     <button class="profile-btn danger" onclick="logout()">🔄 Check Another Student</button>
@@ -819,30 +576,6 @@
                     </div>
                 </div>
 
-                <!-- Filter & Search Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">🔍</div>
-                        <h3>Search & Filter Transactions</h3>
-                    </div>
-                    <p>Find specific transactions using advanced filters</p>
-                    <div class="filter-grid">
-                        <select id="filterType">
-                            <option value="">All Transaction Types</option>
-                            <option value="credit">Credit Only</option>
-                            <option value="debit">Debit Only</option>
-                        </select>
-                        <input type="text" id="filterDescription" placeholder="Search description...">
-                        <input type="date" id="filterDateFrom" placeholder="From Date">
-                        <input type="date" id="filterDateTo" placeholder="To Date">
-                        <input type="number" id="filterAmountMin" placeholder="Min Amount" step="0.01" min="0">
-                        <input type="number" id="filterAmountMax" placeholder="Max Amount" step="0.01" min="0">
-                        <button class="btn btn-primary" onclick="applyFilters()">🔍 Apply Filters</button>
-                        <button class="btn btn-warning" onclick="clearFilters()">🗑️ Clear All</button>
-                    </div>
-                    <div id="filterSummary" class="filter-summary"></div>
-                </div>
-
                 <!-- Transaction History Card -->
                 <div class="card">
                     <div class="card-header">
@@ -850,16 +583,6 @@
                         <h3>Transaction History</h3>
                     </div>
                     <p>Complete record of all financial transactions</p>
-                    <div class="controls-section">
-                        <select id="sortBy">
-                            <option value="date-desc">📅 Date (Newest First)</option>
-                            <option value="date-asc">📅 Date (Oldest First)</option>
-                            <option value="amount-desc">💰 Amount (High to Low)</option>
-                            <option value="amount-asc">💰 Amount (Low to High)</option>
-                            <option value="type">📝 Type</option>
-                        </select>
-                        <button class="btn btn-success" onclick="exportData()">📄 Export PDF</button>
-                    </div>
                     
                     <div id="ledgerStatus" class="loading">📊 Loading transaction history...</div>
                     <div class="table-container">
@@ -875,21 +598,14 @@
                             <tbody id="ledgerBody"></tbody>
                         </table>
                     </div>
-                    <div id="paginationControls" class="pagination-controls"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-
     <script>
         let currentUsername = null;
         let allLedgerData = [];
-        let filteredData = [];
-        let currentPage = 1;
-        let itemsPerPage = 15;
         const api = "https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec";
 
         // Student data mapping
@@ -926,3 +642,158 @@
             '1086': 'MOHAMMED NIDAL',
             '1085': 'MUHAMMED NAFIH',
             '1014': 'MURSHID MK'
+        };
+
+        // Get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Initialize dashboard
+        function initDashboard() {
+            currentUsername = getUrlParameter('user');
+            
+            if (!currentUsername) {
+                showError('No user specified in URL');
+                return;
+            }
+
+            // Set student name from mapping
+            const studentName = studentData[currentUsername];
+            if (studentName) {
+                document.getElementById('studentName').textContent = studentName;
+                document.getElementById('profileIcon').textContent = studentName.charAt(0);
+            } else {
+                document.getElementById('studentName').textContent = `Student ID: ${currentUsername}`;
+            }
+
+            // Load data
+            loadLedgerData();
+        }
+
+        // Load ledger data from API
+        async function loadLedgerData() {
+            try {
+                document.getElementById('ledgerStatus').textContent = '📊 Loading transaction history...';
+                document.getElementById('ledgerTable').style.display = 'none';
+
+                const response = await fetch(`${api}?action=getLedger&username=${currentUsername}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    allLedgerData = data.data || [];
+                    updateFinancialSummary();
+                    displayLedgerData();
+                } else {
+                    throw new Error(data.message || 'Failed to load data');
+                }
+                
+            } catch (error) {
+                console.error('Error loading ledger data:', error);
+                showError(`Error loading data: ${error.message}`);
+            }
+        }
+
+        // Update financial summary
+        function updateFinancialSummary() {
+            let totalCredit = 0;
+            let totalDebit = 0;
+
+            allLedgerData.forEach(entry => {
+                const amount = parseFloat(entry.amount) || 0;
+                if (entry.type.toLowerCase() === 'credit') {
+                    totalCredit += amount;
+                } else if (entry.type.toLowerCase() === 'debit') {
+                    totalDebit += amount;
+                }
+            });
+
+            const balance = totalCredit - totalDebit;
+
+            // Update display
+            document.getElementById('totalCredit').textContent = `₹${totalCredit.toFixed(2)}`;
+            document.getElementById('totalDebit').textContent = `₹${totalDebit.toFixed(2)}`;
+            document.getElementById('balanceAmount').textContent = balance.toFixed(2);
+
+            // Update balance styling
+            const balanceCard = document.getElementById('balanceCard');
+            const balanceElement = document.getElementById('balanceAmountElement');
+            
+            if (balance >= 0) {
+                balanceCard.className = 'stat-item balance positive';
+                balanceElement.className = 'stat-number balance positive';
+            } else {
+                balanceCard.className = 'stat-item balance negative';
+                balanceElement.className = 'stat-number balance negative';
+            }
+        }
+
+        // Display ledger data in table
+        function displayLedgerData() {
+            const tbody = document.getElementById('ledgerBody');
+            const statusDiv = document.getElementById('ledgerStatus');
+            const table = document.getElementById('ledgerTable');
+
+            if (allLedgerData.length === 0) {
+                statusDiv.textContent = 'No transaction records found.';
+                table.style.display = 'none';
+                return;
+            }
+
+            // Sort by date (newest first)
+            const sortedData = [...allLedgerData].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            tbody.innerHTML = '';
+            
+            sortedData.forEach(entry => {
+                const row = tbody.insertRow();
+                const isCredit = entry.type.toLowerCase() === 'credit';
+                
+                row.className = isCredit ? 'credit-row' : 'debit-row';
+                
+                // Format date
+                const date = new Date(entry.date);
+                const formattedDate = date.toLocaleDateString('en-IN');
+                
+                row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td class="${isCredit ? 'text-success' : 'text-danger'}">${entry.type.toUpperCase()}</td>
+                    <td>${entry.description || 'No description'}</td>
+                    <td class="amount-display ${isCredit ? 'text-success' : 'text-danger'}">₹${parseFloat(entry.amount || 0).toFixed(2)}</td>
+                `;
+            });
+
+            statusDiv.style.display = 'none';
+            table.style.display = 'table';
+        }
+
+        // Refresh data
+        function refreshData() {
+            loadLedgerData();
+        }
+
+        // Logout function
+        function logout() {
+            window.location.href = 'index.html';
+        }
+
+        // Show error message
+        function showError(message) {
+            const statusDiv = document.getElementById('ledgerStatus');
+            statusDiv.innerHTML = `<div class="error">❌ ${message}</div>`;
+            document.getElementById('ledgerTable').style.display = 'none';
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>
