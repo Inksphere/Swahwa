@@ -573,6 +573,8 @@
                     </div>
                     <div style="margin-top: 20px;">
                         <button class="btn btn-success" onclick="refreshData()">🔄 Refresh Data</button>
+                        <button class="btn btn-primary" onclick="testAPI()">🔧 Test API</button>
+                        <button class="btn btn-primary" onclick="loadTestData()">📊 Load Test Data</button>
                     </div>
                 </div>
 
@@ -656,18 +658,24 @@
         function initDashboard() {
             currentUsername = getUrlParameter('user');
             
+            console.log('Current username from URL:', currentUsername);
+            
             if (!currentUsername) {
-                showError('No user specified in URL');
+                showError('No user specified in URL. Please access this page through the login system.');
                 return;
             }
 
             // Set student name from mapping
             const studentName = studentData[currentUsername];
+            console.log('Student name found:', studentName);
+            
             if (studentName) {
                 document.getElementById('studentName').textContent = studentName;
                 document.getElementById('profileIcon').textContent = studentName.charAt(0);
             } else {
                 document.getElementById('studentName').textContent = `Student ID: ${currentUsername}`;
+                document.getElementById('profileIcon').textContent = '👤';
+                console.warn('Student name not found in mapping for ID:', currentUsername);
             }
 
             // Load data
@@ -677,28 +685,51 @@
         // Load ledger data from API
         async function loadLedgerData() {
             try {
-                document.getElementById('ledgerStatus').textContent = '📊 Loading transaction history...';
+                document.getElementById('ledgerStatus').innerHTML = '📊 Loading transaction history...';
                 document.getElementById('ledgerTable').style.display = 'none';
 
+                console.log('Making API call to:', `${api}?action=getLedger&username=${currentUsername}`);
+                
                 const response = await fetch(`${api}?action=getLedger&username=${currentUsername}`);
+                
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
                 const data = await response.json();
+                console.log('API Response:', data);
                 
-                if (data.status === 'success') {
-                    allLedgerData = data.data || [];
+                // Handle different possible response formats
+                if (data.status === 'success' || data.success) {
+                    allLedgerData = data.data || data.ledger || data.records || [];
+                    console.log('Ledger data:', allLedgerData);
+                    updateFinancialSummary();
+                    displayLedgerData();
+                } else if (Array.isArray(data)) {
+                    // If API returns array directly
+                    allLedgerData = data;
+                    console.log('Direct array data:', allLedgerData);
                     updateFinancialSummary();
                     displayLedgerData();
                 } else {
-                    throw new Error(data.message || 'Failed to load data');
+                    throw new Error(data.message || data.error || 'Failed to load data - unexpected response format');
                 }
                 
             } catch (error) {
                 console.error('Error loading ledger data:', error);
                 showError(`Error loading data: ${error.message}`);
+                
+                // Show debug info in the UI
+                document.getElementById('ledgerStatus').innerHTML = `
+                    <div class="error">
+                        ❌ Error loading data: ${error.message}<br>
+                        <small>Check browser console for more details</small><br>
+                        <small>API URL: ${api}?action=getLedger&username=${currentUsername}</small>
+                    </div>
+                `;
             }
         }
 
@@ -792,8 +823,27 @@
             document.getElementById('ledgerTable').style.display = 'none';
         }
 
+        // Add a test function to check API connectivity
+        async function testAPI() {
+            try {
+                console.log('Testing API connectivity...');
+                const response = await fetch(api);
+                console.log('API test response:', response);
+                const data = await response.text();
+                console.log('API test data:', data);
+            } catch (error) {
+                console.error('API test failed:', error);
+            }
+        }
+
         // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', initDashboard);
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing dashboard...');
+            initDashboard();
+            
+            // Also test API on load
+            testAPI();
+        });
     </script>
 </body>
 </html>
