@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +32,7 @@
             text-align: center;
             margin-bottom: 20px;
             font-size: 1.8rem;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .card {
@@ -103,13 +104,20 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
             animation: shimmer 3s ease-in-out infinite;
         }
 
         @keyframes shimmer {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(180deg); }
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            50% {
+                transform: rotate(180deg);
+            }
         }
 
         .profile-photo {
@@ -133,7 +141,7 @@
             font-size: 1.6rem;
             font-weight: bold;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             position: relative;
             z-index: 1;
         }
@@ -215,7 +223,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
             transition: left 0.5s;
         }
 
@@ -373,7 +381,8 @@
             font-size: 13px;
         }
 
-        th, td {
+        th,
+        td {
             border: none;
             padding: 15px 12px;
             text-align: left;
@@ -552,7 +561,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Mobile Optimizations */
@@ -648,6 +659,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="dashboard-container">
         <h1 class="main-title">📚 Student Financial Dashboard</h1>
@@ -686,7 +698,8 @@
                             <span class="stat-label">Total Debit</span>
                         </div>
                         <div class="stat-item balance" id="balanceCard">
-                            <span class="stat-number balance" id="balanceAmountElement">₹<span id="balanceAmount">0</span></span>
+                            <span class="stat-number balance" id="balanceAmountElement">₹<span
+                                    id="balanceAmount">0</span></span>
                             <span class="stat-label">Current Balance</span>
                         </div>
                         <div class="stat-item">
@@ -748,7 +761,7 @@
                         <div class="loading-spinner"></div>
                         📊 Loading transaction history...
                     </div>
-                    
+
                     <div class="table-container">
                         <table id="ledgerTable" style="display: none;">
                             <thead>
@@ -848,35 +861,34 @@
         // Load ledger data from API with multiple action attempts
         async function loadLedgerData() {
             const actions = ['getLedger', 'ledger', 'getTransactions', 'transactions', 'getData', 'get'];
-            
+
             for (let action of actions) {
                 try {
                     document.getElementById('ledgerStatus').innerHTML = `
-                        <div class="loading-spinner"></div>
-                        📊 Trying API action: ${action}...
-                    `;
+                <div class="loading-spinner"></div>
+                📊 Trying API action: ${action}...
+            `;
                     document.getElementById('ledgerTable').style.display = 'none';
-
                     const url = `${api}?action=${action}&username=${currentUsername}`;
                     console.log('Making API call to:', url);
-                    
+
                     const response = await fetch(url, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
                         }
                     });
-                    
+
                     console.log(`Response for action ${action}:`, response.status, response.ok);
-                    
+
                     if (!response.ok) {
                         console.warn(`HTTP error for action ${action}! status: ${response.status}`);
                         continue; // Try next action
                     }
-                    
+
                     const data = await response.json();
                     console.log(`API Response for action ${action}:`, data);
-                    
+
                     // Handle different possible response formats
                     if (data.status === 'success' || data.success) {
                         allLedgerData = data.data || data.ledger || data.records || data.transactions || [];
@@ -898,13 +910,13 @@
                     } else if (data.error && !data.error.includes('Unknown action')) {
                         throw new Error(data.error);
                     }
-                    
+
                 } catch (error) {
                     console.error(`Error with action ${action}:`, error);
                     // Continue to next action
                 }
             }
-            
+
             // If we get here, all actions failed
             showWarning('Unable to load data from server. Click "Load Test Data" to see a demo.');
         }
@@ -914,7 +926,10 @@
             let totalCredit = 0;
             let totalDebit = 0;
 
-            filteredLedgerData.forEach(entry => {
+            // Ensure filteredLedgerData is an array
+            const data = Array.isArray(filteredLedgerData) ? filteredLedgerData : [];
+
+            data.forEach(entry => {
                 const amount = parseFloat(entry.amount) || 0;
                 if (entry.type && entry.type.toLowerCase() === 'credit') {
                     totalCredit += amount;
@@ -925,16 +940,15 @@
 
             const balance = totalCredit - totalDebit;
 
-            // Update display
+            // Update display with fallbacks
             document.getElementById('totalCredit').textContent = `₹${totalCredit.toFixed(2)}`;
             document.getElementById('totalDebit').textContent = `₹${totalDebit.toFixed(2)}`;
             document.getElementById('balanceAmount').textContent = balance.toFixed(2);
-            document.getElementById('transactionCount').textContent = filteredLedgerData.length;
+            document.getElementById('transactionCount').textContent = data.length;
 
             // Update balance styling
             const balanceCard = document.getElementById('balanceCard');
             const balanceElement = document.getElementById('balanceAmountElement');
-
             if (balance >= 0) {
                 balanceCard.className = 'stat-item balance positive';
                 balanceElement.className = 'stat-number balance positive';
@@ -950,26 +964,29 @@
             const statusDiv = document.getElementById('ledgerStatus');
             const table = document.getElementById('ledgerTable');
 
-            if (filteredLedgerData.length === 0) {
+            // Ensure filteredLedgerData is an array
+            const data = Array.isArray(filteredLedgerData) ? filteredLedgerData : [];
+
+            if (data.length === 0) {
                 statusDiv.innerHTML = '<div class="status-message">No transaction records found with current filters.</div>';
                 table.style.display = 'none';
                 return;
             }
 
             // Sort by date (newest first)
-            const sortedData = [...filteredLedgerData].sort((a, b) => {
-                const dateA = new Date(a.date || a.timestamp);
-                const dateB = new Date(b.date || b.timestamp);
+            const sortedData = [...data].sort((a, b) => {
+                const dateA = new Date(a.date || a.timestamp || 0);
+                const dateB = new Date(b.date || b.timestamp || 0);
                 return dateB - dateA;
             });
 
             tbody.innerHTML = '';
             let runningBalance = 0;
-            
+
             // Calculate running balance from oldest to newest
             const reversedData = [...sortedData].reverse();
             reversedData.forEach(entry => {
-                const amount = parseFloat(entry.amount || 0);
+                const amount = parseFloat(entry.amount) || 0;
                 if (entry.type && entry.type.toLowerCase() === 'credit') {
                     runningBalance += amount;
                 } else if (entry.type && entry.type.toLowerCase() === 'debit') {
@@ -982,21 +999,20 @@
             sortedData.forEach(entry => {
                 const row = tbody.insertRow();
                 const isCredit = entry.type && entry.type.toLowerCase() === 'credit';
-
                 row.className = isCredit ? 'credit-row' : 'debit-row';
 
-                // Format date
+                // Format date with fallback
                 const dateStr = entry.date || entry.timestamp || new Date().toISOString();
                 const date = new Date(dateStr);
-                const formattedDate = date.toLocaleDateString('en-IN');
+                const formattedDate = isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleDateString('en-IN');
 
                 row.innerHTML = `
-                    <td>${formattedDate}</td>
-                    <td class="${isCredit ? 'text-success' : 'text-danger'}">${(entry.type || 'N/A').toUpperCase()}</td>
-                    <td>${entry.description || entry.details || 'No description'}</td>
-                    <td class="amount-display ${isCredit ? 'text-success' : 'text-danger'}">₹${parseFloat(entry.amount || 0).toFixed(2)}</td>
-                    <td class="amount-display ${entry.runningBalance >= 0 ? 'text-success' : 'text-danger'}">₹${entry.runningBalance.toFixed(2)}</td>
-                `;
+            <td>${formattedDate}</td>
+            <td class="${isCredit ? 'text-success' : 'text-danger'}">${(entry.type || 'N/A').toUpperCase()}</td>
+            <td>${entry.description || entry.details || 'No description'}</td>
+            <td class="amount-display ${isCredit ? 'text-success' : 'text-danger'}">₹${parseFloat(entry.amount || 0).toFixed(2)}</td>
+            <td class="amount-display ${entry.runningBalance >= 0 ? 'text-success' : 'text-danger'}">₹${entry.runningBalance.toFixed(2)}</td>
+        `;
             });
 
             statusDiv.style.display = 'none';
@@ -1044,7 +1060,7 @@
             document.getElementById('dateFromFilter').value = '';
             document.getElementById('dateToFilter').value = '';
             document.getElementById('amountFilter').value = '';
-            
+
             filteredLedgerData = [...allLedgerData];
             updateFinancialSummary();
             displayLedgerData();
@@ -1116,7 +1132,7 @@
                     amount: 1200
                 }
             ];
-            
+
             filteredLedgerData = [...allLedgerData];
             updateFinancialSummary();
             displayLedgerData();
@@ -1155,15 +1171,15 @@
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
-            
+
             link.setAttribute('href', url);
             link.setAttribute('download', `financial_data_${currentUsername}_${new Date().toISOString().split('T')[0]}.csv`);
             link.style.visibility = 'hidden';
-            
+
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
+
             showSuccess('✅ Data exported successfully!');
         }
 
@@ -1230,9 +1246,9 @@
         }
 
         // Add keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.ctrlKey || e.metaKey) {
-                switch(e.key) {
+                switch (e.key) {
                     case 'r':
                         e.preventDefault();
                         refreshData();
@@ -1250,7 +1266,7 @@
         });
 
         // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('DOM loaded, initializing dashboard...');
             initDashboard();
 
@@ -1271,13 +1287,13 @@
         });
 
         // Handle page visibility change to refresh data when page becomes visible
-        document.addEventListener('visibilitychange', function() {
+        document.addEventListener('visibilitychange', function () {
             if (!document.hidden && allLedgerData.length > 0) {
                 // Page became visible, refresh data if it's been more than 2 minutes
                 const now = Date.now();
                 const lastRefreshKey = 'lastRefresh_' + currentUsername;
                 const lastRefresh = sessionStorage.getItem(lastRefreshKey);
-                
+
                 if (!lastRefresh || (now - parseInt(lastRefresh)) > 2 * 60 * 1000) {
                     refreshData();
                     sessionStorage.setItem(lastRefreshKey, now.toString());
@@ -1286,4 +1302,5 @@
         });
     </script>
 </body>
+
 </html>
