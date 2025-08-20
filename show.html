@@ -1,44 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard - Siteosphia</title>
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Inksphere/Swahwa/main/10149443.png">
     <style>
-        :root {
-            /* Light mode colors */
-            --bg-primary: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --bg-card: rgba(255, 255, 255, 0.95);
-            --text-primary: #333;
-            --text-secondary: #7f8c8d;
-            --text-muted: #6c757d;
-            --border-color: rgba(255, 255, 255, 0.2);
-            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --card-hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-            --input-bg: white;
-            --input-border: #e1e5e9;
-            --table-stripe: #f8f9fa;
-            --table-hover: linear-gradient(90deg, #e3f2fd 0%, #f8f9fa 100%);
-        }
-
-        [data-theme="dark"] {
-            /* Dark mode colors */
-            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            --bg-card: rgba(30, 30, 30, 0.95);
-            --text-primary: #e0e0e0;
-            --text-secondary: #b0b0b0;
-            --text-muted: #888;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            --card-hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-            --input-bg: #2a2a2a;
-            --input-border: #444;
-            --table-stripe: #2a2a2a;
-            --table-hover: linear-gradient(90deg, #1e3a8a 0%, #2a2a2a 100%);
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -47,12 +14,11 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-primary);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             padding: 10px;
-            color: var(--text-primary);
+            color: #333;
             font-size: 14px;
-            transition: all 0.3s ease;
         }
 
         .dashboard-container {
@@ -60,50 +26,28 @@
             margin: 0 auto;
         }
 
-        .header-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
         .main-title {
-            color: var(--text-primary);
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
             font-size: 1.8rem;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-            margin: 0;
-        }
-
-        .theme-toggle {
-            background: var(--bg-card);
-            border: 2px solid var(--input-border);
-            border-radius: 25px;
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .theme-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--card-shadow);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
         }
 
         .card {
-            background: var(--bg-card);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 20px;
-            box-shadow: var(--card-shadow);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid var(--border-color);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 20px;
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: var(--card-hover-shadow);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
         }
 
         .card-header {
@@ -127,14 +71,14 @@
         }
 
         .card h3 {
-            color: var(--text-primary);
+            color: #2c3e50;
             font-size: 18px;
             margin: 0;
             font-weight: 600;
         }
 
         .card p {
-            color: var(--text-secondary);
+            color: #7f8c8d;
             line-height: 1.6;
             margin-bottom: 15px;
             font-size: 14px;
@@ -159,7 +103,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
             animation: shimmer 3s ease-in-out infinite;
         }
 
@@ -189,7 +133,7 @@
             font-size: 1.6rem;
             font-weight: bold;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             position: relative;
             z-index: 1;
         }
@@ -256,9 +200,9 @@
         .stat-item {
             text-align: center;
             padding: 25px 15px;
-            background: var(--bg-card);
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-radius: 15px;
-            border: 2px solid var(--input-border);
+            border: 2px solid #e1e5e9;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -271,7 +215,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
             transition: left 0.5s;
         }
 
@@ -281,27 +225,27 @@
 
         .stat-item:hover {
             transform: translateY(-3px);
-            box-shadow: var(--card-shadow);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         .stat-item.credit {
             border-color: #28a745;
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.05) 100%);
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
         }
 
         .stat-item.debit {
             border-color: #dc3545;
-            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
         }
 
         .stat-item.balance.positive {
             border-color: #28a745;
-            background: linear-gradient(135deg, rgba(23, 162, 184, 0.1) 0%, rgba(23, 162, 184, 0.05) 100%);
+            background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
         }
 
         .stat-item.balance.negative {
             border-color: #dc3545;
-            background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
         }
 
         .stat-number {
@@ -332,7 +276,7 @@
 
         .stat-label {
             font-size: 12px;
-            color: var(--text-muted);
+            color: #6c757d;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
@@ -358,7 +302,6 @@
             justify-content: center;
             position: relative;
             overflow: hidden;
-            margin: 5px;
         }
 
         .btn::before {
@@ -391,18 +334,6 @@
             box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
         }
 
-        .btn-warning {
-            background: linear-gradient(45deg, #ffc107 0%, #fd7e14 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
-        }
-
-        .btn-info {
-            background: linear-gradient(45deg, #17a2b8 0%, #138496 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(23, 162, 184, 0.4);
-        }
-
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
@@ -416,10 +347,10 @@
 
         /* Table Styles */
         .table-container {
-            background: var(--bg-card);
+            background: white;
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: var(--card-shadow);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
         }
 
@@ -445,11 +376,11 @@
         }
 
         tr:nth-child(even) {
-            background-color: var(--table-stripe);
+            background-color: #f8f9fa;
         }
 
         tr:hover {
-            background: var(--table-hover);
+            background: linear-gradient(90deg, #e3f2fd 0%, #f8f9fa 100%);
             transition: background 0.3s ease;
         }
 
@@ -477,50 +408,6 @@
             font-size: 14px;
         }
 
-        /* Filter Section */
-        .filter-section {
-            background: var(--bg-card);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .filter-group label {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .filter-group select,
-        .filter-group input {
-            padding: 8px 12px;
-            border: 2px solid var(--input-border);
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-            background: var(--input-bg);
-            color: var(--text-primary);
-        }
-
-        .filter-group select:focus,
-        .filter-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
         /* Utility Classes */
         .hidden {
             display: none;
@@ -528,7 +415,7 @@
 
         .error {
             color: #dc3545;
-            background: linear-gradient(135deg, rgba(248, 215, 218, 0.8) 0%, rgba(245, 198, 203, 0.8) 100%);
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
             padding: 15px;
             border-radius: 10px;
             margin: 15px 0;
@@ -539,34 +426,8 @@
             box-shadow: 0 3px 10px rgba(220, 53, 69, 0.2);
         }
 
-        .success {
-            color: #155724;
-            background: linear-gradient(135deg, rgba(212, 237, 218, 0.8) 0%, rgba(195, 230, 203, 0.8) 100%);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            text-align: center;
-            font-weight: 500;
-            border: 1px solid #c3e6cb;
-            font-size: 14px;
-            box-shadow: 0 3px 10px rgba(40, 167, 69, 0.2);
-        }
-
-        .warning {
-            color: #856404;
-            background: linear-gradient(135deg, rgba(255, 243, 205, 0.8) 0%, rgba(255, 238, 186, 0.8) 100%);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            text-align: center;
-            font-weight: 500;
-            border: 1px solid #ffeeba;
-            font-size: 14px;
-            box-shadow: 0 3px 10px rgba(255, 193, 7, 0.2);
-        }
-
         .loading {
-            color: var(--text-muted);
+            color: #6c757d;
             font-style: italic;
             text-align: center;
             padding: 30px;
@@ -576,42 +437,13 @@
         .status-message {
             text-align: center;
             padding: 30px;
-            color: var(--text-muted);
+            color: #6c757d;
             font-size: 14px;
         }
 
         .dashboard-content {
             display: grid;
             gap: 25px;
-        }
-
-        .debug-info {
-            background: var(--table-stripe);
-            border: 1px solid var(--input-border);
-            border-radius: 8px;
-            padding: 15px;
-            margin: 10px 0;
-            font-family: monospace;
-            font-size: 12px;
-            max-height: 200px;
-            overflow-y: auto;
-            color: var(--text-primary);
-        }
-
-        /* Loading Spinner */
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(102, 126, 234, 0.3);
-            border-radius: 50%;
-            border-top-color: #667eea;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
 
         /* Mobile Optimizations */
@@ -621,15 +453,9 @@
                 font-size: 13px;
             }
 
-            .header-controls {
-                flex-direction: column;
-                gap: 15px;
-                align-items: center;
-            }
-
             .main-title {
                 font-size: 1.5rem;
-                margin-bottom: 0;
+                margin-bottom: 16px;
             }
 
             .card {
@@ -696,15 +522,7 @@
                 gap: 20px;
             }
 
-            .filter-section {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filter-group {
-                width: 100%;
-            }
-
+            /* Table scroll for mobile */
             .table-container {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
@@ -712,17 +530,13 @@
         }
     </style>
 </head>
-
 <body>
     <div class="dashboard-container">
-        <div class="header-controls">
-            <h1 class="main-title">Student Financial Dashboard</h1>
-            <button class="theme-toggle" onclick="toggleTheme()">
-                <span id="themeIcon">🌙</span> <span id="themeText">Dark Mode</span>
-            </button>
-        </div>
-
+        <h1 class="main-title">📚 Student Financial Dashboard</h1>
+        
+        <!-- Dashboard Section -->
         <div id="dashboardSection">
+            <!-- Student Profile Header -->
             <div class="profile-header">
                 <div class="profile-photo">
                     <span id="profileIcon">👤</span>
@@ -730,13 +544,13 @@
                 <h2 class="student-name" id="studentName">Loading...</h2>
                 <p class="student-role">Financial Overview Dashboard</p>
                 <div class="profile-actions">
-                    <button class="profile-btn" onclick="exportData()">📊 Export Data</button>
                     <button class="profile-btn danger" onclick="logout()">🔄 Check Another Student</button>
                     <a href="index.html" class="profile-btn">🏠 Home</a>
                 </div>
             </div>
 
             <div class="dashboard-content">
+                <!-- Financial Summary Card -->
                 <div class="card">
                     <div class="card-header">
                         <div class="card-icon">💰</div>
@@ -756,73 +570,31 @@
                             <span class="stat-number balance" id="balanceAmountElement">₹<span id="balanceAmount">0</span></span>
                             <span class="stat-label">Current Balance</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-number" id="transactionCount">0</span>
-                            <span class="stat-label">Total Transactions</span>
-                        </div>
                     </div>
                     <div style="margin-top: 20px;">
                         <button class="btn btn-success" onclick="refreshData()">🔄 Refresh Data</button>
                         <button class="btn btn-primary" onclick="testAPI()">🔧 Test API</button>
-                        <button class="btn btn-info" onclick="loadTestData()">🧪 Load Test Data</button>
-                        <button class="btn btn-warning" onclick="clearData()">🗑️ Clear Data</button>
+                        <button class="btn btn-primary" onclick="loadTestData()">📊 Load Test Data</button>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">🔍</div>
-                        <h3>Filter Transactions</h3>
-                    </div>
-                    <div class="filter-section">
-                        <div class="filter-group">
-                            <label for="typeFilter">Transaction Type</label>
-                            <select id="typeFilter" onchange="applyFilters()">
-                                <option value="">All Types</option>
-                                <option value="credit">Credit Only</option>
-                                <option value="debit">Debit Only</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="dateFromFilter">From Date</label>
-                            <input type="date" id="dateFromFilter" onchange="applyFilters()">
-                        </div>
-                        <div class="filter-group">
-                            <label for="dateToFilter">To Date</label>
-                            <input type="date" id="dateToFilter" onchange="applyFilters()">
-                        </div>
-                        <div class="filter-group">
-                            <label for="amountFilter">Minimum Amount</label>
-                            <input type="number" id="amountFilter" placeholder="0" onchange="applyFilters()">
-                        </div>
-                        <div class="filter-group">
-                            <label>&nbsp;</label>
-                            <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
-                        </div>
-                    </div>
-                </div>
-
+                <!-- Transaction History Card -->
                 <div class="card">
                     <div class="card-header">
                         <div class="card-icon">📊</div>
                         <h3>Transaction History</h3>
                     </div>
                     <p>Complete record of all financial transactions</p>
-
-                    <div id="ledgerStatus" class="loading">
-                        <div class="loading-spinner"></div>
-                        Loading transaction history...
-                    </div>
-
+                    
+                    <div id="ledgerStatus" class="loading">📊 Loading transaction history...</div>
                     <div class="table-container">
                         <table id="ledgerTable" style="display: none;">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                    <th>Amount</th>
-                                    <th>Balance</th>
+                                    <th>📅 Date</th>
+                                    <th>📝 Type</th>
+                                    <th>📋 Description</th>
+                                    <th>💰 Amount</th>
                                 </tr>
                             </thead>
                             <tbody id="ledgerBody"></tbody>
@@ -836,9 +608,9 @@
     <script>
         let currentUsername = null;
         let allLedgerData = [];
-        let filteredLedgerData = [];
         const api = "https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec";
 
+        // Student data mapping
         const studentData = {
             '1050': 'MUHAMMAD SINAN PC',
             '1070': 'MUHAMMED MUSAMMIL B K',
@@ -874,35 +646,7 @@
             '1014': 'MURSHID MK'
         };
 
-        // Theme management
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            updateThemeToggle(savedTheme);
-        }
-
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeToggle(newTheme);
-        }
-
-        function updateThemeToggle(theme) {
-            const themeIcon = document.getElementById('themeIcon');
-            const themeText = document.getElementById('themeText');
-            
-            if (theme === 'dark') {
-                themeIcon.textContent = '☀️';
-                themeText.textContent = 'Light Mode';
-            } else {
-                themeIcon.textContent = '🌙';
-                themeText.textContent = 'Dark Mode';
-            }
-        }
-
+        // Get URL parameters
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
             const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -910,18 +654,21 @@
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
+        // Initialize dashboard
         function initDashboard() {
             currentUsername = getUrlParameter('user');
+            
             console.log('Current username from URL:', currentUsername);
-
+            
             if (!currentUsername) {
                 showError('No user specified in URL. Please access this page through the login system.');
                 return;
             }
 
+            // Set student name from mapping
             const studentName = studentData[currentUsername];
             console.log('Student name found:', studentName);
-
+            
             if (studentName) {
                 document.getElementById('studentName').textContent = studentName;
                 document.getElementById('profileIcon').textContent = studentName.charAt(0);
@@ -931,512 +678,171 @@
                 console.warn('Student name not found in mapping for ID:', currentUsername);
             }
 
+            // Load data
             loadLedgerData();
         }
 
+        // Load ledger data from API
         async function loadLedgerData() {
-            // Reset data arrays
-            allLedgerData = [];
-            filteredLedgerData = [];
-            
-            const actions = ['getLedger', 'ledger', 'getTransactions', 'transactions', 'getData', 'get'];
-            let lastError = null;
+            try {
+                document.getElementById('ledgerStatus').innerHTML = '📊 Loading transaction history...';
+                document.getElementById('ledgerTable').style.display = 'none';
 
-            for (let action of actions) {
-                try {
-                    document.getElementById('ledgerStatus').innerHTML = `
-                        <div class="loading-spinner"></div>
-                        Loading data with method: ${action}...
-                    `;
-                    document.getElementById('ledgerTable').style.display = 'none';
-                    
-                    const url = `${api}?action=${action}&username=${encodeURIComponent(currentUsername)}`;
-                    console.log('API Request URL:', url);
-
-                    const response = await fetch(url, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        cache: 'no-cache'
-                    });
-
-                    console.log(`Response status for ${action}:`, response.status, response.statusText);
-
-                    if (!response.ok) {
-                        lastError = `HTTP ${response.status}: ${response.statusText}`;
-                        console.warn(`Failed with ${action}:`, lastError);
-                        continue;
-                    }
-
-                    let data;
-                    const contentType = response.headers.get('content-type');
-                    
-                    if (contentType && contentType.includes('application/json')) {
-                        data = await response.json();
-                    } else {
-                        const textData = await response.text();
-                        console.log('Raw response:', textData);
-                        try {
-                            data = JSON.parse(textData);
-                        } catch (e) {
-                            console.error('Failed to parse response as JSON:', e);
-                            lastError = 'Invalid JSON response from server';
-                            continue;
-                        }
-                    }
-
-                    console.log(`Parsed data for ${action}:`, data);
-
-                    // Handle various response formats
-                    let ledgerArray = null;
-                    
-                    if (data.success === true || data.status === 'success') {
-                        ledgerArray = data.data || data.ledger || data.records || data.transactions || [];
-                    } else if (Array.isArray(data)) {
-                        ledgerArray = data;
-                    } else if (data.ledger && Array.isArray(data.ledger)) {
-                        ledgerArray = data.ledger;
-                    } else if (data.data && Array.isArray(data.data)) {
-                        ledgerArray = data.data;
-                    } else if (data.transactions && Array.isArray(data.transactions)) {
-                        ledgerArray = data.transactions;
-                    }
-
-                    if (ledgerArray && Array.isArray(ledgerArray)) {
-                        console.log('Valid ledger data found:', ledgerArray.length, 'records');
-                        
-                        // Validate and clean data
-                        allLedgerData = ledgerArray.filter(entry => {
-                            return entry && typeof entry === 'object' && 
-                                   (entry.amount !== undefined && entry.amount !== null && entry.amount !== '');
-                        }).map(entry => {
-                            // Normalize data structure
-                            return {
-                                date: entry.date || entry.timestamp || new Date().toISOString(),
-                                type: (entry.type || '').toLowerCase(),
-                                description: entry.description || entry.details || entry.memo || 'No description',
-                                amount: parseFloat(entry.amount) || 0
-                            };
-                        });
-
-                        console.log('Cleaned ledger data:', allLedgerData.length, 'valid records');
-                        
-                        if (allLedgerData.length > 0) {
-                            filteredLedgerData = [...allLedgerData];
-                            updateFinancialSummary();
-                            displayLedgerData();
-                            showSuccess(`Successfully loaded ${allLedgerData.length} transactions using method: ${action}`);
-                            return;
-                        }
-                    }
-
-                    if (data.error && !data.error.toLowerCase().includes('unknown action')) {
-                        lastError = data.error;
-                        throw new Error(data.error);
-                    }
-
-                } catch (error) {
-                    console.error(`Error with action ${action}:`, error);
-                    lastError = error.message;
+                console.log('Making API call to:', `${api}?action=getLedger&username=${currentUsername}`);
+                
+                const response = await fetch(`${api}?action=getLedger&username=${currentUsername}`);
+                
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                
+                const data = await response.json();
+                console.log('API Response:', data);
+                
+                // Handle different possible response formats
+                if (data.status === 'success' || data.success) {
+                    allLedgerData = data.data || data.ledger || data.records || [];
+                    console.log('Ledger data:', allLedgerData);
+                    updateFinancialSummary();
+                    displayLedgerData();
+                } else if (Array.isArray(data)) {
+                    // If API returns array directly
+                    allLedgerData = data;
+                    console.log('Direct array data:', allLedgerData);
+                    updateFinancialSummary();
+                    displayLedgerData();
+                } else {
+                    throw new Error(data.message || data.error || 'Failed to load data - unexpected response format');
+                }
+                
+            } catch (error) {
+                console.error('Error loading ledger data:', error);
+                showError(`Error loading data: ${error.message}`);
+                
+                // Show debug info in the UI
+                document.getElementById('ledgerStatus').innerHTML = `
+                    <div class="error">
+                        ❌ Error loading data: ${error.message}<br>
+                        <small>Check browser console for more details</small><br>
+                        <small>API URL: ${api}?action=getLedger&username=${currentUsername}</small>
+                    </div>
+                `;
             }
-
-            console.error('All API methods failed. Last error:', lastError);
-            showWarning(`Unable to load data from server. ${lastError || 'Unknown error'}. Click "Load Test Data" to see a demo.`);
         }
 
+        // Update financial summary
         function updateFinancialSummary() {
             let totalCredit = 0;
             let totalDebit = 0;
 
-            if (!Array.isArray(filteredLedgerData)) {
-                console.warn('filteredLedgerData is not an array:', filteredLedgerData);
-                filteredLedgerData = [];
-            }
-
-            filteredLedgerData.forEach((entry, index) => {
-                const amount = parseFloat(entry.amount);
-                if (isNaN(amount)) {
-                    console.warn(`Invalid amount at index ${index}:`, entry.amount);
-                    return;
-                }
-
-                if (entry.type === 'credit') {
+            allLedgerData.forEach(entry => {
+                const amount = parseFloat(entry.amount) || 0;
+                if (entry.type.toLowerCase() === 'credit') {
                     totalCredit += amount;
-                } else if (entry.type === 'debit') {
+                } else if (entry.type.toLowerCase() === 'debit') {
                     totalDebit += amount;
-                } else {
-                    console.warn(`Unknown transaction type at index ${index}:`, entry.type);
                 }
             });
 
             const balance = totalCredit - totalDebit;
 
-            // Update display elements with error handling
-            const elements = {
-                totalCredit: document.getElementById('totalCredit'),
-                totalDebit: document.getElementById('totalDebit'),
-                balanceAmount: document.getElementById('balanceAmount'),
-                transactionCount: document.getElementById('transactionCount'),
-                balanceCard: document.getElementById('balanceCard'),
-                balanceAmountElement: document.getElementById('balanceAmountElement')
-            };
-
-            // Check if elements exist before updating
-            if (elements.totalCredit) elements.totalCredit.textContent = `₹${totalCredit.toFixed(2)}`;
-            if (elements.totalDebit) elements.totalDebit.textContent = `₹${totalDebit.toFixed(2)}`;
-            if (elements.balanceAmount) elements.balanceAmount.textContent = balance.toFixed(2);
-            if (elements.transactionCount) elements.transactionCount.textContent = filteredLedgerData.length.toString();
+            // Update display
+            document.getElementById('totalCredit').textContent = `₹${totalCredit.toFixed(2)}`;
+            document.getElementById('totalDebit').textContent = `₹${totalDebit.toFixed(2)}`;
+            document.getElementById('balanceAmount').textContent = balance.toFixed(2);
 
             // Update balance styling
-            if (elements.balanceCard && elements.balanceAmountElement) {
-                if (balance >= 0) {
-                    elements.balanceCard.className = 'stat-item balance positive';
-                    elements.balanceAmountElement.className = 'stat-number balance positive';
-                } else {
-                    elements.balanceCard.className = 'stat-item balance negative';
-                    elements.balanceAmountElement.className = 'stat-number balance negative';
-                }
+            const balanceCard = document.getElementById('balanceCard');
+            const balanceElement = document.getElementById('balanceAmountElement');
+            
+            if (balance >= 0) {
+                balanceCard.className = 'stat-item balance positive';
+                balanceElement.className = 'stat-number balance positive';
+            } else {
+                balanceCard.className = 'stat-item balance negative';
+                balanceElement.className = 'stat-number balance negative';
             }
-
-            console.log(`Financial summary updated: Credit: ₹${totalCredit.toFixed(2)}, Debit: ₹${totalDebit.toFixed(2)}, Balance: ₹${balance.toFixed(2)}`);
         }
 
+        // Display ledger data in table
         function displayLedgerData() {
             const tbody = document.getElementById('ledgerBody');
             const statusDiv = document.getElementById('ledgerStatus');
             const table = document.getElementById('ledgerTable');
 
-            if (!tbody || !statusDiv || !table) {
-                console.error('Required DOM elements not found');
-                return;
-            }
-
-            if (!Array.isArray(filteredLedgerData) || filteredLedgerData.length === 0) {
-                statusDiv.innerHTML = '<div class="status-message">No transaction records found with current filters.</div>';
+            if (allLedgerData.length === 0) {
+                statusDiv.textContent = 'No transaction records found.';
                 table.style.display = 'none';
                 return;
             }
 
             // Sort by date (newest first)
-            const sortedData = [...filteredLedgerData].sort((a, b) => {
-                const dateA = new Date(a.date);
-                const dateB = new Date(b.date);
-                return dateB - dateA;
-            });
-
-            // Calculate running balance
-            let runningBalance = 0;
-            const balanceCalculation = [...sortedData].reverse();
-            
-            balanceCalculation.forEach(entry => {
-                const amount = parseFloat(entry.amount) || 0;
-                if (entry.type === 'credit') {
-                    runningBalance += amount;
-                } else if (entry.type === 'debit') {
-                    runningBalance -= amount;
-                }
-                entry.runningBalance = runningBalance;
-            });
+            const sortedData = [...allLedgerData].sort((a, b) => new Date(b.date) - new Date(a.date));
 
             tbody.innerHTML = '';
-
-            sortedData.forEach((entry, index) => {
-                try {
-                    const row = tbody.insertRow();
-                    const isCredit = entry.type === 'credit';
-                    row.className = isCredit ? 'credit-row' : 'debit-row';
-
-                    const date = new Date(entry.date);
-                    const formattedDate = isNaN(date.getTime()) ? 'Invalid Date' : 
-                        date.toLocaleDateString('en-IN', { 
-                            year: 'numeric', 
-                            month: 'short', 
-                            day: 'numeric' 
-                        });
-
-                    const amount = parseFloat(entry.amount) || 0;
-                    const balance = entry.runningBalance || 0;
-
-                    row.innerHTML = `
-                        <td>${formattedDate}</td>
-                        <td class="${isCredit ? 'text-success' : 'text-danger'}">${entry.type.toUpperCase()}</td>
-                        <td title="${entry.description}">${entry.description.length > 50 ? entry.description.substring(0, 50) + '...' : entry.description}</td>
-                        <td class="amount-display ${isCredit ? 'text-success' : 'text-danger'}">₹${amount.toFixed(2)}</td>
-                        <td class="amount-display ${balance >= 0 ? 'text-success' : 'text-danger'}">₹${balance.toFixed(2)}</td>
-                    `;
-                } catch (error) {
-                    console.error(`Error creating row ${index}:`, error, entry);
-                }
+            
+            sortedData.forEach(entry => {
+                const row = tbody.insertRow();
+                const isCredit = entry.type.toLowerCase() === 'credit';
+                
+                row.className = isCredit ? 'credit-row' : 'debit-row';
+                
+                // Format date
+                const date = new Date(entry.date);
+                const formattedDate = date.toLocaleDateString('en-IN');
+                
+                row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td class="${isCredit ? 'text-success' : 'text-danger'}">${entry.type.toUpperCase()}</td>
+                    <td>${entry.description || 'No description'}</td>
+                    <td class="amount-display ${isCredit ? 'text-success' : 'text-danger'}">₹${parseFloat(entry.amount || 0).toFixed(2)}</td>
+                `;
             });
 
             statusDiv.style.display = 'none';
             table.style.display = 'table';
-            console.log(`Displayed ${sortedData.length} transactions in table`);
         }
 
-        function applyFilters() {
-            if (!Array.isArray(allLedgerData)) {
-                console.warn('allLedgerData is not available for filtering');
-                return;
-            }
-
-            const typeFilter = document.getElementById('typeFilter')?.value || '';
-            const dateFromFilter = document.getElementById('dateFromFilter')?.value || '';
-            const dateToFilter = document.getElementById('dateToFilter')?.value || '';
-            const amountFilter = parseFloat(document.getElementById('amountFilter')?.value) || 0;
-
-            filteredLedgerData = allLedgerData.filter(entry => {
-                // Type filter
-                if (typeFilter && entry.type !== typeFilter) {
-                    return false;
-                }
-
-                // Date filters
-                const entryDate = new Date(entry.date);
-                if (dateFromFilter && entryDate < new Date(dateFromFilter)) {
-                    return false;
-                }
-                if (dateToFilter && entryDate > new Date(dateToFilter + 'T23:59:59')) {
-                    return false;
-                }
-
-                // Amount filter
-                const amount = parseFloat(entry.amount) || 0;
-                if (amount < amountFilter) {
-                    return false;
-                }
-
-                return true;
-            });
-
-            console.log(`Applied filters: ${filteredLedgerData.length} of ${allLedgerData.length} records match`);
-            updateFinancialSummary();
-            displayLedgerData();
-        }
-
-        function clearFilters() {
-            const filterElements = ['typeFilter', 'dateFromFilter', 'dateToFilter', 'amountFilter'];
-            filterElements.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) element.value = '';
-            });
-
-            filteredLedgerData = [...allLedgerData];
-            updateFinancialSummary();
-            displayLedgerData();
-            showSuccess('Filters cleared successfully!');
-        }
-
-        function loadTestData() {
-            console.log('Loading test data...');
-            allLedgerData = [
-                { date: '2024-02-15', type: 'credit', description: 'Tuition fee payment received', amount: 15000 },
-                { date: '2024-02-10', type: 'debit', description: 'Library fine for overdue books', amount: 100 },
-                { date: '2024-02-05', type: 'credit', description: 'Merit scholarship awarded', amount: 5000 },
-                { date: '2024-02-01', type: 'debit', description: 'Exam registration fee', amount: 750 },
-                { date: '2024-01-28', type: 'credit', description: 'Hostel security deposit refund', amount: 3000 },
-                { date: '2024-01-25', type: 'debit', description: 'Laboratory equipment damage', amount: 500 },
-                { date: '2024-01-20', type: 'credit', description: 'Part-time job salary', amount: 8000 },
-                { date: '2024-01-15', type: 'debit', description: 'Student ID card replacement', amount: 50 },
-                { date: '2024-01-10', type: 'credit', description: 'Government scholarship', amount: 12000 },
-                { date: '2024-01-05', type: 'debit', description: 'Course materials purchase', amount: 1200 }
-            ];
-
-            filteredLedgerData = [...allLedgerData];
-            updateFinancialSummary();
-            displayLedgerData();
-            showSuccess('Test data loaded successfully!');
-        }
-
-        function clearData() {
-            if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
-                allLedgerData = [];
-                filteredLedgerData = [];
-                updateFinancialSummary();
-                document.getElementById('ledgerTable').style.display = 'none';
-                document.getElementById('ledgerStatus').innerHTML = '<div class="status-message">No data available. Click "Refresh Data" or "Load Test Data".</div>';
-                showSuccess('Data cleared successfully!');
-            }
-        }
-
-        function exportData() {
-            if (!Array.isArray(filteredLedgerData) || filteredLedgerData.length === 0) {
-                showError('No data available to export.');
-                return;
-            }
-
-            try {
-                const csvContent = [
-                    ['Date', 'Type', 'Description', 'Amount'],
-                    ...filteredLedgerData.map(entry => [
-                        entry.date || '',
-                        entry.type || '',
-                        (entry.description || '').replace(/"/g, '""'),
-                        entry.amount || 0
-                    ])
-                ].map(row => row.map(field => `"${field}"`).join(',')).join('\n');
-
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                const url = URL.createObjectURL(blob);
-
-                link.setAttribute('href', url);
-                link.setAttribute('download', `financial_data_${currentUsername}_${new Date().toISOString().split('T')[0]}.csv`);
-                link.style.visibility = 'hidden';
-
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-
-                showSuccess('Data exported successfully!');
-            } catch (error) {
-                console.error('Export failed:', error);
-                showError('Failed to export data: ' + error.message);
-            }
-        }
-
+        // Refresh data
         function refreshData() {
-            allLedgerData = [];
-            filteredLedgerData = [];
-            updateFinancialSummary();
-            document.getElementById('ledgerTable').style.display = 'none';
-            document.getElementById('ledgerStatus').innerHTML = `
-                <div class="loading-spinner"></div>
-                Refreshing data...
-            `;
-            clearFilters();
             loadLedgerData();
         }
 
+        // Logout function
         function logout() {
-            if (confirm('Are you sure you want to check another student? This will redirect you to the home page.')) {
-                window.location.href = 'index.html';
-            }
+            window.location.href = 'index.html';
         }
 
+        // Show error message
         function showError(message) {
             const statusDiv = document.getElementById('ledgerStatus');
-            if (statusDiv) {
-                statusDiv.innerHTML = `<div class="error">${message}</div>`;
-            }
+            statusDiv.innerHTML = `<div class="error">❌ ${message}</div>`;
             document.getElementById('ledgerTable').style.display = 'none';
-            console.error('Dashboard Error:', message);
         }
 
-        function showSuccess(message) {
-            const statusDiv = document.getElementById('ledgerStatus');
-            if (statusDiv) {
-                statusDiv.innerHTML = `<div class="success">${message}</div>`;
-                setTimeout(() => {
-                    if (filteredLedgerData && filteredLedgerData.length > 0) {
-                        statusDiv.style.display = 'none';
-                        document.getElementById('ledgerTable').style.display = 'table';
-                    }
-                }, 2000);
-            }
-            console.log('Dashboard Success:', message);
-        }
-
-        function showWarning(message) {
-            const statusDiv = document.getElementById('ledgerStatus');
-            if (statusDiv) {
-                statusDiv.innerHTML = `<div class="warning">${message}</div>`;
-            }
-            document.getElementById('ledgerTable').style.display = 'none';
-            console.warn('Dashboard Warning:', message);
-        }
-
+        // Add a test function to check API connectivity
         async function testAPI() {
             try {
                 console.log('Testing API connectivity...');
-                showSuccess('Testing API connection...');
-                
-                const response = await fetch(api + '?test=1', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                console.log('API test response status:', response.status, response.statusText);
-                
+                const response = await fetch(api);
+                console.log('API test response:', response);
                 const data = await response.text();
-                console.log('API test response data:', data);
-                
-                showSuccess(`API connection test completed. Status: ${response.status}. Check console for details.`);
+                console.log('API test data:', data);
             } catch (error) {
                 console.error('API test failed:', error);
-                showError(`API test failed: ${error.message}`);
             }
         }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function (e) {
-            if (e.ctrlKey || e.metaKey) {
-                switch (e.key) {
-                    case 'r':
-                        e.preventDefault();
-                        refreshData();
-                        break;
-                    case 'e':
-                        e.preventDefault();
-                        exportData();
-                        break;
-                    case 't':
-                        e.preventDefault();
-                        loadTestData();
-                        break;
-                    case 'd':
-                        e.preventDefault();
-                        toggleTheme();
-                        break;
-                }
-            }
-        });
-
         // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, initializing dashboard...');
-            
-            // Initialize theme first
-            initTheme();
-            
-            // Initialize dashboard
             initDashboard();
-
-            // Add tooltips
-            const tooltips = {
-                'totalCredit': 'Total amount of money received',
-                'totalDebit': 'Total amount of money spent or deducted',
-                'balanceAmount': 'Current account balance (Credit - Debit)',
-                'transactionCount': 'Total number of transactions'
-            };
-
-            Object.keys(tooltips).forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.title = tooltips[id];
-                }
-            });
-        });
-
-        // Handle page visibility change
-        document.addEventListener('visibilitychange', function () {
-            if (!document.hidden && allLedgerData && allLedgerData.length > 0) {
-                const now = Date.now();
-                const lastRefreshKey = 'lastRefresh_' + currentUsername;
-                const lastRefresh = localStorage.getItem(lastRefreshKey);
-
-                if (!lastRefresh || (now - parseInt(lastRefresh)) > 2 * 60 * 1000) {
-                    refreshData();
-                    localStorage.setItem(lastRefreshKey, now.toString());
-                }
-            }
+            
+            // Also test API on load
+            testAPI();
         });
     </script>
 </body>
