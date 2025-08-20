@@ -604,9 +604,8 @@
         <a class="active" onclick="showSection('home', event)">🏠 Home</a>
         <a onclick="showSection('credit', event)">💰 Credit Total</a>
         <a onclick="showSection('debit', event)">💸 Debit Total</a>
-        <a href="recent.html">💳 recent</a>
+        <a href="recent.html">💳 Recent</a>
         <a href="dashboard.html">💳 Money</a>
-
         <a href="help.html">❓ Help</a>
       </div>
     </div>
@@ -706,6 +705,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
+    // Global variables to store API URLs
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec';
+
     // Mobile sidebar toggle functions
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
@@ -730,13 +732,18 @@
     function showSection(id, event) {
       // Remove active from all links
       document.querySelectorAll('.menu a').forEach(el => el.classList.remove('active'));
-      event.target.classList.add('active');
+      if (event && event.target) {
+        event.target.classList.add('active');
+      }
 
       // Hide all sections
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
 
       // Show selected section
-      document.getElementById(id).classList.add('active');
+      const section = document.getElementById(id);
+      if (section) {
+        section.classList.add('active');
+      }
 
       // Close sidebar on mobile after selection
       if (window.innerWidth <= 768) {
@@ -759,14 +766,13 @@
       console.log('Fetching total data for all users');
 
       // Use action=get_all_totals to get combined data for all users
-      const apiUrl = `https://script.google.com/macros/s/AKfycbzNcEpYTCZNlvZ3XfrFD-0sp5c4kIDLFsVdu6_Qyqvkz0KpGp0osTtwSCbj2iYrXx53/exec?action=get_all_totals`;
-      const apiUrl = `https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec?action=get_all_totals`;
+      const apiUrl = `${API_URL}?action=get_all_totals`;
 
       fetch(apiUrl)
         .then(res => {
           console.log('Response status:', res.status);
           if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`);
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
           }
           return res.json();
         })
@@ -777,14 +783,14 @@
             throw new Error(data.error);
           }
 
-          const totalCredit = data.totalCredit || 0;
-          const totalDebit = data.totalDebit || 0;
+          const totalCredit = parseFloat(data.totalCredit) || 0;
+          const totalDebit = parseFloat(data.totalDebit) || 0;
           const balance = totalCredit - totalDebit;
 
           // Update the display
-          document.getElementById("creditAmount").textContent = totalCredit.toFixed(2);
-          document.getElementById("debitAmount").textContent = totalDebit.toFixed(2);
-          document.getElementById("balanceAmount").textContent = balance.toFixed(2);
+          document.getElementById("creditAmount").textContent = totalCredit.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          document.getElementById("debitAmount").textContent = totalDebit.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          document.getElementById("balanceAmount").textContent = balance.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
           // Update balance box styling based on positive/negative
           const balanceBox = document.querySelector('.box.balance');
@@ -797,6 +803,8 @@
               balanceBox.classList.add('negative');
             }
           }
+
+          console.log('Data loaded successfully:', { totalCredit, totalDebit, balance });
         })
         .catch(err => {
           console.error("Error fetching total data:", err);
@@ -809,74 +817,19 @@
         });
     }
 
-    function loadUserData() {
-      const username = document.getElementById('usernameInput').value.trim();
-
-      if (!username) {
-        alert('Please enter a username');
-        return;
-      }
-
-      hideError('');
-
-      // Show loading state
-      document.getElementById("creditAmount").textContent = "...";
-      document.getElementById("debitAmount").textContent = "...";
-      document.getElementById("balanceAmount").textContent = "...";
-
-      // Show current user
-      document.getElementById('currentUsername').textContent = username;
-      document.getElementById('currentUserInfo').style.display = 'block';
-
-      console.log('Fetching data for username:', username);
-
-      const apiUrl = `https://script.google.com/macros/s/AKfycbzNcEpYTCZNlvZ3XfrFD-0sp5c4kIDLFsVdu6_Qyqvkz0KpGp0osTtwSCbj2iYrXx53/exec?action=get_summary&username=${encodeURIComponent(username)}`;
-      const apiUrl = `https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec/exec?action=get_summary&username=${encodeURIComponent(username)}`;
-
-      fetch(apiUrl)
-        .then(res => {
-          console.log('Response status:', res.status);
-          if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`);
-          }
-          return res.json();
-        })
-        .then(data => {
-          console.log('API Response:', data);
-
-          if (data.error) {
-            throw new Error(data.error);
-          }
-
-          const totalCredit = data.totalCredit || 0;
-          const totalDebit = data.totalDebit || 0;
-          const balance = totalCredit - totalDebit;
-
-          // Update the display
-          document.getElementById("creditAmount").textContent = totalCredit.toFixed(2);
-          document.getElementById("debitAmount").textContent = totalDebit.toFixed(2);
-          document.getElementById("balanceAmount").textContent = balance.toFixed(2);
-        })
-        .catch(err => {
-          console.error("Error fetching summary:", err);
-          showError(`Failed to load data: ${err.message}`, '');
-
-          // Reset display
-          document.getElementById("creditAmount").textContent = "Error";
-          document.getElementById("debitAmount").textContent = "Error";
-          document.getElementById("balanceAmount").textContent = "Error";
-        });
-    }
-
     function showError(message, type) {
       const errorDiv = document.getElementById(`${type}errorMessage`) || document.getElementById('errorMessage');
-      errorDiv.innerHTML = `<div class="error">❌ ${message}</div>`;
-      errorDiv.style.display = 'block';
+      if (errorDiv) {
+        errorDiv.innerHTML = `<div class="error">❌ ${message}</div>`;
+        errorDiv.style.display = 'block';
+      }
     }
 
     function hideError(type) {
       const errorDiv = document.getElementById(`${type}errorMessage`) || document.getElementById('errorMessage');
-      errorDiv.style.display = 'none';
+      if (errorDiv) {
+        errorDiv.style.display = 'none';
+      }
     }
 
     function loadCreditData() {
@@ -890,7 +843,7 @@
       hideError('credit');
 
       // Show loading state
-      document.getElementById("creditTotalAmount").textContent = "...";
+      document.getElementById("creditTotalAmount").textContent = "Loading...";
 
       // Show current user
       document.getElementById('creditUsername').textContent = username;
@@ -898,14 +851,13 @@
 
       console.log('Fetching credit data for username:', username);
 
-      const apiUrl = `https://script.google.com/macros/s/AKfycbzNcEpYTCZNlvZ3XfrFD-0sp5c4kIDLFsVdu6_Qyqvkz0KpGp0osTtwSCbj2iYrXx53/exec?action=get_summary&username=${encodeURIComponent(username)}`;
-      const apiUrl = `https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec/exec?action=get_summary&username=${encodeURIComponent(username)}`;
+      const apiUrl = `${API_URL}?action=get_summary&username=${encodeURIComponent(username)}`;
 
       fetch(apiUrl)
         .then(res => {
           console.log('Response status:', res.status);
           if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`);
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
           }
           return res.json();
         })
@@ -917,7 +869,8 @@
           }
 
           // Update the credit display
-          document.getElementById("creditTotalAmount").textContent = (data.totalCredit || 0).toFixed(2);
+          const creditAmount = parseFloat(data.totalCredit) || 0;
+          document.getElementById("creditTotalAmount").textContent = creditAmount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         })
         .catch(err => {
           console.error("Error fetching credit data:", err);
@@ -925,6 +878,55 @@
 
           // Reset display
           document.getElementById("creditTotalAmount").textContent = "Error";
+        });
+    }
+
+    function loadDebitData() {
+      const username = document.getElementById('debitUsernameInput').value.trim();
+
+      if (!username) {
+        alert('Please enter a username');
+        return;
+      }
+
+      hideError('debit');
+
+      // Show loading state
+      document.getElementById("debitTotalAmount").textContent = "Loading...";
+
+      // Show current user
+      document.getElementById('debitUsername').textContent = username;
+      document.getElementById('debitUserInfo').style.display = 'block';
+
+      console.log('Fetching debit data for username:', username);
+
+      const apiUrl = `${API_URL}?action=get_summary&username=${encodeURIComponent(username)}`;
+
+      fetch(apiUrl)
+        .then(res => {
+          console.log('Response status:', res.status);
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          console.log('API Response:', data);
+
+          if (data.error) {
+            throw new Error(data.error);
+          }
+
+          // Update the debit display
+          const debitAmount = parseFloat(data.totalDebit) || 0;
+          document.getElementById("debitTotalAmount").textContent = debitAmount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        })
+        .catch(err => {
+          console.error("Error fetching debit data:", err);
+          showError(`Failed to load debit data: ${err.message}`, 'debit');
+
+          // Reset display
+          document.getElementById("debitTotalAmount").textContent = "Error";
         });
     }
 
@@ -968,7 +970,7 @@
         doc.text(`Overall Balance: ₹${balanceAmount}`, 30, 110);
 
         // Balance status
-        const balance = parseFloat(balanceAmount.replace(',', ''));
+        const balance = parseFloat(balanceAmount.replace(/,/g, ''));
         doc.setFontSize(12);
         if (balance >= 0) {
           doc.setTextColor(0, 128, 0);
@@ -997,7 +999,7 @@
         const username = document.getElementById('creditUsername').textContent.trim();
         const amount = document.getElementById('creditTotalAmount').textContent.trim();
 
-        if (!username || amount === "0.00" || amount === "Error" || amount === "...") {
+        if (!username || amount === "0.00" || amount === "Error" || amount === "Loading...") {
           alert("Please load valid credit data before exporting.");
           return;
         }
@@ -1053,7 +1055,7 @@
         const username = document.getElementById('debitUsername').textContent.trim();
         const amount = document.getElementById('debitTotalAmount').textContent.trim();
 
-        if (!username || amount === "0.00" || amount === "Error" || amount === "...") {
+        if (!username || amount === "0.00" || amount === "Error" || amount === "Loading...") {
           alert("Please load valid debit data before exporting.");
           return;
         }
@@ -1104,94 +1106,41 @@
       }
     }
 
-    function loadDebitData() {
-      const username = document.getElementById('debitUsernameInput').value.trim();
-
-      if (!username) {
-        alert('Please enter a username');
-        return;
+    // Handle Enter key in username inputs
+    document.addEventListener('DOMContentLoaded', function() {
+      // Handle Enter key in credit username input
+      const creditUsernameInput = document.getElementById('creditUsernameInput');
+      if (creditUsernameInput) {
+        creditUsernameInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            loadCreditData();
+          }
+        });
       }
 
-      hideError('debit');
-
-      // Show loading state
-      document.getElementById("debitTotalAmount").textContent = "...";
-
-      // Show current user
-      document.getElementById('debitUsername').textContent = username;
-      document.getElementById('debitUserInfo').style.display = 'block';
-
-      console.log('Fetching debit data for username:', username);
-
-      const apiUrl = `https://script.google.com/macros/s/AKfycbzNcEpYTCZNlvZ3XfrFD-0sp5c4kIDLFsVdu6_Qyqvkz0KpGp0osTtwSCbj2iYrXx53/exec?action=get_summary&username=${encodeURIComponent(username)}`;
-      const apiUrl = `https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec?action=get_summary&username=${encodeURIComponent(username)}`;
-
-      fetch(apiUrl)
-        .then(res => {
-          console.log('Response status:', res.status);
-          if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`);
+      // Handle Enter key in debit username input
+      const debitUsernameInput = document.getElementById('debitUsernameInput');
+      if (debitUsernameInput) {
+        debitUsernameInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            loadDebitData();
           }
-          return res.json();
-        })
-        .then(data => {
-          console.log('API Response:', data);
-
-          if (data.error) {
-            throw new Error(data.error);
-          }
-
-          // Update the debit display
-          document.getElementById("debitTotalAmount").textContent = (data.totalDebit || 0).toFixed(2);
-        })
-        .catch(err => {
-          console.error("Error fetching debit data:", err);
-          showError(`Failed to load debit data: ${err.message}`, 'debit');
-
-          // Reset display
-          document.getElementById("debitTotalAmount").textContent = "Error";
         });
-    }
+      }
 
-    // Handle Enter key in username input
-    if (document.getElementById('usernameInput')) {
-      document.getElementById('usernameInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          loadUserData();
-        }
-      });
-    }
-
-    // Handle Enter key in credit username input
-    if (document.getElementById('creditUsernameInput')) {
-      document.getElementById('creditUsernameInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          loadCreditData();
-        }
-      });
-    }
-
-    // Handle Enter key in debit username input
-    if (document.getElementById('debitUsernameInput')) {
-      document.getElementById('debitUsernameInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          loadDebitData();
-        }
-      });
-    }
-
-    // Auto-load total data when page loads
-    window.addEventListener('DOMContentLoaded', function() {
-      // Load total data for all users on home page
+      // Auto-load total data when page loads
+      console.log('Page loaded, loading all data...');
       loadAllData();
 
       // Check if username is provided in URL for individual user data
       const urlParams = new URLSearchParams(window.location.search);
       const username = urlParams.get('user');
 
-      if (username && document.getElementById('usernameInput')) {
-        document.getElementById('usernameInput').value = username;
-        loadUserData();
+      if (username) {
+        console.log('Username found in URL:', username);
+        // Set username in inputs if available
+        if (creditUsernameInput) creditUsernameInput.value = username;
+        if (debitUsernameInput) debitUsernameInput.value = username;
       }
     });
 
@@ -1208,6 +1157,25 @@
         closeSidebar();
       }
     });
+
+    // Additional debugging function to test API connection
+    function testAPIConnection() {
+      console.log('Testing API connection...');
+      fetch(API_URL + '?action=test')
+        .then(response => {
+          console.log('Test response status:', response.status);
+          return response.json();
+        })
+        .then(data => {
+          console.log('Test response data:', data);
+        })
+        .catch(error => {
+          console.error('API test failed:', error);
+        });
+    }
+
+    // Call test function on load (can be removed in production)
+    // testAPIConnection();
   </script>
 
 </body>
