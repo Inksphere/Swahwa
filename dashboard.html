@@ -1255,6 +1255,12 @@
                 toggleIcon.textContent = '🌙';
             }
         }
+        // Initialize when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
 
         // Student data mapping
         const studentData = {
@@ -1406,6 +1412,135 @@
                 customInput.style.display = 'block';
                 manageSection.style.display = 'none';
             }
+        }
+
+        // Bulk Entry Functions
+        function addBulkEntries() {
+            if (!currentUsername) {
+                alert("⚠️ Please login first.");
+                return;
+            }
+
+            const bulkTextarea = document.getElementById("bulkEntries");
+            const bulkStatus = document.getElementById("bulkStatus");
+            const entriesText = bulkTextarea.value.trim();
+            
+            if (!entriesText) {
+                alert("⚠️ Please enter at least one entry.");
+                return;
+            }
+
+            // Split into lines and process each line
+            const lines = entriesText.split('\n').filter(line => line.trim() !== '');
+            const results = [];
+            let successCount = 0;
+            let errorCount = 0;
+            
+            // Show processing status
+            bulkStatus.style.display = "block";
+            bulkStatus.className = "loading";
+            bulkStatus.innerHTML = "Processing bulk entries...";
+            
+            // Process each entry
+            const processEntry = (index) => {
+                if (index >= lines.length) {
+                    // All entries processed
+                    bulkStatus.className = "status-message";
+                    bulkStatus.innerHTML = `✅ Bulk entry complete: ${successCount} added successfully, ${errorCount} failed.`;
+                    
+                    // Clear the textarea if all were successful
+                    if (errorCount === 0) {
+                        bulkTextarea.value = "";
+                    }
+                    
+                    // Refresh data
+                    setTimeout(() => {
+                        fetchSummary();
+                        fetchLedger();
+                    }, 500);
+                    
+                    return;
+                }
+                
+                const line = lines[index].trim();
+                const parts = line.split(',').map(part => part.trim());
+                
+                // Validate format
+                if (parts.length !== 3) {
+                    results.push({ line, error: "Invalid format. Expected: type,description,amount" });
+                    errorCount++;
+                    processEntry(index + 1);
+                    return;
+                }
+                
+                const [type, description, amountStr] = parts;
+                
+                // Validate type
+                if (type !== 'credit' && type !== 'debit') {
+                    results.push({ line, error: "Type must be 'credit' or 'debit'" });
+                    errorCount++;
+                    processEntry(index + 1);
+                    return;
+                }
+                
+                // Validate amount
+                const amount = parseFloat(amountStr);
+                if (isNaN(amount) || amount <= 0) {
+                    results.push({ line, error: "Amount must be a positive number" });
+                    errorCount++;
+                    processEntry(index + 1);
+                    return;
+                }
+                
+                // Add the entry
+                const action = type === "credit" ? "add_credit" : "add_debit";
+                const requestUrl = `${api}?action=${encodeURIComponent(action)}&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(description)}&amount=${encodeURIComponent(amount)}`;
+                
+                fetch(requestUrl, { 
+                    method: "GET",
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.result === "success") {
+                        successCount++;
+                        results.push({ line, success: true });
+                    } else {
+                        errorCount++;
+                        results.push({ line, error: data.error || "Unknown error" });
+                    }
+                    
+                    // Process next entry
+                    processEntry(index + 1);
+                })
+                .catch(error => {
+                    errorCount++;
+                    results.push({ line, error: error.message });
+                    processEntry(index + 1);
+                });
+            };
+            
+            // Start processing entries
+            processEntry(0);
+        }
+
+        function clearBulkEntries() {
+            document.getElementById("bulkEntries").value = "";
+            document.getElementById("bulkStatus").style.display = "none";
+        }
+
+        function showBulkExample() {
+            const exampleText = `credit,Pocket Money Received,500
+debit,Books & Supplies,200
+debit,Fine,50
+credit,Monthly Allowance,1000
+debit,Phone & Internet,300
+credit,Account Transfer,1500`;
+            
+            document.getElementById("bulkEntries").value = exampleText;
+            alert("Example loaded! You can modify it before adding.");
         }
 
         // Toggle manage items section
@@ -2446,4 +2581,5 @@
     </script>
 </body>
 </html>
+
 
