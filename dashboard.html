@@ -1,2823 +1,2816 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siteosphia</title>
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Inksphere/Swahwa/main/10149443.png">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        :root {
-            /* Light mode colors */
-            --bg-color: white;
-            --text-color: #333;
-            --card-bg: white;
-            --card-border: #e1e5e9;
-            --card-shadow: rgba(0, 0, 0, 0.1);
-            --input-bg: white;
-            --input-border: #e1e5e9;
-            --input-focus: #667eea;
-            --table-even: #f8f9fa;
-            --table-hover: #e3f2fd;
-            --filter-summary-bg: #e3f2fd;
-            --filter-summary-border: #2196f3;
-            --debug-bg: #f8f9fa;
-            --debug-border: #dee2e6;
-            --debug-text: #495057;
-            --error-bg: #f8d7da;
-            --error-border: #f5c6cb;
-            --error-text: #721c24;
-            --loading-text: #6c757d;
-            --received-bg: #f0f9ff;
-            --stat-bg: #f8f9fa;
-            --stat-border: #e1e5e9;
-            --pagination-info: #666;
-            --auto-add-indicator: #28a745;
-        }
-        [data-theme="dark"] {
-            /* Dark mode colors */
-            --bg-color: #1a1a1a;
-            --text-color: #e0e0e0;
-            --card-bg: #2d2d2d;
-            --card-border: #404040;
-            --card-shadow: rgba(0, 0, 0, 0.3);
-            --input-bg: #404040;
-            --input-border: #555;
-            --input-focus: #667eea;
-            --table-even: #333;
-            --table-hover: #404040;
-            --filter-summary-bg: #1e3a8a;
-            --filter-summary-border: #3b82f6;
-            --debug-bg: #333;
-            --debug-border: #555;
-            --debug-text: #ccc;
-            --error-bg: #4a1e1e;
-            --error-border: #6b2c2c;
-            --error-text: #ff9999;
-            --loading-text: #999;
-            --received-bg: #1e293b;
-            --stat-bg: #333;
-            --stat-border: #555;
-            --pagination-info: #999;
-            --auto-add-indicator: #20c997;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-color);
-            min-height: 100vh;
-            padding: 10px;
-            color: var(--text-color);
-            font-size: 14px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        /* Dark Mode Toggle */
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: var(--card-bg);
-            border: 2px solid var(--card-border);
-            border-radius: 50px;
-            padding: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px var(--card-shadow);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .theme-toggle:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px var(--card-shadow);
-        }
-        .theme-toggle-icon {
-            font-size: 20px;
-            transition: transform 0.3s ease;
-        }
-        .theme-toggle:hover .theme-toggle-icon {
-            transform: rotate(20deg);
-        }
-        .main-title {
-            color: var(--text-color);
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 4px 16px var(--card-shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-            border: 1px solid var(--card-border);
-            margin-bottom: 16px;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px var(--card-shadow);
-        }
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        .card-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 16px;
-        }
-        .card h3 {
-            color: var(--text-color);
-            font-size: 16px;
-            margin: 0;
-        }
-        .card p {
-            color: var(--text-color);
-            opacity: 0.8;
-            line-height: 1.5;
-            margin-bottom: 12px;
-            font-size: 13px;
-        }
-        /* Login Card Styles */
-        .login-card {
-            max-width: 400px;
-            margin: 30px auto;
-            text-align: center;
-        }
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-top: 16px;
-        }
-        .login-form input {
-            padding: 12px 16px;
-            border: 2px solid var(--input-border);
-            border-radius: 8px;
-            font-size: 16px;
-            text-align: center;
-            transition: all 0.3s ease;
-            background: var(--input-bg);
-            color: var(--text-color);
-        }
-        .login-form input:focus {
-            outline: none;
-            border-color: var(--input-focus);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        /* Student Profile Header */
-        .profile-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            color: white;
-            text-align: center;
-        }
-        .profile-photo {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid #ff8a00;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8f9fa;
-            font-size: 2rem;
-            color: #667eea;
-            margin: 0 auto 16px;
-        }
-        .student-name {
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-        }
-        .student-role {
-            font-size: 1rem;
-            opacity: 0.9;
-            font-weight: 500;
-            margin-bottom: 16px;
-        }
-        .profile-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .profile-btn {
-            padding: 10px 16px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            backdrop-filter: blur(10px);
-            font-size: 13px;
-        }
-        .profile-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-1px);
-        }
-        .profile-btn.danger {
-            background: rgba(220, 53, 69, 0.8);
-            border-color: rgba(220, 53, 69, 1);
-        }
-        .profile-btn.danger:hover {
-            background: rgba(220, 53, 69, 1);
-        }
-        /* Statistics Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-            margin-top: 16px;
-        }
-        .stat-item {
-            text-align: center;
-            padding: 16px 8px;
-            background: var(--stat-bg);
-            border-radius: 8px;
-            border: 2px solid var(--stat-border);
-            transition: all 0.3s ease;
-        }
-        .stat-item:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px var(--card-shadow);
-        }
-        .stat-item.credit {
-            border-color: #28a745;
-        }
-        .stat-item.debit {
-            border-color: #dc3545;
-        }
-        .stat-item.balance.positive {
-            border-color: #28a745;
-        }
-        .stat-item.balance.negative {
-            border-color: #dc3545;
-        }
-        .stat-number {
-            font-size: 18px;
-            font-weight: bold;
-            color: #667eea;
-            display: block;
-            margin-bottom: 4px;
-        }
-        .stat-number.credit {
-            color: #28a745;
-        }
-        .stat-number.debit {
-            color: #dc3545;
-        }
-        .stat-number.balance.positive {
-            color: #28a745;
-        }
-        .stat-number.balance.negative {
-            color: #dc3545;
-        }
-        .stat-label {
-            font-size: 10px;
-            color: var(--text-color);
-            opacity: 0.7;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        /* Form Styles */
-        .form-grid {
-            display: grid;
-            gap: 12px;
-        }
-        .item-input-container {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-        .item-selector {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
-        }
-        .item-toggle {
-            padding: 6px 10px;
-            background: linear-gradient(45deg, #6c757d 0%, #5a6268 100%);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 11px;
-            transition: all 0.3s ease;
-            flex: 1;
-            min-width: 70px;
-        }
-        .item-toggle.active {
-            background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
-        }
-        .item-toggle:hover {
-            transform: translateY(-1px);
-        }
-        .new-item-section {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--card-border);
-            display: none;
-        }
-        .new-item-form {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            margin-top: 8px;
-            flex-direction: column;
-        }
-        .predefined-items {
-            max-height: 150px;
-            overflow-y: auto;
-            border: 1px solid var(--card-border);
-            border-radius: 4px;
-            padding: 8px;
-            background: var(--stat-bg);
-            margin-top: 8px;
-        }
-        .predefined-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid var(--card-border);
-            font-size: 12px;
-            color: var(--text-color);
-        }
-        .predefined-item:last-child {
-            border-bottom: none;
-        }
-        /* Auto Add Indicator */
-        .auto-add-indicator {
-            display: none;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 8px;
-            background: var(--auto-add-indicator);
-            color: white;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 8px;
-            animation: pulse 1.5s infinite;
-        }
-        .auto-add-indicator.show {
-            display: flex;
-        }
-        @keyframes pulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
-        }
-        /* Multiple Entry Sets */
-        .entry-sets-container {
-            margin-top: 12px;
-        }
-        .entry-set {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 8px;
-            margin-bottom: 12px;
-            align-items: center;
-            padding: 8px;
-            border-radius: 6px;
-            background: var(--stat-bg);
-            border: 1px solid var(--card-border);
-            transition: all 0.3s ease;
-        }
-        .entry-set:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 6px var(--card-shadow);
-        }
-        .entry-set select,
-        .entry-set input {
-            margin-bottom: 0;
-        }
-        .remove-set-btn {
-            background: linear-gradient(45deg, #dc3545 0%, #e74c3c 100%);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 6px 10px;
-            cursor: pointer;
-            font-size: 11px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .remove-set-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(220, 53, 69, 0.4);
-        }
-        .add-set-btn {
-            background: linear-gradient(45deg, #17a2b8 0%, #138496 100%);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 8px 16px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin-top: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .add-set-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(23, 162, 184, 0.4);
-        }
-        /* Filter Grid */
-        .filter-grid {
-            display: grid;
-            gap: 12px;
-            align-items: end;
-            margin-bottom: 12px;
-        }
-        .filter-summary {
-            background: var(--filter-summary-bg);
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 12px;
-            display: none;
-            color: var(--text-color);
-            border-left: 3px solid var(--filter-summary-border);
-            font-size: 12px;
-        }
-        .filter-summary.show {
-            display: block;
-        }
-        /* Button Styles */
-        .btn {
-            padding: 10px 16px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            justify-content: center;
-        }
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        .btn-success {
-            background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
-            color: white;
-        }
-        .btn-danger {
-            background: linear-gradient(45deg, #dc3545 0%, #e74c3c 100%);
-            color: white;
-        }
-        .btn-warning {
-            background: linear-gradient(45deg, #ff7043 0%, #ff5722 100%);
-            color: white;
-        }
-        .btn-info {
-            background: linear-gradient(45deg, #17a2b8 0%, #138496 100%);
-            color: white;
-        }
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        /* Input Styles */
-        input, select, textarea {
-            padding: 10px 12px;
-            border: 2px solid var(--input-border);
-            border-radius: 6px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            width: 100%;
-            background: var(--input-bg);
-            color: var(--text-color);
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--input-focus);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        /* Table Styles */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 16px;
-            background: var(--card-bg);
-            border-radius: 6px;
-            overflow: hidden;
-            font-size: 12px;
-        }
-        th, td {
-            border: 1px solid var(--card-border);
-            padding: 8px 6px;
-            text-align: left;
-            color: var(--text-color);
-        }
-        th {
-            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 10px;
-            letter-spacing: 0.3px;
-        }
-        tr:nth-child(even) {
-            background-color: var(--table-even);
-        }
-        tr:hover {
-            background-color: var(--table-hover);
-            transition: background-color 0.3s ease;
-        }
-        .credit-row {
-            border-left: 3px solid #28a745;
-        }
-        .debit-row {
-            border-left: 3px solid #dc3545;
-        }
-        .transaction-row.received {
-            opacity: 0.7;
-            background-color: var(--received-bg);
-        }
-        .text-success {
-            color: #28a745 !important;
-            font-weight: bold;
-        }
-        .text-danger {
-            color: #dc3545 !important;
-            font-weight: bold;
-        }
-        .amount-display {
-            font-weight: bold;
-            font-family: 'Courier New', monospace;
-        }
-        /* Received Button */
-        .received-btn {
-            background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .received-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.4);
-        }
-        /* Pagination */
-        .pagination-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            margin-top: 16px;
-            flex-wrap: wrap;
-        }
-        .pagination-btn {
-            padding: 6px 10px;
-            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 11px;
-            transition: all 0.3s ease;
-        }
-        .pagination-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
-        }
-        .pagination-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .pagination-btn.active {
-            background: linear-gradient(45deg, #4caf50 0%, #66bb6a 100%);
-        }
-        .pagination-info {
-            color: var(--pagination-info);
-            font-size: 11px;
-        }
-        /* Utility Classes */
-        .hidden {
-            display: none;
-        }
-        .error {
-            color: var(--error-text);
-            background: var(--error-bg);
-            padding: 12px;
-            border-radius: 6px;
-            margin: 12px 0;
-            text-align: center;
-            font-weight: 500;
-            border: 1px solid var(--error-border);
-            font-size: 13px;
-        }
-        .loading {
-            color: var(--loading-text);
-            font-style: italic;
-            text-align: center;
-            padding: 16px;
-            font-size: 13px;
-        }
-        .status-message {
-            text-align: center;
-            padding: 16px;
-            color: var(--loading-text);
-            font-size: 13px;
-        }
-        .debug-info {
-            background: var(--debug-bg);
-            border: 1px solid var(--debug-border);
-            border-radius: 4px;
-            padding: 8px;
-            margin: 8px 0;
-            font-family: monospace;
-            font-size: 10px;
-            color: var(--debug-text);
-        }
-        .dashboard-content {
-            display: grid;
-            gap: 16px;
-        }
-        .controls-section {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-        
-        /* Bulk Entry Styles */
-        .bulk-entry-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-        
-        .bulk-section {
-            border-radius: 8px;
-            overflow: hidden;
-            border: 2px solid var(--card-border);
-            transition: all 0.3s ease;
-        }
-        
-        .bulk-section:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px var(--card-shadow);
-        }
-        
-        .credit-section {
-            border-color: rgba(40, 167, 69, 0.3);
-            background: linear-gradient(to bottom, rgba(40, 167, 69, 0.05), transparent);
-        }
-        
-        .debit-section {
-            border-color: rgba(220, 53, 69, 0.3);
-            background: linear-gradient(to bottom, rgba(220, 53, 69, 0.05), transparent);
-        }
-        
-        .bulk-section-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px;
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--card-border);
-        }
-        
-        .bulk-section-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-        
-        .credit-section .bulk-section-icon {
-            background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
-            color: white;
-        }
-        
-        .debit-section .bulk-section-icon {
-            background: linear-gradient(45deg, #dc3545 0%, #e74c3c 100%);
-            color: white;
-        }
-        
-        .bulk-section-header h4 {
-            margin: 0;
-            color: var(--text-color);
-            font-size: 16px;
-            font-weight: 600;
-        }
-        
-        .bulk-section-content {
-            padding: 12px;
-        }
-        
-        .bulk-section textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--input-border);
-            border-radius: 6px;
-            background: var(--input-bg);
-            color: var(--text-color);
-            font-family: inherit;
-            resize: vertical;
-            min-height: 100px;
-            margin-bottom: 12px;
-            transition: all 0.3s ease;
-        }
-        
-        .bulk-section textarea:focus {
-            outline: none;
-            border-color: var(--input-focus);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        .bulk-section-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        
-        .bulk-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 16px;
-            flex-wrap: wrap;
-        }
-        
-        /* Mobile Optimizations */
-        @media (max-width: 768px) {
-            .theme-toggle {
-                top: 15px;
-                right: 15px;
-                padding: 6px;
-                font-size: 10px;
-                gap: 4px;
-            }
-            .theme-toggle-icon {
-                font-size: 16px;
-            }
-            body {
-                padding: 8px;
-                font-size: 13px;
-            }
-            .main-title {
-                font-size: 1.5rem;
-                margin-bottom: 16px;
-            }
-            .card {
-                padding: 12px;
-                margin-bottom: 12px;
-                border-radius: 8px;
-            }
-            .card-header {
-                gap: 10px;
-                margin-bottom: 12px;
-            }
-            .card-icon {
-                width: 28px;
-                height: 28px;
-                font-size: 14px;
-            }
-            .card h3 {
-                font-size: 14px;
-            }
-            .card p {
-                font-size: 12px;
-                margin-bottom: 10px;
-            }
-            .login-card {
-                margin: 20px auto;
-                padding: 16px;
-            }
-            .profile-header {
-                padding: 16px;
-                margin-bottom: 16px;
-            }
-            .profile-photo {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
-                margin-bottom: 12px;
-            }
-            .student-name {
-                font-size: 1.2rem;
-                margin-bottom: 6px;
-            }
-            .student-role {
-                font-size: 0.9rem;
-                margin-bottom: 12px;
-            }
-            .profile-actions {
-                flex-direction: column;
-                gap: 8px;
-            }
-            .profile-btn {
-                width: 100%;
-                justify-content: center;
-                padding: 12px;
-                font-size: 12px;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-            .stat-item {
-                padding: 12px 8px;
-            }
-            .stat-number {
-                font-size: 16px;
-            }
-            .stat-label {
-                font-size: 9px;
-            }
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            .item-selector {
-                flex-direction: column;
-                gap: 6px;
-            }
-            .item-toggle {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-            .new-item-form {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .new-item-form input,
-            .new-item-form button {
-                width: 100%;
-            }
-            .filter-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            .btn {
-                padding: 12px 16px;
-                font-size: 13px;
-                width: 100%;
-                margin-bottom: 8px;
-            }
-            .controls-section {
-                flex-direction: column;
-                gap: 8px;
-            }
-            .controls-section > * {
-                width: 100%;
-            }
-            table {
-                font-size: 10px;
-            }
-            th, td {
-                padding: 6px 4px;
-            }
-            .received-btn {
-                padding: 3px 6px;
-                font-size: 9px;
-            }
-            .pagination-controls {
-                flex-direction: column;
-                gap: 8px;
-            }
-            .pagination-btn {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-            .pagination-info {
-                font-size: 10px;
-                text-align: center;
-            }
-            .dashboard-content {
-                gap: 12px;
-            }
-            /* Table scroll for mobile */
-            .table-container {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            /* Input improvements for mobile */
-            input, select, textarea {
-                padding: 12px;
-                font-size: 16px; /* Prevents zoom on iOS */
-                border-radius: 8px;
-            }
-            .login-form input {
-                font-size: 16px;
-                padding: 14px;
-            }
-            /* Button improvements for mobile */
-            .btn {
-                min-height: 44px; /* Better touch target */
-                font-size: 14px;
-            }
-            /* Improve touch targets */
-            .item-toggle,
-            .pagination-btn,
-            .received-btn {
-                min-height: 32px;
-            }
-            /* Bulk entry mobile styles */
-            .bulk-entry-container {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-            
-            .bulk-section-header {
-                padding: 10px;
-            }
-            
-            .bulk-section-content {
-                padding: 10px;
-            }
-            
-            .bulk-section textarea {
-                min-height: 80px;
-                margin-bottom: 10px;
-            }
-            
-            .bulk-actions {
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            .bulk-actions .btn {
-                width: 100%;
-            }
-            /* Entry sets mobile styles */
-            .entry-set {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-            .remove-set-btn {
-                width: 100%;
-                margin-top: 8px;
-            }
-        }
-        /* Extra small devices */
-        @media (max-width: 480px) {
-            body {
-                padding: 6px;
-            }
-            .main-title {
-                font-size: 1.3rem;
-            }
-            .card {
-                padding: 10px;
-                border-radius: 6px;
-            }
-            .profile-header {
-                padding: 12px;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 6px;
-            }
-            .stat-item {
-                padding: 10px 6px;
-            }
-            .stat-number {
-                font-size: 14px;
-            }
-            table {
-                font-size: 9px;
-            }
-            th, td {
-                padding: 4px 3px;
-            }
-            .received-btn {
-                padding: 2px 4px;
-                font-size: 8px;
-            }
-        }
-        /* Landscape orientation optimization for mobile */
-        @media (max-width: 768px) and (orientation: landscape) {
-            .profile-actions {
-                flex-direction: row;
-                justify-content: center;
-            }
-            .profile-btn {
-                width: auto;
-                flex: 1;
-                max-width: 200px;
-            }
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        /* Dark mode specific adjustments */
-        [data-theme="dark"] .profile-photo {
-            background: #404040;
-            color: #667eea;
-        }
-        [data-theme="dark"] .card-icon {
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-        }
-        [data-theme="dark"] .btn:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-        }
-        [data-theme="dark"] .received-btn:hover {
-            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.6);
-        }
-        [data-theme="dark"] .pagination-btn:hover {
-            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.6);
-        }
-        [data-theme="dark"] .credit-section {
-            border-color: rgba(40, 167, 69, 0.5);
-            background: linear-gradient(to bottom, rgba(40, 167, 69, 0.1), transparent);
-        }
-        [data-theme="dark"] .debit-section {
-            border-color: rgba(220, 53, 69, 0.5);
-            background: linear-gradient(to bottom, rgba(220, 53, 69, 0.1), transparent);
-        }
-        /* Smooth transitions for theme changes */
-        * {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card, input, select, table, th, td, .stat-item, .predefined-items, .filter-summary, .debug-info, .error, .theme-toggle, .bulk-section, .entry-set {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Siteosphia</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Inksphere/Swahwa/main/10149443.png">
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+:root {
+/* Light mode colors */
+--bg-color: white;
+--text-color: #333;
+--card-bg: white;
+--card-border: #e1e5e9;
+--card-shadow: rgba(0, 0, 0, 0.1);
+--input-bg: white;
+--input-border: #e1e5e9;
+--input-focus: #667eea;
+--table-even: #f8f9fa;
+--table-hover: #e3f2fd;
+--filter-summary-bg: #e3f2fd;
+--filter-summary-border: #2196f3;
+--debug-bg: #f8f9fa;
+--debug-border: #dee2e6;
+--debug-text: #495057;
+--error-bg: #f8d7da;
+--error-border: #f5c6cb;
+--error-text: #721c24;
+--loading-text: #6c757d;
+--received-bg: #f0f9ff;
+--stat-bg: #f8f9fa;
+--stat-border: #e1e5e9;
+--pagination-info: #666;
+--auto-add-indicator: #28a745;
+}
+[data-theme="dark"] {
+/* Dark mode colors */
+--bg-color: #1a1a1a;
+--text-color: #e0e0e0;
+--card-bg: #2d2d2d;
+--card-border: #404040;
+--card-shadow: rgba(0, 0, 0, 0.3);
+--input-bg: #404040;
+--input-border: #555;
+--input-focus: #667eea;
+--table-even: #333;
+--table-hover: #404040;
+--filter-summary-bg: #1e3a8a;
+--filter-summary-border: #3b82f6;
+--debug-bg: #333;
+--debug-border: #555;
+--debug-text: #ccc;
+--error-bg: #4a1e1e;
+--error-border: #6b2c2c;
+--error-text: #ff9999;
+--loading-text: #999;
+--received-bg: #1e293b;
+--stat-bg: #333;
+--stat-border: #555;
+--pagination-info: #999;
+--auto-add-indicator: #20c997;
+}
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background: var(--bg-color);
+min-height: 100vh;
+padding: 10px;
+color: var(--text-color);
+font-size: 14px;
+transition: background-color 0.3s ease, color 0.3s ease;
+}
+.dashboard-container {
+max-width: 1200px;
+margin: 0 auto;
+}
+/* Dark Mode Toggle */
+.theme-toggle {
+position: fixed;
+top: 20px;
+right: 20px;
+z-index: 1000;
+background: var(--card-bg);
+border: 2px solid var(--card-border);
+border-radius: 50px;
+padding: 8px;
+cursor: pointer;
+transition: all 0.3s ease;
+box-shadow: 0 2px 8px var(--card-shadow);
+display: flex;
+align-items: center;
+gap: 8px;
+font-size: 12px;
+font-weight: 600;
+color: var(--text-color);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+.theme-toggle:hover {
+transform: scale(1.05);
+box-shadow: 0 4px 12px var(--card-shadow);
+}
+.theme-toggle-icon {
+font-size: 20px;
+transition: transform 0.3s ease;
+}
+.theme-toggle:hover .theme-toggle-icon {
+transform: rotate(20deg);
+}
+.main-title {
+color: var(--text-color);
+text-align: center;
+margin-bottom: 20px;
+font-size: 1.8rem;
+}
+.card {
+background: var(--card-bg);
+backdrop-filter: blur(10px);
+border-radius: 12px;
+padding: 16px;
+box-shadow: 0 4px 16px var(--card-shadow);
+transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+border: 1px solid var(--card-border);
+margin-bottom: 16px;
+}
+.card:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 20px var(--card-shadow);
+}
+.card-header {
+display: flex;
+align-items: center;
+gap: 12px;
+margin-bottom: 16px;
+}
+.card-icon {
+width: 32px;
+height: 32px;
+border-radius: 8px;
+background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-size: 16px;
+}
+.card h3 {
+color: var(--text-color);
+font-size: 16px;
+margin: 0;
+}
+.card p {
+color: var(--text-color);
+opacity: 0.8;
+line-height: 1.5;
+margin-bottom: 12px;
+font-size: 13px;
+}
+/* Login Card Styles */
+.login-card {
+max-width: 400px;
+margin: 30px auto;
+text-align: center;
+}
+.login-form {
+display: flex;
+flex-direction: column;
+gap: 16px;
+margin-top: 16px;
+}
+.login-form input {
+padding: 12px 16px;
+border: 2px solid var(--input-border);
+border-radius: 8px;
+font-size: 16px;
+text-align: center;
+transition: all 0.3s ease;
+background: var(--input-bg);
+color: var(--text-color);
+}
+.login-form input:focus {
+outline: none;
+border-color: var(--input-focus);
+box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+/* Student Profile Header */
+.profile-header {
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+border-radius: 12px;
+padding: 20px;
+margin-bottom: 20px;
+color: white;
+text-align: center;
+}
+.profile-photo {
+width: 80px;
+height: 80px;
+border-radius: 50%;
+border: 3px solid #ff8a00;
+overflow: hidden;
+display: flex;
+align-items: center;
+justify-content: center;
+background: #f8f9fa;
+font-size: 2rem;
+color: #667eea;
+margin: 0 auto 16px;
+}
+.student-name {
+font-size: 1.4rem;
+font-weight: bold;
+margin-bottom: 8px;
+text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+.student-role {
+font-size: 1rem;
+opacity: 0.9;
+font-weight: 500;
+margin-bottom: 16px;
+}
+.profile-actions {
+display: flex;
+gap: 12px;
+justify-content: center;
+flex-wrap: wrap;
+}
+.profile-btn {
+padding: 10px 16px;
+background: rgba(255, 255, 255, 0.2);
+color: white;
+border: 2px solid rgba(255, 255, 255, 0.3);
+border-radius: 8px;
+cursor: pointer;
+font-weight: 600;
+transition: all 0.3s ease;
+text-decoration: none;
+display: inline-flex;
+align-items: center;
+gap: 6px;
+backdrop-filter: blur(10px);
+font-size: 13px;
+}
+.profile-btn:hover {
+background: rgba(255, 255, 255, 0.3);
+border-color: rgba(255, 255, 255, 0.5);
+transform: translateY(-1px);
+}
+.profile-btn.danger {
+background: rgba(220, 53, 69, 0.8);
+border-color: rgba(220, 53, 69, 1);
+}
+.profile-btn.danger:hover {
+background: rgba(220, 53, 69, 1);
+}
+/* Statistics Grid */
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+gap: 12px;
+margin-top: 16px;
+}
+.stat-item {
+text-align: center;
+padding: 16px 8px;
+background: var(--stat-bg);
+border-radius: 8px;
+border: 2px solid var(--stat-border);
+transition: all 0.3s ease;
+}
+.stat-item:hover {
+transform: translateY(-1px);
+box-shadow: 0 2px 8px var(--card-shadow);
+}
+.stat-item.credit {
+border-color: #28a745;
+}
+.stat-item.debit {
+border-color: #dc3545;
+}
+.stat-item.balance.positive {
+border-color: #28a745;
+}
+.stat-item.balance.negative {
+border-color: #dc3545;
+}
+.stat-number {
+font-size: 18px;
+font-weight: bold;
+color: #667eea;
+display: block;
+margin-bottom: 4px;
+}
+.stat-number.credit {
+color: #28a745;
+}
+.stat-number.debit {
+color: #dc3545;
+}
+.stat-number.balance.positive {
+color: #28a745;
+}
+.stat-number.balance.negative {
+color: #dc3545;
+}
+.stat-label {
+font-size: 10px;
+color: var(--text-color);
+opacity: 0.7;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+/* Form Styles */
+.form-grid {
+display: grid;
+gap: 12px;
+}
+.item-input-container {
+position: relative;
+display: flex;
+flex-direction: column;
+}
+.item-selector {
+display: flex;
+gap: 8px;
+margin-bottom: 8px;
+flex-wrap: wrap;
+}
+.item-toggle {
+padding: 6px 10px;
+background: linear-gradient(45deg, #6c757d 0%, #5a6268 100%);
+color: white;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+font-size: 11px;
+transition: all 0.3s ease;
+flex: 1;
+min-width: 70px;
+}
+.item-toggle.active {
+background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
+}
+.item-toggle:hover {
+transform: translateY(-1px);
+}
+.new-item-section {
+margin-top: 12px;
+padding-top: 12px;
+border-top: 1px solid var(--card-border);
+display: none;
+}
+.new-item-form {
+display: flex;
+gap: 8px;
+align-items: center;
+margin-top: 8px;
+flex-direction: column;
+}
+.predefined-items {
+max-height: 150px;
+overflow-y: auto;
+border: 1px solid var(--card-border);
+border-radius: 4px;
+padding: 8px;
+background: var(--stat-bg);
+margin-top: 8px;
+}
+.predefined-item {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 6px 0;
+border-bottom: 1px solid var(--card-border);
+font-size: 12px;
+color: var(--text-color);
+}
+.predefined-item:last-child {
+border-bottom: none;
+}
+/* Auto Add Indicator */
+.auto-add-indicator {
+display: none;
+align-items: center;
+justify-content: center;
+gap: 6px;
+padding: 8px;
+background: var(--auto-add-indicator);
+color: white;
+border-radius: 6px;
+font-size: 12px;
+font-weight: 600;
+margin-top: 8px;
+animation: pulse 1.5s infinite;
+}
+.auto-add-indicator.show {
+display: flex;
+}
+@keyframes pulse {
+0% { opacity: 0.7; }
+50% { opacity: 1; }
+100% { opacity: 0.7; }
+}
+/* Multiple Entry Sets */
+.entry-sets-container {
+margin-top: 12px;
+}
+.entry-set {
+display: grid;
+grid-template-columns: 1fr 1fr auto;
+gap: 8px;
+margin-bottom: 12px;
+align-items: center;
+padding: 8px;
+border-radius: 6px;
+background: var(--stat-bg);
+border: 1px solid var(--card-border);
+transition: all 0.3s ease;
+}
+.entry-set:hover {
+transform: translateY(-1px);
+box-shadow: 0 2px 6px var(--card-shadow);
+}
+.entry-set select,
+.entry-set input {
+margin-bottom: 0;
+}
+.remove-set-btn {
+background: linear-gradient(45deg, #dc3545 0%, #e74c3c 100%);
+color: white;
+border: none;
+border-radius: 4px;
+padding: 6px 10px;
+cursor: pointer;
+font-size: 11px;
+transition: all 0.3s ease;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.remove-set-btn:hover {
+transform: translateY(-1px);
+box-shadow: 0 2px 6px rgba(220, 53, 69, 0.4);
+}
+.add-set-btn {
+background: linear-gradient(45deg, #17a2b8 0%, #138496 100%);
+color: white;
+border: none;
+border-radius: 6px;
+padding: 8px 16px;
+cursor: pointer;
+font-weight: 500;
+transition: all 0.3s ease;
+margin-top: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 6px;
+}
+.add-set-btn:hover {
+transform: translateY(-1px);
+box-shadow: 0 2px 6px rgba(23, 162, 184, 0.4);
+}
+/* Filter Grid */
+.filter-grid {
+display: grid;
+gap: 12px;
+align-items: end;
+margin-bottom: 12px;
+}
+.filter-summary {
+background: var(--filter-summary-bg);
+padding: 12px;
+border-radius: 6px;
+margin-top: 12px;
+display: none;
+color: var(--text-color);
+border-left: 3px solid var(--filter-summary-border);
+font-size: 12px;
+}
+.filter-summary.show {
+display: block;
+}
+/* Button Styles */
+.btn {
+padding: 10px 16px;
+border: none;
+border-radius: 6px;
+cursor: pointer;
+font-weight: 500;
+transition: all 0.3s ease;
+text-decoration: none;
+display: inline-flex;
+align-items: center;
+gap: 6px;
+font-size: 12px;
+text-transform: uppercase;
+letter-spacing: 0.3px;
+justify-content: center;
+}
+.btn-primary {
+background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+color: white;
+}
+.btn-success {
+background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
+color: white;
+}
+.btn-danger {
+background: linear-gradient(45deg, #dc3545 0%, #e74c3c 100%);
+color: white;
+}
+.btn-warning {
+background: linear-gradient(45deg, #ff7043 0%, #ff5722 100%);
+color: white;
+}
+.btn-info {
+background: linear-gradient(45deg, #17a2b8 0%, #138496 100%);
+color: white;
+}
+.btn:hover {
+transform: translateY(-1px);
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.btn:disabled {
+opacity: 0.6;
+cursor: not-allowed;
+transform: none;
+}
+/* Input Styles */
+input, select, textarea {
+padding: 10px 12px;
+border: 2px solid var(--input-border);
+border-radius: 6px;
+font-size: 14px;
+transition: all 0.3s ease;
+width: 100%;
+background: var(--input-bg);
+color: var(--text-color);
+}
+input:focus, select:focus, textarea:focus {
+outline: none;
+border-color: var(--input-focus);
+box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+/* Table Styles */
+table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 16px;
+background: var(--card-bg);
+border-radius: 6px;
+overflow: hidden;
+font-size: 12px;
+}
+th, td {
+border: 1px solid var(--card-border);
+padding: 8px 6px;
+text-align: left;
+color: var(--text-color);
+}
+th {
+background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+color: white;
+font-weight: 600;
+text-transform: uppercase;
+font-size: 10px;
+letter-spacing: 0.3px;
+}
+tr:nth-child(even) {
+background-color: var(--table-even);
+}
+tr:hover {
+background-color: var(--table-hover);
+transition: background-color 0.3s ease;
+}
+.credit-row {
+border-left: 3px solid #28a745;
+}
+.debit-row {
+border-left: 3px solid #dc3545;
+}
+.transaction-row.received {
+opacity: 0.7;
+background-color: var(--received-bg);
+}
+.text-success {
+color: #28a745 !important;
+font-weight: bold;
+}
+.text-danger {
+color: #dc3545 !important;
+font-weight: bold;
+}
+.amount-display {
+font-weight: bold;
+font-family: 'Courier New', monospace;
+}
+/* Received Button */
+.received-btn {
+background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
+color: white;
+border: none;
+padding: 4px 8px;
+border-radius: 4px;
+font-size: 10px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+.received-btn:hover {
+transform: translateY(-1px);
+box-shadow: 0 2px 8px rgba(40, 167, 69, 0.4);
+}
+/* Pagination */
+.pagination-controls {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 8px;
+margin-top: 16px;
+flex-wrap: wrap;
+}
+.pagination-btn {
+padding: 6px 10px;
+background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+color: white;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+font-size: 11px;
+transition: all 0.3s ease;
+}
+.pagination-btn:hover {
+transform: translateY(-1px);
+box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
+}
+.pagination-btn:disabled {
+opacity: 0.5;
+cursor: not-allowed;
+transform: none;
+}
+.pagination-btn.active {
+background: linear-gradient(45deg, #4caf50 0%, #66bb6a 100%);
+}
+.pagination-info {
+color: var(--pagination-info);
+font-size: 11px;
+}
+/* Utility Classes */
+.hidden {
+display: none;
+}
+.error {
+color: var(--error-text);
+background: var(--error-bg);
+padding: 12px;
+border-radius: 6px;
+margin: 12px 0;
+text-align: center;
+font-weight: 500;
+border: 1px solid var(--error-border);
+font-size: 13px;
+}
+.loading {
+color: var(--loading-text);
+font-style: italic;
+text-align: center;
+padding: 16px;
+font-size: 13px;
+}
+.status-message {
+text-align: center;
+padding: 16px;
+color: var(--loading-text);
+font-size: 13px;
+}
+.debug-info {
+background: var(--debug-bg);
+border: 1px solid var(--debug-border);
+border-radius: 4px;
+padding: 8px;
+margin: 8px 0;
+font-family: monospace;
+font-size: 10px;
+color: var(--debug-text);
+}
+.dashboard-content {
+display: grid;
+gap: 16px;
+}
+.controls-section {
+display: flex;
+gap: 12px;
+align-items: center;
+margin-bottom: 12px;
+flex-wrap: wrap;
+}
+
+/* Bulk Entry Styles */
+.bulk-entry-container {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 16px;
+margin-bottom: 16px;
+}
+
+.bulk-section {
+border-radius: 8px;
+overflow: hidden;
+border: 2px solid var(--card-border);
+transition: all 0.3s ease;
+}
+
+.bulk-section:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 12px var(--card-shadow);
+}
+
+.credit-section {
+border-color: rgba(40, 167, 69, 0.3);
+background: linear-gradient(to bottom, rgba(40, 167, 69, 0.05), transparent);
+}
+
+.debit-section {
+border-color: rgba(220, 53, 69, 0.3);
+background: linear-gradient(to bottom, rgba(220, 53, 69, 0.05), transparent);
+}
+
+.bulk-section-header {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 12px;
+background: var(--card-bg);
+border-bottom: 1px solid var(--card-border);
+}
+
+.bulk-section-icon {
+width: 32px;
+height: 32px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 16px;
+}
+
+.credit-section .bulk-section-icon {
+background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
+color: white;
+}
+
+.debit-section .bulk-section-icon {
+background: linear-gradient(45deg, #dc3545 0%, #e74c3c 100%);
+color: white;
+}
+
+.bulk-section-header h4 {
+margin: 0;
+color: var(--text-color);
+font-size: 16px;
+font-weight: 600;
+}
+
+.bulk-section-content {
+padding: 12px;
+}
+
+.bulk-section textarea {
+width: 100%;
+padding: 10px;
+border: 1px solid var(--input-border);
+border-radius: 6px;
+background: var(--input-bg);
+color: var(--text-color);
+font-family: inherit;
+resize: vertical;
+min-height: 100px;
+margin-bottom: 12px;
+transition: all 0.3s ease;
+}
+
+.bulk-section textarea:focus {
+outline: none;
+border-color: var(--input-focus);
+box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.bulk-section-actions {
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
+}
+
+.bulk-actions {
+display: flex;
+gap: 12px;
+justify-content: center;
+margin-top: 16px;
+flex-wrap: wrap;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+.theme-toggle {
+top: 15px;
+right: 15px;
+padding: 6px;
+font-size: 10px;
+gap: 4px;
+}
+.theme-toggle-icon {
+font-size: 16px;
+}
+body {
+padding: 8px;
+font-size: 13px;
+}
+.main-title {
+font-size: 1.5rem;
+margin-bottom: 16px;
+}
+.card {
+padding: 12px;
+margin-bottom: 12px;
+border-radius: 8px;
+}
+.card-header {
+gap: 10px;
+margin-bottom: 12px;
+}
+.card-icon {
+width: 28px;
+height: 28px;
+font-size: 14px;
+}
+.card h3 {
+font-size: 14px;
+}
+.card p {
+font-size: 12px;
+margin-bottom: 10px;
+}
+.login-card {
+margin: 20px auto;
+padding: 16px;
+}
+.profile-header {
+padding: 16px;
+margin-bottom: 16px;
+}
+.profile-photo {
+width: 60px;
+height: 60px;
+font-size: 1.5rem;
+margin-bottom: 12px;
+}
+.student-name {
+font-size: 1.2rem;
+margin-bottom: 6px;
+}
+.student-role {
+font-size: 0.9rem;
+margin-bottom: 12px;
+}
+.profile-actions {
+flex-direction: column;
+gap: 8px;
+}
+.profile-btn {
+width: 100%;
+justify-content: center;
+padding: 12px;
+font-size: 12px;
+}
+.stats-grid {
+grid-template-columns: 1fr;
+gap: 8px;
+}
+.stat-item {
+padding: 12px 8px;
+}
+.stat-number {
+font-size: 16px;
+}
+.stat-label {
+font-size: 9px;
+}
+.form-grid {
+grid-template-columns: 1fr;
+gap: 10px;
+}
+.item-selector {
+flex-direction: column;
+gap: 6px;
+}
+.item-toggle {
+padding: 8px 12px;
+font-size: 12px;
+}
+.new-item-form {
+flex-direction: column;
+gap: 10px;
+}
+.new-item-form input,
+.new-item-form button {
+width: 100%;
+}
+.filter-grid {
+grid-template-columns: 1fr;
+gap: 10px;
+}
+.btn {
+padding: 12px 16px;
+font-size: 13px;
+width: 100%;
+margin-bottom: 8px;
+}
+.controls-section {
+flex-direction: column;
+gap: 8px;
+}
+.controls-section > * {
+width: 100%;
+}
+table {
+font-size: 10px;
+}
+th, td {
+padding: 6px 4px;
+}
+.received-btn {
+padding: 3px 6px;
+font-size: 9px;
+}
+.pagination-controls {
+flex-direction: column;
+gap: 8px;
+}
+.pagination-btn {
+padding: 8px 12px;
+font-size: 12px;
+}
+.pagination-info {
+font-size: 10px;
+text-align: center;
+}
+.dashboard-content {
+gap: 12px;
+}
+/* Table scroll for mobile */
+.table-container {
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
+}
+/* Input improvements for mobile */
+input, select, textarea {
+padding: 12px;
+font-size: 16px; /* Prevents zoom on iOS */
+border-radius: 8px;
+}
+.login-form input {
+font-size: 16px;
+padding: 14px;
+}
+/* Button improvements for mobile */
+.btn {
+min-height: 44px; /* Better touch target */
+font-size: 14px;
+}
+/* Improve touch targets */
+.item-toggle,
+.pagination-btn,
+.received-btn {
+min-height: 32px;
+}
+/* Bulk entry mobile styles */
+.bulk-entry-container {
+grid-template-columns: 1fr;
+gap: 12px;
+}
+
+.bulk-section-header {
+padding: 10px;
+}
+
+.bulk-section-content {
+padding: 10px;
+}
+
+.bulk-section textarea {
+min-height: 80px;
+margin-bottom: 10px;
+}
+
+.bulk-actions {
+flex-direction: column;
+gap: 8px;
+}
+
+.bulk-actions .btn {
+width: 100%;
+}
+/* Entry sets mobile styles */
+.entry-set {
+grid-template-columns: 1fr;
+gap: 8px;
+}
+.remove-set-btn {
+width: 100%;
+margin-top: 8px;
+}
+}
+/* Extra small devices */
+@media (max-width: 480px) {
+body {
+padding: 6px;
+}
+.main-title {
+font-size: 1.3rem;
+}
+.card {
+padding: 10px;
+border-radius: 6px;
+}
+.profile-header {
+padding: 12px;
+}
+.stats-grid {
+grid-template-columns: 1fr 1fr;
+gap: 6px;
+}
+.stat-item {
+padding: 10px 6px;
+}
+.stat-number {
+font-size: 14px;
+}
+table {
+font-size: 9px;
+}
+th, td {
+padding: 4px 3px;
+}
+.received-btn {
+padding: 2px 4px;
+font-size: 8px;
+}
+}
+/* Landscape orientation optimization for mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+.profile-actions {
+flex-direction: row;
+justify-content: center;
+}
+.profile-btn {
+width: auto;
+flex: 1;
+max-width: 200px;
+}
+.stats-grid {
+grid-template-columns: repeat(3, 1fr);
+}
+}
+/* Dark mode specific adjustments */
+[data-theme="dark"] .profile-photo {
+background: #404040;
+color: #667eea;
+}
+[data-theme="dark"] .card-icon {
+box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+[data-theme="dark"] .btn:hover {
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+[data-theme="dark"] .received-btn:hover {
+box-shadow: 0 2px 8px rgba(40, 167, 69, 0.6);
+}
+[data-theme="dark"] .pagination-btn:hover {
+box-shadow: 0 2px 6px rgba(102, 126, 234, 0.6);
+}
+[data-theme="dark"] .credit-section {
+border-color: rgba(40, 167, 69, 0.5);
+background: linear-gradient(to bottom, rgba(40, 167, 69, 0.1), transparent);
+}
+[data-theme="dark"] .debit-section {
+border-color: rgba(220, 53, 69, 0.5);
+background: linear-gradient(to bottom, rgba(220, 53, 69, 0.1), transparent);
+}
+/* Smooth transitions for theme changes */
+* {
+transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.card, input, select, table, th, td, .stat-item, .predefined-items, .filter-summary, .debug-info, .error, .theme-toggle, .bulk-section, .entry-set {
+transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+</style>
 </head>
 <body>
-    <!-- Dark Mode Toggle -->
-    <div class="theme-toggle" onclick="toggleTheme()">
-        <span class="theme-toggle-icon">🌓</span>
-        <span class="theme-toggle-text">Dark</span>
-    </div>
-    <div class="dashboard-container">
-        <h1 class="main-title">📘 Student Financial Dashboard</h1>
-        
-        <!-- Login Section -->
-        <div id="loginSection" class="card login-card">
-            <div class="card-header">
-                <div class="card-icon">👋</div>
-                <h3>Welcome! Please Login</h3>
-            </div>
-            <div class="login-form">
-                <input type="text" id="usernameInput" placeholder="Enter AD.NO (e.g., 1050)" maxlength="4" pattern="\d{4}" inputmode="numeric">
-                <button class="btn btn-primary" onclick="login()">🔑 Student Login</button>
-            </div>
-            <div style="margin-top: 16px; text-align: center;">
-                <p style="font-size: 12px; color: var(--text-color); opacity: 0.7; margin-bottom: 8px;">Admin Access:</p>
-                <button class="btn btn-info" onclick="window.location.href='admin-dashboard.html'" style="margin-top: 0;">⚙️ Admin Dashboard</button>
-            </div>
-            <div id="loginError" class="error" style="display: none; margin-top: 12px;"></div>
-            <div id="debugInfo" class="debug-info" style="display: none;">
-                <div>API URL: <span id="apiUrl"></span></div>
-                <div>Last Request: <span id="lastRequest"></span></div>
-                <div>Last Response: <span id="lastResponse"></span></div>
-            </div>
-        </div>
-        <!-- Dashboard Section -->
-        <div id="dashboardSection" class="hidden">
-            <!-- Student Profile Header -->
-            <div class="profile-header">
-                <div class="profile-photo">
-                    <span id="profileIcon">👤</span>
-                </div>
-                <h2 class="student-name" id="studentName">STUDENT NAME</h2>
-                <p class="student-role">Student Dashboard</p>
-                <div class="profile-actions">
-                    <button class="profile-btn danger" onclick="logout()">Check Another</button>
-                    <button class="profile-btn" onclick="window.location.href='admin-dashboard.html'">Home</button>
-                </div>
-            </div>
-            <div class="dashboard-content">
-                <!-- Financial Summary Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">💰</div>
-                        <h3>Financial Summary</h3>
-                    </div>
-                    <p>Track your financial activities and current balance.</p>
-                    <div class="stats-grid">
-                        <div class="stat-item credit">
-                            <span class="stat-number credit" id="totalCredit">₹0</span>
-                            <span class="stat-label">Total Credit</span>
-                        </div>
-                        <div class="stat-item debit">
-                            <span class="stat-number debit" id="totalDebit">₹0</span>
-                            <span class="stat-label">Total Debit</span>
-                        </div>
-                        <div class="stat-item balance" id="balanceCard">
-                            <span class="stat-number balance" id="balanceAmountElement">₹<span id="balanceAmount">0</span></span>
-                            <span class="stat-label">Current Balance</span>
-                        </div>
-                    </div>
-                    <div style="margin-top: 16px;">
-                        <button class="btn btn-success" onclick="refreshData()">🔄 Refresh Data</button>
-                    </div>
-                </div>
-                <!-- Add New Entry Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">➕</div>
-                        <h3>Add New Entry</h3>
-                    </div>
-                    <p>Record your income and expenses quickly.</p>
-                    <div class="form-grid">
-                        <select id="entryType">
-                            <option value="credit">Credit</option>
-                            <option value="debit">Debit</option>
-                        </select>
-                        
-                        <div class="item-input-container">
-                            <div class="item-selector">
-                                <button type="button" class="item-toggle active" id="predefinedToggle" onclick="toggleItemInput('predefined')">📋 From List</button>
-                                <button type="button" class="item-toggle" id="customToggle" onclick="toggleItemInput('custom')">✏️ Custom</button>
-                                <button type="button" class="item-toggle" id="manageToggle" onclick="toggleManageItems()">⚙️ Manage</button>
-                            </div>
-                            
-                            <select id="predefinedItemSelect">
-                                <option value="">Select an item...</option>
-                            </select>
-                            
-                            <input type="text" id="customItemInput" placeholder="Enter custom description" style="display: none;">
-                            
-                            <div id="manageItemsSection" class="new-item-section">
-                                <h4>Manage Predefined Items</h4>
-                                <div class="new-item-form">
-                                    <input type="text" id="newItemInput" placeholder="New item name">
-                                    <button type="button" class="btn btn-info" onclick="addPredefinedItem()">➕ Add</button>
-                                </div>
-                                <div id="predefinedItemsList" class="predefined-items"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="entry-sets-container" id="entrySetsContainer">
-                            <!-- Entry sets will be dynamically added here -->
-                        </div>
-                        
-                        <button class="add-set-btn" onclick="addNewEntrySet()">
-                            <span>➕</span>
-                            <span>Add Another Entry</span>
-                        </button>
-                        
-                        <div class="auto-add-indicator" id="autoAddIndicator">
-                            <span>⏱️</span>
-                            <span>Auto-adding entry...</span>
-                        </div>
-                        
-                        <button class="btn btn-primary" onclick="addAllEntries()">📝 Add All Entries</button>
-                    </div>
-                </div>
-                <!-- Bulk Entry Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">📝</div>
-                        <h3>Bulk Entry</h3>
-                    </div>
-                    <p>Add multiple transactions quickly using the format: description,amount</p>
-                    
-                    <div class="bulk-entry-container">
-                        <!-- Credit Section -->
-                        <div class="bulk-section credit-section">
-                            <div class="bulk-section-header">
-                                <div class="bulk-section-icon">💰</div>
-                                <h4>Credit Entries</h4>
-                            </div>
-                            <div class="bulk-section-content">
-                                <textarea id="bulkCredit" rows="5" placeholder="Pocket Money Received,500&#10;Monthly Allowance,1000&#10;Account Transfer,1500"></textarea>
-                                <div class="bulk-section-actions">
-                                    <button class="btn btn-success" onclick="addBulkCredit()">➕ Add Credits</button>
-                                    <button class="btn btn-info" onclick="showCreditExample()">📋 Example</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Debit Section -->
-                        <div class="bulk-section debit-section">
-                            <div class="bulk-section-header">
-                                <div class="bulk-section-icon">💸</div>
-                                <h4>Debit Entries</h4>
-                            </div>
-                            <div class="bulk-section-content">
-                                <textarea id="bulkDebit" rows="5" placeholder="Books & Supplies,200&#10;Fine,50&#10;Phone & Internet,300"></textarea>
-                                <div class="bulk-section-actions">
-                                    <button class="btn btn-danger" onclick="addBulkDebit()">➕ Add Debits</button>
-                                    <button class="btn btn-info" onclick="showDebitExample()">📋 Example</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="bulk-actions">
-                        <button class="btn btn-primary" onclick="addBulkEntries()">📝 Add All Entries</button>
-                        <button class="btn btn-warning" onclick="clearBulkEntries()">🗑️ Clear All</button>
-                    </div>
-                    
-                    <div id="bulkStatus" class="status-message" style="display: none;"></div>
-                </div>
-                <!-- Filter & Search Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">🔍</div>
-                        <h3>Filter & Search</h3>
-                    </div>
-                    <p>Find specific transactions using advanced filters.</p>
-                    <div class="filter-grid">
-                        <select id="filterType">
-                            <option value="">All Types</option>
-                            <option value="credit">Credit Only</option>
-                            <option value="debit">Debit Only</option>
-                        </select>
-                        <input type="text" id="filterDescription" placeholder="Search description...">
-                        <input type="date" id="filterDateFrom" placeholder="From Date">
-                        <input type="date" id="filterDateTo" placeholder="To Date">
-                        <input type="number" id="filterAmountMin" placeholder="Min Amount" step="0.01" min="0">
-                        <input type="number" id="filterAmountMax" placeholder="Max Amount" step="0.01" min="0">
-                        <button class="btn btn-primary" onclick="applyFilters()">🔍 Apply Filters</button>
-                        <button class="btn btn-warning" onclick="clearFilters()">🗑️ Clear</button>
-                    </div>
-                    <div id="filterSummary" class="filter-summary"></div>
-                </div>
-                <!-- Transaction Ledger Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-icon">📊</div>
-                        <h3>Transaction Ledger</h3>
-                    </div>
-                    <p>View and manage your complete transaction history.</p>
-                    <div class="controls-section">
-                        <select id="sortBy">
-                            <option value="date-desc">📅Date (Newest First)</option>
-                            <option value="date-asc">📅 Date (Oldest First)</option>
-                            <option value="amount-desc">💰 Amount (High to Low)</option>
-                            <option value="amount-asc">💰 Amount (Low to High)</option>
-                            <option value="type">📝 Type</option>
-                        </select>
-                        <button class="btn btn-success" onclick="exportData()">📄 Export PDF</button>
-                    </div>
-                    
-                    <div id="ledgerStatus" class="loading">Loading transactions...</div>
-                    <div class="table-container">
-                        <table id="ledgerTable" style="display: none;">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                    <th>Amount</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ledgerBody"></tbody>
-                        </table>
-                    </div>
-                    <div id="paginationControls" class="pagination-controls"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    <script>
-        let currentUsername = null;
-        let debugMode = false;
-        let allLedgerData = [];
-        let filteredData = [];
-        let currentPage = 1;
-        let itemsPerPage = 10;
-        let predefinedItems = [];
-        let currentItemInputMode = 'predefined';
-        let receivedTransactions = new Set();
-        let autoAddTimeout = null;
-        let entrySetCounter = 0;
-        const api = "https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec";
-        // Theme management
-        function initializeTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            setTheme(savedTheme);
-        }
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            setTheme(newTheme);
-        }
-        function setTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-            
-            const toggleText = document.querySelector('.theme-toggle-text');
-            const toggleIcon = document.querySelector('.theme-toggle-icon');
-            
-            if (theme === 'dark') {
-                toggleText.textContent = 'Light';
-                toggleIcon.textContent = '☀️';
-            } else {
-                toggleText.textContent = 'Dark';
-                toggleIcon.textContent = '🌙';
-            }
-        }
-        // Initialize when DOM is loaded
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeApp);
-        } else {
-            initializeApp();
-        }
-        // Student data mapping
-        const studentData = {
-            
-   '1050': 'MUHAMMAD SINAN PC',
-   '1070': 'MUHAMMED MUSAMMIL B K',
-   '1074': 'MUAD .M',
-   '1058': 'MUHAMMED JALAL AT',
-   '1051': 'MUHAMMAD HISHAM T',
-   '1056': 'MUHAMMED SHADIN N.M.',
-   '1076': 'MUHAMMED MINHAJ KK',
-   '1071': 'SAYYID MOHAMMAD ZUHAIR A K',
-   '1075': 'MUHAMMED HASHIM P',
-   '1061': 'ANSHID M P',
-   '1072': 'MOHAMMED SINAN TP',
-   '1078': 'MUHAMMED RABIEUE MK',
-   '1088': 'MOHAMMED NAEEM K',
-   '1082': 'MUHAMMED SANEEN',
-   '1090': 'MUHAMMED BASSAM',
-   '1066': 'HASHIM MOHAMMED K P',
-   '1063': 'MOHAMMED RISHADH. T',
-   '1073': 'MUHAMMAD MUSTHAFA KK',
-   '1068': 'MUHAMMED UVAIS.EK',
-   '1053': 'AMEEN T',
-   '1040': 'MUHAMMAD RIFAD K',
-   '1059': 'AFSAL',
-   '1064': 'MOHAMED SHAMIL M',
-   '1013': 'MOHAMMED SAHAD.K',
-   '1087': 'MUHAMMED SHAMIL. A',
-   '1089': 'ADIL SHAH M',
-   '1084': 'ASIM MOHAMED M',
-   '1024': 'FADHIL KATTIPARUTHI',
-   '1008': 'MUHAMMED MINHAJ',
-   '1086': 'MOHAMMED NIDAL',
-   '1085': 'MUHAMMED NAFIH',
-   '1014': 'MURSHID MK'
-        };
-        // Default predefined items
-        const defaultPredefinedItems = [
-            'Fine',
-            'SSLC Fee',
-            'Books & Supplies', 
-            'Class Fund',
-            'Monthly',
-            'Phone & Internet',
-            'Medical Expenses',
-            'Account',
-            'Pocket Money Received',
-            'Food',
-            'Accessories',
-            'Emergency Expense'
-        ];
-        // Check for username in URL first
-        const urlUsername = new URLSearchParams(window.location.search).get("user");
-        // Function to format student name without "Mohammed" prefix
-        function formatStudentName(name) {
-            if (!name) return name;
-            
-            // Remove "MOHAMMED" and "MUHAMMED" from the beginning
-            let formattedName = name
-                .replace(/^MOHAMMED\s+/i, '')
-                .replace(/^MUHAMMED\s+/i, '')
-                .replace(/^MUHAMMAD\s+/i, '')
-                .trim();
-            
-            return formattedName || name; // Return original if empty after removal
-        }
-        // Initialize predefined items
-        function initializePredefinedItems() {
-            try {
-                const stored = localStorage.getItem('predefinedItems_' + (currentUsername || 'default'));
-                if (stored) {
-                    predefinedItems = JSON.parse(stored);
-                } else {
-                    predefinedItems = [...defaultPredefinedItems];
-                    savePredefinedItems();
-                }
-            } catch (error) {
-                console.warn("Error loading predefined items from localStorage:", error);
-                predefinedItems = [...defaultPredefinedItems];
-            }
-            updatePredefinedItemsUI();
-        }
-        // Save predefined items to localStorage
-        function savePredefinedItems() {
-            try {
-                if (currentUsername) {
-                    localStorage.setItem('predefinedItems_' + currentUsername, JSON.stringify(predefinedItems));
-                }
-            } catch (error) {
-                console.warn("Error saving predefined items to localStorage:", error);
-            }
-        }
-        // Update predefined items dropdown and management list
-        function updatePredefinedItemsUI() {
-            const select = document.getElementById('predefinedItemSelect');
-            const managementList = document.getElementById('predefinedItemsList');
-            
-            if (!select || !managementList) return;
-            
-            // Update dropdown
-            select.innerHTML = '<option value="">Select an item...</option>';
-            predefinedItems.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                select.appendChild(option);
-            });
-            // Update management list
-            managementList.innerHTML = '';
-            predefinedItems.forEach((item, index) => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'predefined-item';
-                itemDiv.innerHTML = `
-                    <span>${item}</span>
-                    <button type="button" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removePredefinedItem(${index})">🗑️ Remove</button>
-                `;
-                managementList.appendChild(itemDiv);
-            });
-        }
-        // Toggle between predefined and custom item input
-        function toggleItemInput(mode) {
-            currentItemInputMode = mode;
-            
-            // Update button states
-            document.querySelectorAll('.item-toggle').forEach(btn => btn.classList.remove('active'));
-            
-            const predefinedSelect = document.getElementById('predefinedItemSelect');
-            const customInput = document.getElementById('customItemInput');
-            const manageSection = document.getElementById('manageItemsSection');
-            
-            if (mode === 'predefined') {
-                document.getElementById('predefinedToggle').classList.add('active');
-                predefinedSelect.style.display = 'block';
-                customInput.style.display = 'none';
-                manageSection.style.display = 'none';
-            } else if (mode === 'custom') {
-                document.getElementById('customToggle').classList.add('active');
-                predefinedSelect.style.display = 'none';
-                customInput.style.display = 'block';
-                manageSection.style.display = 'none';
-            }
-            
-            // Clear any pending auto-add
-            clearAutoAddTimeout();
-        }
-        // Entry Sets Management
-        function initializeEntrySets() {
-            const container = document.getElementById('entrySetsContainer');
-            if (!container) return;
-            
-            // Clear existing sets
-            container.innerHTML = '';
-            entrySetCounter = 0;
-            
-            // Add the first entry set
-            addNewEntrySet();
-        }
-        
-        function addNewEntrySet() {
-            const container = document.getElementById('entrySetsContainer');
-            if (!container) return;
-            
-            entrySetCounter++;
-            const setId = entrySetCounter;
-            
-            const entrySetDiv = document.createElement('div');
-            entrySetDiv.className = 'entry-set';
-            entrySetDiv.id = `entrySet-${setId}`;
-            
-            // Create item select
-            const itemSelect = document.createElement('select');
-            itemSelect.className = 'entry-item-select';
-            itemSelect.id = `entryItem-${setId}`;
-            
-            // Add predefined items to the select
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'Select an item...';
-            itemSelect.appendChild(defaultOption);
-            
-            predefinedItems.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item;
-                option.textContent = item;
-                itemSelect.appendChild(option);
-            });
-            
-            // Create amount input
-            const amountInput = document.createElement('input');
-            amountInput.type = 'number';
-            amountInput.className = 'entry-amount-input';
-            amountInput.id = `entryAmount-${setId}`;
-            amountInput.placeholder = 'Amount (₹)';
-            amountInput.step = '0.01';
-            amountInput.min = '0';
-            
-            // Create remove button (only if it's not the first set)
-            let removeButton = null;
-            if (entrySetCounter > 1) {
-                removeButton = document.createElement('button');
-                removeButton.type = 'button';
-                removeButton.className = 'remove-set-btn';
-                removeButton.textContent = 'Remove';
-                removeButton.onclick = function() {
-                    removeEntrySet(setId);
-                };
-            }
-            
-            // Add event listeners for auto-adding new set when both fields are filled
-            itemSelect.addEventListener('change', function() {
-                checkEntrySetFields(setId);
-            });
-            
-            amountInput.addEventListener('input', function() {
-                checkEntrySetFields(setId);
-            });
-            
-            // Append elements to the entry set
-            entrySetDiv.appendChild(itemSelect);
-            entrySetDiv.appendChild(amountInput);
-            if (removeButton) {
-                entrySetDiv.appendChild(removeButton);
-            }
-            
-            // Add the entry set to the container
-            container.appendChild(entrySetDiv);
-            
-            // Focus on the item select
-            itemSelect.focus();
-        }
-        
-        function removeEntrySet(setId) {
-            const entrySet = document.getElementById(`entrySet-${setId}`);
-            if (entrySet) {
-                entrySet.remove();
-            }
-        }
-        
-        function checkEntrySetFields(setId) {
-            const itemSelect = document.getElementById(`entryItem-${setId}`);
-            const amountInput = document.getElementById(`entryAmount-${setId}`);
-            
-            if (!itemSelect || !amountInput) return;
-            
-            const itemValue = itemSelect.value;
-            const amountValue = amountInput.value.trim();
-            
-            // Check if both fields have valid values
-            if (itemValue && amountValue && !isNaN(parseFloat(amountValue)) && parseFloat(amountValue) > 0) {
-                // Check if this is the last entry set
-                const container = document.getElementById('entrySetsContainer');
-                const allSets = container.querySelectorAll('.entry-set');
-                const lastSet = allSets[allSets.length - 1];
-                
-                if (lastSet && lastSet.id === `entrySet-${setId}`) {
-                    // Add a new entry set after a short delay
-                    setTimeout(() => {
-                        addNewEntrySet();
-                    }, 500);
-                }
-            }
-        }
-        
-        function addAllEntries() {
-            if (!currentUsername) {
-                alert("⚠️ Please login first.");
-                return;
-            }
-            
-            // Clear any pending auto-add
-            clearAutoAddTimeout();
-            
-            const entryType = document.getElementById('entryType');
-            const type = entryType ? entryType.value : 'credit';
-            
-            // Get all entry sets
-            const container = document.getElementById('entrySetsContainer');
-            const entrySets = container.querySelectorAll('.entry-set');
-            
-            const entries = [];
-            
-            // Collect all valid entries
-            entrySets.forEach(set => {
-                const setId = set.id.split('-')[1];
-                const itemSelect = document.getElementById(`entryItem-${setId}`);
-                const amountInput = document.getElementById(`entryAmount-${setId}`);
-                
-                if (itemSelect && amountInput) {
-                    const item = itemSelect.value;
-                    const amount = amountInput.value.trim();
-                    
-                    if (item && amount && !isNaN(parseFloat(amount)) && parseFloat(amount) > 0) {
-                        entries.push({
-                            item: item,
-                            amount: parseFloat(amount),
-                            setId: setId
-                        });
-                    }
-                }
-            });
-            
-            if (entries.length === 0) {
-                alert("⚠️ Please fill in at least one entry with valid item and amount.");
-                return;
-            }
-            
-            // Process each entry
-            let successCount = 0;
-            let errorCount = 0;
-            
-            const processEntry = (index) => {
-                if (index >= entries.length) {
-                    // All entries processed
-                    alert(`✅ Entry submission complete: ${successCount} added successfully, ${errorCount} failed.`);
-                    
-                    // Clear all entry sets and add a new one
-                    initializeEntrySets();
-                    
-                    // Refresh data
-                    setTimeout(() => {
-                        fetchSummary();
-                        fetchLedger();
-                    }, 500);
-                    
-                    return;
-                }
-                
-                const entry = entries[index];
-                const action = type === "credit" ? "add_credit" : "add_debit";
-                const requestUrl = `${api}?action=${encodeURIComponent(action)}&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(entry.item)}&amount=${encodeURIComponent(entry.amount)}`;
-                
-                fetch(requestUrl, { 
-                    method: "GET",
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.result === "success") {
-                        successCount++;
-                        // Mark the entry set as processed
-                        const entrySet = document.getElementById(`entrySet-${entry.setId}`);
-                        if (entrySet) {
-                            entrySet.style.opacity = '0.5';
-                            entrySet.style.pointerEvents = 'none';
-                        }
-                    } else {
-                        errorCount++;
-                        console.error(`Error adding entry: ${data.error || "Unknown error"}`);
-                    }
-                    
-                    // Process next entry
-                    processEntry(index + 1);
-                })
-                .catch(error => {
-                    errorCount++;
-                    console.error(`Error adding entry: ${error.message}`);
-                    
-                    // Process next entry
-                    processEntry(index + 1);
-                });
-            };
-            
-            // Start processing entries
-            processEntry(0);
-        }
-        
-        // Auto-add functionality
-        function setupAutoAddListeners() {
-            // This function is now handled by the entry set management
-        }
-        
-        function clearAutoAddTimeout() {
-            if (autoAddTimeout) {
-                clearTimeout(autoAddTimeout);
-                autoAddTimeout = null;
-            }
-            
-            // Hide auto-add indicator
-            const indicator = document.getElementById('autoAddIndicator');
-            if (indicator) {
-                indicator.classList.remove('show');
-            }
-        }
-        // Bulk Entry Functions
-        function addBulkCredit() {
-            const bulkCredit = document.getElementById("bulkCredit");
-            const bulkStatus = document.getElementById("bulkStatus");
-            const entriesText = bulkCredit.value.trim();
-            
-            if (!entriesText) {
-                alert("⚠️ Please enter at least one credit entry.");
-                return;
-            }
-            
-            processBulkEntries(entriesText, 'credit', bulkStatus);
-        }
+<!-- Dark Mode Toggle -->
+<div class="theme-toggle" onclick="toggleTheme()">
+<span class="theme-toggle-icon">🌓</span>
+<span class="theme-toggle-text">Dark</span>
+</div>
+<div class="dashboard-container">
+<h1 class="main-title">📘 Student Financial Dashboard</h1>
 
-        function addBulkDebit() {
-            const bulkDebit = document.getElementById("bulkDebit");
-            const bulkStatus = document.getElementById("bulkStatus");
-            const entriesText = bulkDebit.value.trim();
-            
-            if (!entriesText) {
-                alert("⚠️ Please enter at least one debit entry.");
-                return;
-            }
-            
-            processBulkEntries(entriesText, 'debit', bulkStatus);
-        }
+<!-- Login Section -->
+<div id="loginSection" class="card login-card">
+<div class="card-header">
+<div class="card-icon">👋</div>
+<h3>Welcome! Please Login</h3>
+</div>
+<div class="login-form">
+<input type="text" id="usernameInput" placeholder="Enter AD.NO (e.g., 1050)" maxlength="4" pattern="\d{4}" inputmode="numeric">
+<button class="btn btn-primary" onclick="login()">🔑 Student Login</button>
+</div>
+<div style="margin-top: 16px; text-align: center;">
+<p style="font-size: 12px; color: var(--text-color); opacity: 0.7; margin-bottom: 8px;">Admin Access:</p>
+<button class="btn btn-info" onclick="window.location.href='admin-dashboard.html'" style="margin-top: 0;">⚙️ Admin Dashboard</button>
+</div>
+<div id="loginError" class="error" style="display: none; margin-top: 12px;"></div>
+<div id="debugInfo" class="debug-info" style="display: none;">
+<div>API URL: <span id="apiUrl"></span></div>
+<div>Last Request: <span id="lastRequest"></span></div>
+<div>Last Response: <span id="lastResponse"></span></div>
+</div>
+</div>
+<!-- Dashboard Section -->
+<div id="dashboardSection" class="hidden">
+<!-- Student Profile Header -->
+<div class="profile-header">
+<div class="profile-photo">
+<span id="profileIcon">👤</span>
+</div>
+<h2 class="student-name" id="studentName">STUDENT NAME</h2>
+<p class="student-role">Student Dashboard</p>
+<div class="profile-actions">
+<button class="profile-btn danger" onclick="logout()">Check Another</button>
+<button class="profile-btn" onclick="window.location.href='admin-dashboard.html'">Home</button>
+</div>
+</div>
+<div class="dashboard-content">
+<!-- Financial Summary Card -->
+<div class="card">
+<div class="card-header">
+<div class="card-icon">💰</div>
+<h3>Financial Summary</h3>
+</div>
+<p>Track your financial activities and current balance.</p>
+<div class="stats-grid">
+<div class="stat-item credit">
+<span class="stat-number credit" id="totalCredit">₹0</span>
+<span class="stat-label">Total Credit</span>
+</div>
+<div class="stat-item debit">
+<span class="stat-number debit" id="totalDebit">₹0</span>
+<span class="stat-label">Total Debit</span>
+</div>
+<div class="stat-item balance" id="balanceCard">
+<span class="stat-number balance" id="balanceAmountElement">₹<span id="balanceAmount">0</span></span>
+<span class="stat-label">Current Balance</span>
+</div>
+</div>
+<div style="margin-top: 16px;">
+<button class="btn btn-success" onclick="refreshData()">🔄 Refresh Data</button>
+</div>
+</div>
+<!-- Add New Entry Card -->
+<div class="card">
+<div class="card-header">
+<div class="card-icon">➕</div>
+<h3>Add New Entry</h3>
+</div>
+<p>Record your income and expenses quickly.</p>
+<div class="form-grid">
+<select id="entryType">
+<option value="credit">Credit</option>
+<option value="debit">Debit</option>
+</select>
 
-        function addBulkEntries() {
-            const bulkCredit = document.getElementById("bulkCredit");
-            const bulkDebit = document.getElementById("bulkDebit");
-            const bulkStatus = document.getElementById("bulkStatus");
-            
-            const creditText = bulkCredit.value.trim();
-            const debitText = bulkDebit.value.trim();
-            
-            if (!creditText && !debitText) {
-                alert("⚠️ Please enter at least one entry.");
-                return;
-            }
-            
-            let allEntries = [];
-            let successCount = 0;
-            let errorCount = 0;
-            
-            // Process credit entries
-            if (creditText) {
-                const creditResults = processBulkEntriesSync(creditText, 'credit');
-                allEntries = allEntries.concat(creditResults.entries);
-                successCount += creditResults.successCount;
-                errorCount += creditResults.errorCount;
-            }
-            
-            // Process debit entries
-            if (debitText) {
-                const debitResults = processBulkEntriesSync(debitText, 'debit');
-                allEntries = allEntries.concat(debitResults.entries);
-                successCount += debitResults.successCount;
-                errorCount += debitResults.errorCount;
-            }
-            
-            // Show combined status
-            bulkStatus.style.display = "block";
-            bulkStatus.className = "status-message";
-            bulkStatus.innerHTML = `✅ Bulk entry complete: ${successCount} added successfully, ${errorCount} failed.`;
-            
-            // Clear textareas if all were successful
-            if (errorCount === 0) {
-                bulkCredit.value = "";
-                bulkDebit.value = "";
-            }
-            
-            // Refresh data
-            setTimeout(() => {
-                fetchSummary();
-                fetchLedger();
-            }, 500);
-        }
+<div class="item-input-container">
+<div class="item-selector">
+<button type="button" class="item-toggle active" id="predefinedToggle" onclick="toggleItemInput('predefined')">📋 From List</button>
+<button type="button" class="item-toggle" id="customToggle" onclick="toggleItemInput('custom')">✏️ Custom</button>
+<button type="button" class="item-toggle" id="manageToggle" onclick="toggleManageItems()">⚙️ Manage</button>
+</div>
 
-        function processBulkEntries(entriesText, type, statusElement) {
-            if (!currentUsername) {
-                alert("⚠️ Please login first.");
-                return;
-            }
-            
-            const lines = entriesText.split('\n').filter(line => line.trim() !== '');
-            const results = [];
-            let successCount = 0;
-            let errorCount = 0;
-            
-            // Show processing status
-            statusElement.style.display = "block";
-            statusElement.className = "loading";
-            statusElement.innerHTML = `Processing ${type} entries...`;
-            
-            // Process each entry
-            const processEntry = (index) => {
-                if (index >= lines.length) {
-                    // All entries processed
-                    statusElement.className = "status-message";
-                    statusElement.innerHTML = `✅ ${type} entries complete: ${successCount} added successfully, ${errorCount} failed.`;
-                    
-                    // Refresh data
-                    setTimeout(() => {
-                        fetchSummary();
-                        fetchLedger();
-                    }, 500);
-                    
-                    return;
-                }
-                
-                const line = lines[index].trim();
-                const parts = line.split(',').map(part => part.trim());
-                
-                // Validate format
-                if (parts.length !== 2) {
-                    results.push({ line, error: "Invalid format. Expected: description,amount" });
-                    errorCount++;
-                    processEntry(index + 1);
-                    return;
-                }
-                
-                const [description, amountStr] = parts;
-                
-                // Validate amount
-                const amount = parseFloat(amountStr);
-                if (isNaN(amount) || amount <= 0) {
-                    results.push({ line, error: "Amount must be a positive number" });
-                    errorCount++;
-                    processEntry(index + 1);
-                    return;
-                }
-                
-                // Add the entry
-                const action = type === "credit" ? "add_credit" : "add_debit";
-                const requestUrl = `${api}?action=${encodeURIComponent(action)}&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(description)}&amount=${encodeURIComponent(amount)}`;
-                
-                fetch(requestUrl, { 
-                    method: "GET",
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.result === "success") {
-                        successCount++;
-                        results.push({ line, success: true });
-                    } else {
-                        errorCount++;
-                        results.push({ line, error: data.error || "Unknown error" });
-                    }
-                    
-                    // Process next entry
-                    processEntry(index + 1);
-                })
-                .catch(error => {
-                    errorCount++;
-                    results.push({ line, error: error.message });
-                    processEntry(index + 1);
-                });
-            };
-            
-            // Start processing entries
-            processEntry(0);
-        }
+<select id="predefinedItemSelect">
+<option value="">Select an item...</option>
+</select>
 
-        function processBulkEntriesSync(entriesText, type) {
-            const lines = entriesText.split('\n').filter(line => line.trim() !== '');
-            const results = [];
-            let successCount = 0;
-            let errorCount = 0;
-            
-            for (const line of lines) {
-                const parts = line.split(',').map(part => part.trim());
-                
-                // Validate format
-                if (parts.length !== 2) {
-                    results.push({ line, error: "Invalid format. Expected: description,amount" });
-                    errorCount++;
-                    continue;
-                }
-                
-                const [description, amountStr] = parts;
-                
-                // Validate amount
-                const amount = parseFloat(amountStr);
-                if (isNaN(amount) || amount <= 0) {
-                    results.push({ line, error: "Amount must be a positive number" });
-                    errorCount++;
-                    continue;
-                }
-                
-                results.push({ line, type, description, amount, success: true });
-                successCount++;
-            }
-            
-            return { entries: results, successCount, errorCount };
-        }
+<input type="text" id="customItemInput" placeholder="Enter custom description" style="display: none;">
 
-        function clearBulkEntries() {
-            document.getElementById("bulkCredit").value = "";
-            document.getElementById("bulkDebit").value = "";
-            document.getElementById("bulkStatus").style.display = "none";
-        }
+<div id="manageItemsSection" class="new-item-section">
+<h4>Manage Predefined Items</h4>
+<div class="new-item-form">
+<input type="text" id="newItemInput" placeholder="New item name">
+<button type="button" class="btn btn-info" onclick="addPredefinedItem()">➕ Add</button>
+</div>
+<div id="predefinedItemsList" class="predefined-items"></div>
+</div>
+</div>
 
-        function showCreditExample() {
-            const exampleText = `Pocket Money Received,500
+<div class="entry-sets-container" id="entrySetsContainer">
+<!-- Entry sets will be dynamically added here -->
+</div>
+
+<button class="add-set-btn" onclick="addNewEntrySet()">
+<span>➕</span>
+<span>Add Another Entry</span>
+</button>
+
+<div class="auto-add-indicator" id="autoAddIndicator">
+<span>⏱️</span>
+<span>Auto-adding entry...</span>
+</div>
+
+<button class="btn btn-primary" onclick="addAllEntries()">📝 Add All Entries</button>
+</div>
+</div>
+<!-- Bulk Entry Card -->
+<div class="card">
+<div class="card-header">
+<div class="card-icon">📝</div>
+<h3>Bulk Entry</h3>
+</div>
+<p>Add multiple transactions quickly using the format: description,amount</p>
+
+<div class="bulk-entry-container">
+<!-- Credit Section -->
+<div class="bulk-section credit-section">
+<div class="bulk-section-header">
+<div class="bulk-section-icon">💰</div>
+<h4>Credit Entries</h4>
+</div>
+<div class="bulk-section-content">
+<textarea id="bulkCredit" rows="5" placeholder="Pocket Money Received,500&#10;Monthly Allowance,1000&#10;Account Transfer,1500"></textarea>
+<div class="bulk-section-actions">
+<button class="btn btn-success" onclick="addBulkCredit()">➕ Add Credits</button>
+<button class="btn btn-info" onclick="showCreditExample()">📋 Example</button>
+</div>
+</div>
+</div>
+
+<!-- Debit Section -->
+<div class="bulk-section debit-section">
+<div class="bulk-section-header">
+<div class="bulk-section-icon">💸</div>
+<h4>Debit Entries</h4>
+</div>
+<div class="bulk-section-content">
+<textarea id="bulkDebit" rows="5" placeholder="Books & Supplies,200&#10;Fine,50&#10;Phone & Internet,300"></textarea>
+<div class="bulk-section-actions">
+<button class="btn btn-danger" onclick="addBulkDebit()">➕ Add Debits</button>
+<button class="btn btn-info" onclick="showDebitExample()">📋 Example</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="bulk-actions">
+<button class="btn btn-primary" onclick="addBulkEntries()">📝 Add All Entries</button>
+<button class="btn btn-warning" onclick="clearBulkEntries()">🗑️ Clear All</button>
+</div>
+
+<div id="bulkStatus" class="status-message" style="display: none;"></div>
+</div>
+<!-- Filter & Search Card -->
+<div class="card">
+<div class="card-header">
+<div class="card-icon">🔍</div>
+<h3>Filter & Search</h3>
+</div>
+<p>Find specific transactions using advanced filters.</p>
+<div class="filter-grid">
+<select id="filterType">
+<option value="">All Types</option>
+<option value="credit">Credit Only</option>
+<option value="debit">Debit Only</option>
+</select>
+<input type="text" id="filterDescription" placeholder="Search description...">
+<input type="date" id="filterDateFrom" placeholder="From Date">
+<input type="date" id="filterDateTo" placeholder="To Date">
+<input type="number" id="filterAmountMin" placeholder="Min Amount" step="0.01" min="0">
+<input type="number" id="filterAmountMax" placeholder="Max Amount" step="0.01" min="0">
+<button class="btn btn-primary" onclick="applyFilters()">🔍 Apply Filters</button>
+<button class="btn btn-warning" onclick="clearFilters()">🗑️ Clear</button>
+</div>
+<div id="filterSummary" class="filter-summary"></div>
+</div>
+<!-- Transaction Ledger Card -->
+<div class="card">
+<div class="card-header">
+<div class="card-icon">📊</div>
+<h3>Transaction Ledger</h3>
+</div>
+<p>View and manage your complete transaction history.</p>
+<div class="controls-section">
+<select id="sortBy">
+<option value="date-desc">📅Date (Newest First)</option>
+<option value="date-asc">📅 Date (Oldest First)</option>
+<option value="amount-desc">💰 Amount (High to Low)</option>
+<option value="amount-asc">💰 Amount (Low to High)</option>
+<option value="type">📝 Type</option>
+</select>
+<button class="btn btn-success" onclick="exportData()">📄 Export PDF</button>
+</div>
+
+<div id="ledgerStatus" class="loading">Loading transactions...</div>
+<div class="table-container">
+<table id="ledgerTable" style="display: none;">
+<thead>
+<tr>
+<th>Date</th>
+<th>Type</th>
+<th>Description</th>
+<th>Amount</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="ledgerBody"></tbody>
+</table>
+</div>
+<div id="paginationControls" class="pagination-controls"></div>
+</div>
+</div>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script>
+let currentUsername = null;
+let debugMode = false;
+let allLedgerData = [];
+let filteredData = [];
+let currentPage = 1;
+let itemsPerPage = 10;
+let predefinedItems = [];
+let currentItemInputMode = 'predefined';
+let receivedTransactions = new Set();
+let autoAddTimeout = null;
+let entrySetCounter = 0;
+const api = "https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec";
+// Theme management
+function initializeTheme() {
+const savedTheme = localStorage.getItem('theme') || 'light';
+setTheme(savedTheme);
+}
+function toggleTheme() {
+const currentTheme = document.documentElement.getAttribute('data-theme');
+const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+setTheme(newTheme);
+}
+function setTheme(theme) {
+document.documentElement.setAttribute('data-theme', theme);
+localStorage.setItem('theme', theme);
+
+const toggleText = document.querySelector('.theme-toggle-text');
+const toggleIcon = document.querySelector('.theme-toggle-icon');
+
+if (theme === 'dark') {
+toggleText.textContent = 'Light';
+toggleIcon.textContent = '☀️';
+} else {
+toggleText.textContent = 'Dark';
+toggleIcon.textContent = '🌙';
+}
+}
+// Initialize when DOM is loaded
+if (document.readyState === 'loading') {
+document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+initializeApp();
+}
+// Student data mapping
+const studentData = {
+
+'1050': 'MUHAMMAD SINAN PC',
+'1070': 'MUHAMMED MUSAMMIL B K',
+'1074': 'MUAD .M',
+'1058': 'MUHAMMED JALAL AT',
+'1051': 'MUHAMMAD HISHAM T',
+'1056': 'MUHAMMED SHADIN N.M.',
+'1076': 'MUHAMMED MINHAJ KK',
+'1071': 'SAYYID MOHAMMAD ZUHAIR A K',
+'1075': 'MUHAMMED HASHIM P',
+'1061': 'ANSHID M P',
+'1072': 'MOHAMMED SINAN TP',
+'1078': 'MUHAMMED RABIEUE MK',
+'1088': 'MOHAMMED NAEEM K',
+'1082': 'MUHAMMED SANEEN',
+'1090': 'MUHAMMED BASSAM',
+'1066': 'HASHIM MOHAMMED K P',
+'1063': 'MOHAMMED RISHADH. T',
+'1073': 'MUHAMMAD MUSTHAFA KK',
+'1068': 'MUHAMMED UVAIS.EK',
+'1053': 'AMEEN T',
+'1040': 'MUHAMMAD RIFAD K',
+'1059': 'AFSAL',
+'1064': 'MOHAMED SHAMIL M',
+'1013': 'MOHAMMED SAHAD.K',
+'1087': 'MUHAMMED SHAMIL. A',
+'1089': 'ADIL SHAH M',
+'1084': 'ASIM MOHAMED M',
+'1024': 'FADHIL KATTIPARUTHI',
+'1008': 'MUHAMMED MINHAJ',
+'1086': 'MOHAMMED NIDAL',
+'1085': 'MUHAMMED NAFIH',
+'1014': 'MURSHID MK'
+};
+// Default predefined items
+const defaultPredefinedItems = [
+'Fine',
+'SSLC Fee',
+'Books & Supplies',
+'Class Fund',
+'Monthly',
+'Phone & Internet',
+'Medical Expenses',
+'Account',
+'Pocket Money Received',
+'Food',
+'Accessories',
+'Emergency Expense'
+];
+// Check for username in URL first
+const urlUsername = new URLSearchParams(window.location.search).get("user");
+// Function to format student name without "Mohammed" prefix
+function formatStudentName(name) {
+if (!name) return name;
+
+// Remove "MOHAMMED" and "MUHAMMED" from the beginning
+let formattedName = name
+.replace(/^MOHAMMED\s+/i, '')
+.replace(/^MUHAMMED\s+/i, '')
+.replace(/^MUHAMMAD\s+/i, '')
+.trim();
+
+return formattedName || name; // Return original if empty after removal
+}
+// Initialize predefined items
+function initializePredefinedItems() {
+try {
+const stored = localStorage.getItem('predefinedItems_' + (currentUsername || 'default'));
+if (stored) {
+predefinedItems = JSON.parse(stored);
+} else {
+predefinedItems = [...defaultPredefinedItems];
+savePredefinedItems();
+}
+} catch (error) {
+console.warn("Error loading predefined items from localStorage:", error);
+predefinedItems = [...defaultPredefinedItems];
+}
+updatePredefinedItemsUI();
+}
+// Save predefined items to localStorage
+function savePredefinedItems() {
+try {
+if (currentUsername) {
+localStorage.setItem('predefinedItems_' + currentUsername, JSON.stringify(predefinedItems));
+}
+} catch (error) {
+console.warn("Error saving predefined items to localStorage:", error);
+}
+}
+// Update predefined items dropdown and management list
+function updatePredefinedItemsUI() {
+const select = document.getElementById('predefinedItemSelect');
+const managementList = document.getElementById('predefinedItemsList');
+
+if (!select || !managementList) return;
+
+// Update dropdown
+select.innerHTML = '<option value="">Select an item...</option>';
+predefinedItems.forEach(item => {
+const option = document.createElement('option');
+option.value = item;
+option.textContent = item;
+select.appendChild(option);
+});
+// Update management list
+managementList.innerHTML = '';
+predefinedItems.forEach((item, index) => {
+const itemDiv = document.createElement('div');
+itemDiv.className = 'predefined-item';
+itemDiv.innerHTML = `
+<span>${item}</span>
+<button type="button" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="removePredefinedItem(${index})">🗑️ Remove</button>
+`;
+managementList.appendChild(itemDiv);
+});
+}
+// Toggle between predefined and custom item input
+function toggleItemInput(mode) {
+currentItemInputMode = mode;
+
+// Update button states
+document.querySelectorAll('.item-toggle').forEach(btn => btn.classList.remove('active'));
+
+const predefinedSelect = document.getElementById('predefinedItemSelect');
+const customInput = document.getElementById('customItemInput');
+const manageSection = document.getElementById('manageItemsSection');
+
+if (mode === 'predefined') {
+document.getElementById('predefinedToggle').classList.add('active');
+predefinedSelect.style.display = 'block';
+customInput.style.display = 'none';
+manageSection.style.display = 'none';
+} else if (mode === 'custom') {
+document.getElementById('customToggle').classList.add('active');
+predefinedSelect.style.display = 'none';
+customInput.style.display = 'block';
+manageSection.style.display = 'none';
+}
+
+// Clear any pending auto-add
+clearAutoAddTimeout();
+}
+// Entry Sets Management
+function initializeEntrySets() {
+const container = document.getElementById('entrySetsContainer');
+if (!container) return;
+
+// Clear existing sets
+container.innerHTML = '';
+entrySetCounter = 0;
+
+// Add the first entry set
+addNewEntrySet();
+}
+
+function addNewEntrySet() {
+const container = document.getElementById('entrySetsContainer');
+if (!container) return;
+
+entrySetCounter++;
+const setId = entrySetCounter;
+
+const entrySetDiv = document.createElement('div');
+entrySetDiv.className = 'entry-set';
+entrySetDiv.id = `entrySet-${setId}`;
+
+// Create item select
+const itemSelect = document.createElement('select');
+itemSelect.className = 'entry-item-select';
+itemSelect.id = `entryItem-${setId}`;
+
+// Add predefined items to the select
+const defaultOption = document.createElement('option');
+defaultOption.value = '';
+defaultOption.textContent = 'Select an item...';
+itemSelect.appendChild(defaultOption);
+
+predefinedItems.forEach(item => {
+const option = document.createElement('option');
+option.value = item;
+option.textContent = item;
+itemSelect.appendChild(option);
+});
+
+// Create amount input
+const amountInput = document.createElement('input');
+amountInput.type = 'number';
+amountInput.className = 'entry-amount-input';
+amountInput.id = `entryAmount-${setId}`;
+amountInput.placeholder = 'Amount (₹)';
+amountInput.step = '0.01';
+amountInput.min = '0';
+
+// Create remove button (only if it's not the first set)
+let removeButton = null;
+if (entrySetCounter > 1) {
+removeButton = document.createElement('button');
+removeButton.type = 'button';
+removeButton.className = 'remove-set-btn';
+removeButton.textContent = 'Remove';
+removeButton.onclick = function() {
+removeEntrySet(setId);
+};
+}
+
+// Add event listeners for auto-adding new set when both fields are filled
+itemSelect.addEventListener('change', function() {
+checkEntrySetFields(setId);
+});
+
+amountInput.addEventListener('input', function() {
+checkEntrySetFields(setId);
+});
+
+// Append elements to the entry set
+entrySetDiv.appendChild(itemSelect);
+entrySetDiv.appendChild(amountInput);
+if (removeButton) {
+entrySetDiv.appendChild(removeButton);
+}
+
+// Add the entry set to the container
+container.appendChild(entrySetDiv);
+
+// Focus on the item select
+itemSelect.focus();
+}
+
+function removeEntrySet(setId) {
+const entrySet = document.getElementById(`entrySet-${setId}`);
+if (entrySet) {
+entrySet.remove();
+}
+}
+
+function checkEntrySetFields(setId) {
+const itemSelect = document.getElementById(`entryItem-${setId}`);
+const amountInput = document.getElementById(`entryAmount-${setId}`);
+
+if (!itemSelect || !amountInput) return;
+
+const itemValue = itemSelect.value;
+const amountValue = amountInput.value.trim();
+
+// Check if both fields have valid values
+if (itemValue && amountValue && !isNaN(parseFloat(amountValue)) && parseFloat(amountValue) > 0) {
+// Check if this is the last entry set
+const container = document.getElementById('entrySetsContainer');
+const allSets = container.querySelectorAll('.entry-set');
+const lastSet = allSets[allSets.length - 1];
+
+if (lastSet && lastSet.id === `entrySet-${setId}`) {
+// Add a new entry set after a short delay
+setTimeout(() => {
+addNewEntrySet();
+}, 500);
+}
+}
+}
+
+function addAllEntries() {
+if (!currentUsername) {
+alert("⚠️ Please login first.");
+return;
+}
+
+// Clear any pending auto-add
+clearAutoAddTimeout();
+
+const entryType = document.getElementById('entryType');
+const type = entryType ? entryType.value : 'credit';
+
+// Get all entry sets
+const container = document.getElementById('entrySetsContainer');
+const entrySets = container.querySelectorAll('.entry-set');
+
+const entries = [];
+
+// Collect all valid entries
+entrySets.forEach(set => {
+const setId = set.id.split('-')[1];
+const itemSelect = document.getElementById(`entryItem-${setId}`);
+const amountInput = document.getElementById(`entryAmount-${setId}`);
+
+if (itemSelect && amountInput) {
+const item = itemSelect.value;
+const amount = amountInput.value.trim();
+
+if (item && amount && !isNaN(parseFloat(amount)) && parseFloat(amount) > 0) {
+entries.push({
+item: item,
+amount: parseFloat(amount),
+setId: setId
+});
+}
+}
+});
+
+if (entries.length === 0) {
+alert("⚠️ Please fill in at least one entry with valid item and amount.");
+return;
+}
+
+// Process each entry
+let successCount = 0;
+let errorCount = 0;
+
+const processEntry = (index) => {
+if (index >= entries.length) {
+// All entries processed
+alert(`✅ Entry submission complete: ${successCount} added successfully, ${errorCount} failed.`);
+
+// Clear all entry sets and add a new one
+initializeEntrySets();
+
+// Refresh data
+setTimeout(() => {
+fetchSummary();
+fetchLedger();
+}, 500);
+
+return;
+}
+
+const entry = entries[index];
+const action = type === "credit" ? "add_credit" : "add_debit";
+const requestUrl = `${api}?action=${encodeURIComponent(action)}&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(entry.item)}&amount=${encodeURIComponent(entry.amount)}`;
+
+fetch(requestUrl, {
+method: "GET",
+headers: {
+'Accept': 'application/json'
+}
+})
+.then(res => res.json())
+.then(data => {
+if (data.result === "success") {
+successCount++;
+// Mark the entry set as processed
+const entrySet = document.getElementById(`entrySet-${entry.setId}`);
+if (entrySet) {
+entrySet.style.opacity = '0.5';
+entrySet.style.pointerEvents = 'none';
+}
+} else {
+errorCount++;
+console.error(`Error adding entry: ${data.error || "Unknown error"}`);
+}
+
+// Process next entry
+processEntry(index + 1);
+})
+.catch(error => {
+errorCount++;
+console.error(`Error adding entry: ${error.message}`);
+
+// Process next entry
+processEntry(index + 1);
+});
+};
+
+// Start processing entries
+processEntry(0);
+}
+
+// Auto-add functionality
+function setupAutoAddListeners() {
+// This function is now handled by the entry set management
+}
+
+function clearAutoAddTimeout() {
+if (autoAddTimeout) {
+clearTimeout(autoAddTimeout);
+autoAddTimeout = null;
+}
+
+// Hide auto-add indicator
+const indicator = document.getElementById('autoAddIndicator');
+if (indicator) {
+indicator.classList.remove('show');
+}
+}
+// Bulk Entry Functions
+function addBulkCredit() {
+const bulkCredit = document.getElementById("bulkCredit");
+const bulkStatus = document.getElementById("bulkStatus");
+const entriesText = bulkCredit.value.trim();
+
+if (!entriesText) {
+alert("⚠️ Please enter at least one credit entry.");
+return;
+}
+
+processBulkEntries(entriesText, 'credit', bulkStatus);
+}
+function addBulkDebit() {
+const bulkDebit = document.getElementById("bulkDebit");
+const bulkStatus = document.getElementById("bulkStatus");
+const entriesText = bulkDebit.value.trim();
+
+if (!entriesText) {
+alert("⚠️ Please enter at least one debit entry.");
+return;
+}
+
+processBulkEntries(entriesText, 'debit', bulkStatus);
+}
+function addBulkEntries() {
+const bulkCredit = document.getElementById("bulkCredit");
+const bulkDebit = document.getElementById("bulkDebit");
+const bulkStatus = document.getElementById("bulkStatus");
+
+const creditText = bulkCredit.value.trim();
+const debitText = bulkDebit.value.trim();
+
+if (!creditText && !debitText) {
+alert("⚠️ Please enter at least one entry.");
+return;
+}
+
+let allEntries = [];
+let successCount = 0;
+let errorCount = 0;
+
+// Process credit entries
+if (creditText) {
+const creditResults = processBulkEntriesSync(creditText, 'credit');
+allEntries = allEntries.concat(creditResults.entries);
+successCount += creditResults.successCount;
+errorCount += creditResults.errorCount;
+}
+
+// Process debit entries
+if (debitText) {
+const debitResults = processBulkEntriesSync(debitText, 'debit');
+allEntries = allEntries.concat(debitResults.entries);
+successCount += debitResults.successCount;
+errorCount += debitResults.errorCount;
+}
+
+// Show combined status
+bulkStatus.style.display = "block";
+bulkStatus.className = "status-message";
+bulkStatus.innerHTML = `✅ Bulk entry complete: ${successCount} added successfully, ${errorCount} failed.`;
+
+// Clear textareas if all were successful
+if (errorCount === 0) {
+bulkCredit.value = "";
+bulkDebit.value = "";
+}
+
+// Refresh data
+setTimeout(() => {
+fetchSummary();
+fetchLedger();
+}, 500);
+}
+function processBulkEntries(entriesText, type, statusElement) {
+if (!currentUsername) {
+alert("⚠️ Please login first.");
+return;
+}
+
+const lines = entriesText.split('\n').filter(line => line.trim() !== '');
+const results = [];
+let successCount = 0;
+let errorCount = 0;
+
+// Show processing status
+statusElement.style.display = "block";
+statusElement.className = "loading";
+statusElement.innerHTML = `Processing ${type} entries...`;
+
+// Process each entry
+const processEntry = (index) => {
+if (index >= lines.length) {
+// All entries processed
+statusElement.className = "status-message";
+statusElement.innerHTML = `✅ ${type} entries complete: ${successCount} added successfully, ${errorCount} failed.`;
+
+// Refresh data
+setTimeout(() => {
+fetchSummary();
+fetchLedger();
+}, 500);
+
+return;
+}
+
+const line = lines[index].trim();
+const parts = line.split(',').map(part => part.trim());
+
+// Validate format
+if (parts.length !== 2) {
+results.push({ line, error: "Invalid format. Expected: description,amount" });
+errorCount++;
+processEntry(index + 1);
+return;
+}
+
+const [description, amountStr] = parts;
+
+// Validate amount
+const amount = parseFloat(amountStr);
+if (isNaN(amount) || amount <= 0) {
+results.push({ line, error: "Amount must be a positive number" });
+errorCount++;
+processEntry(index + 1);
+return;
+}
+
+// Add the entry
+const action = type === "credit" ? "add_credit" : "add_debit";
+const requestUrl = `${api}?action=${encodeURIComponent(action)}&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(description)}&amount=${encodeURIComponent(amount)}`;
+
+fetch(requestUrl, {
+method: "GET",
+headers: {
+'Accept': 'application/json'
+}
+})
+.then(res => res.json())
+.then(data => {
+if (data.result === "success") {
+successCount++;
+results.push({ line, success: true });
+} else {
+errorCount++;
+results.push({ line, error: data.error || "Unknown error" });
+}
+
+// Process next entry
+processEntry(index + 1);
+})
+.catch(error => {
+errorCount++;
+results.push({ line, error: error.message });
+processEntry(index + 1);
+});
+};
+
+// Start processing entries
+processEntry(0);
+}
+function processBulkEntriesSync(entriesText, type) {
+const lines = entriesText.split('\n').filter(line => line.trim() !== '');
+const results = [];
+let successCount = 0;
+let errorCount = 0;
+
+for (const line of lines) {
+const parts = line.split(',').map(part => part.trim());
+
+// Validate format
+if (parts.length !== 2) {
+results.push({ line, error: "Invalid format. Expected: description,amount" });
+errorCount++;
+continue;
+}
+
+const [description, amountStr] = parts;
+
+// Validate amount
+const amount = parseFloat(amountStr);
+if (isNaN(amount) || amount <= 0) {
+results.push({ line, error: "Amount must be a positive number" });
+errorCount++;
+continue;
+}
+
+results.push({ line, type, description, amount, success: true });
+successCount++;
+}
+
+return { entries: results, successCount, errorCount };
+}
+function clearBulkEntries() {
+document.getElementById("bulkCredit").value = "";
+document.getElementById("bulkDebit").value = "";
+document.getElementById("bulkStatus").style.display = "none";
+}
+function showCreditExample() {
+const exampleText = `Pocket Money Received,500
 Monthly Allowance,1000
 Account Transfer,1500
 Scholarship,2000
 Gift from Family,750`;
-            
-            document.getElementById("bulkCredit").value = exampleText;
-            alert("Credit example loaded! You can modify it before adding.");
-        }
 
-        function showDebitExample() {
-            const exampleText = `Books & Supplies,200
+document.getElementById("bulkCredit").value = exampleText;
+alert("Credit example loaded! You can modify it before adding.");
+}
+function showDebitExample() {
+const exampleText = `Books & Supplies,200
 Fine,50
 Phone & Internet,300
 Food Expenses,450
 Transportation,150`;
-            
-            document.getElementById("bulkDebit").value = exampleText;
-            alert("Debit example loaded! You can modify it before adding.");
-        }
-        // Toggle manage items section
-        function toggleManageItems() {
-            const section = document.getElementById('manageItemsSection');
-            const isVisible = section.style.display === 'block';
-            
-            if (isVisible) {
-                section.style.display = 'none';
-                document.getElementById('manageToggle').classList.remove('active');
-                // Return to previous mode
-                toggleItemInput(currentItemInputMode === 'predefined' ? 'predefined' : 'custom');
-            } else {
-                section.style.display = 'block';
-                document.getElementById('manageToggle').classList.add('active');
-                document.getElementById('predefinedItemSelect').style.display = 'none';
-                document.getElementById('customItemInput').style.display = 'none';
-                document.querySelectorAll('.item-toggle:not(#manageToggle)').forEach(btn => btn.classList.remove('active'));
-            }
-            
-            // Clear any pending auto-add
-            clearAutoAddTimeout();
-        }
-        // Add new predefined item
-        function addPredefinedItem() {
-            const input = document.getElementById('newItemInput');
-            const itemName = input.value.trim();
-            
-            if (!itemName) {
-                alert('⚠️ Please enter an item name.');
-                return;
-            }
-            
-            if (predefinedItems.includes(itemName)) {
-                alert('⚠️ This item already exists in the list.');
-                return;
-            }
-            
-            predefinedItems.push(itemName);
-            savePredefinedItems();
-            updatePredefinedItemsUI();
-            input.value = '';
-            
-            alert(`✅ "${itemName}" added to predefined items!`);
-        }
-        // Remove predefined item
-        function removePredefinedItem(index) {
-            const itemName = predefinedItems[index];
-            
-            if (confirm(`🗑️ Are you sure you want to remove "${itemName}" from the predefined items list?`)) {
-                predefinedItems.splice(index, 1);
-                savePredefinedItems();
-                updatePredefinedItemsUI();
-                alert(`✅ "${itemName}" removed from predefined items.`);
-            }
-        }
-        // Get current item description based on input mode
-        function getCurrentItemDescription() {
-            if (currentItemInputMode === 'predefined') {
-                const select = document.getElementById('predefinedItemSelect');
-                return select ? select.value : '';
-            } else {
-                const input = document.getElementById('customItemInput');
-                return input ? input.value.trim() : '';
-            }
-        }
-        // Clear current item input
-        function clearCurrentItemInput() {
-            if (currentItemInputMode === 'predefined') {
-                const select = document.getElementById('predefinedItemSelect');
-                if (select) select.value = '';
-            } else {
-                const input = document.getElementById('customItemInput');
-                if (input) input.value = '';
-            }
-        }
-        // Load received transactions from local storage
-        function loadReceivedTransactions() {
-            try {
-                if (currentUsername) {
-                    const stored = JSON.parse(localStorage.getItem(`receivedTransactions_${currentUsername}`) || '[]');
-                    receivedTransactions = new Set(stored);
-                }
-            } catch (error) {
-                console.warn("Error loading received transactions:", error);
-                receivedTransactions = new Set();
-            }
-        }
-        // Save received transactions to local storage
-        function saveReceivedTransactions() {
-            try {
-                if (currentUsername) {
-                    localStorage.setItem(`receivedTransactions_${currentUsername}`, JSON.stringify([...receivedTransactions]));
-                }
-            } catch (error) {
-                console.warn("Error saving received transactions:", error);
-            }
-        }
-        // Generate unique transaction ID
-        function generateTransactionId(entry) {
-            return `${entry.date || 'nodate'}_${entry.type || 'notype'}_${entry.item || 'noitem'}_${entry.amount || 0}`;
-        }
-        // Handle received button click
-        function markAsReceived(transactionId, amount, description, buttonElement) {
-            if (receivedTransactions.has(transactionId)) {
-                alert("This transaction has already been marked as received!");
-                return;
-            }
-            if (confirm(`Mark as received: ₹${amount} for "${description}"?\n\nThis will add ₹${amount} to your balance as credit.`)) {
-                // Disable button and show processing
-                buttonElement.disabled = true;
-                buttonElement.innerText = 'Processing...';
-                // Add credit entry for the received amount
-                addReceivedCredit(amount, description, transactionId, buttonElement);
-            }
-        }
-        // Add credit for received transaction
-        function addReceivedCredit(amount, originalDescription, transactionId, buttonElement) {
-            const item = `Received: ${originalDescription}`;
-            const requestUrl = `${api}?action=add_credit&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(item)}&amount=${encodeURIComponent(amount)}`;
-            
-            console.log("Adding received credit:", { amount, item, transactionId });
-            fetch(requestUrl, { 
-                method: "GET",
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(res => {
-                return res.text().then(text => {
-                    try {
-                        const jsonData = JSON.parse(text);
-                        return { success: res.ok, data: jsonData, raw: text };
-                    } catch (parseError) {
-                        return { success: res.ok, data: null, raw: text, parseError: parseError.message };
-                    }
-                });
-            })
-            .then(result => {
-                if (!result.success || !result.data || result.data.result !== "success") {
-                    throw new Error(result.data?.error || "Failed to add received credit");
-                }
-                // Mark transaction as received
-                receivedTransactions.add(transactionId);
-                saveReceivedTransactions();
-                // Remove the button and update the row
-                const row = buttonElement.closest('tr');
-                if (row) {
-                    row.classList.add('received');
-                    buttonElement.parentElement.innerHTML = '<span style="color: #28a745; font-weight: 600;">✅ Received</span>';
-                }
-                // Refresh data
-                setTimeout(() => {
-                    fetchSummary();
-                    fetchLedger();
-                }, 500);
-                alert(`✅ Marked as received! ₹${amount} has been added to your balance.`);
-            })
-            .catch(error => {
-                console.error("Error adding received credit:", error);
-                
-                // Re-enable button
-                buttonElement.disabled = false;
-                buttonElement.innerText = 'Received';
-                
-                alert(`❌ Failed to mark as received: ${error.message}`);
-            });
-        }
-        // Update balance display with color coding and special handling for negative amounts
-        function updateBalanceDisplay(balance) {
-            const balanceCard = document.getElementById('balanceCard');
-            const balanceElement = document.getElementById('balanceAmountElement');
-            const balanceAmountSpan = document.getElementById('balanceAmount');
-            
-            if (!balanceCard || !balanceElement || !balanceAmountSpan) return;
-            
-            // Remove existing classes
-            balanceCard.classList.remove('positive', 'negative');
-            balanceElement.classList.remove('positive', 'negative');
-            
-            // For negative balances, show the absolute value in red
-            const displayAmount = balance < 0 ? Math.abs(balance) : balance;
-            balanceAmountSpan.innerText = Number(displayAmount).toFixed(2);
-            
-            // Add appropriate classes based on balance
-            if (balance >= 0) {
-                balanceCard.classList.add('positive');
-                balanceElement.classList.add('positive');
-            } else {
-                balanceCard.classList.add('negative');
-                balanceElement.classList.add('negative');
-            }
-        }
-        function showError(message) {
-            return `<div class="error">❌ ${message}</div>`;
-        }
-        // Login function
-        function login() {
-            const usernameInput = document.getElementById("usernameInput");
-            const loginError = document.getElementById("loginError");
-            const username = usernameInput.value.trim();
-            if (!username) {
-                loginError.innerHTML = "⚠️ Please enter your AD.NO.";
-                loginError.style.display = "block";
-                return;
-            }
-            // Check if username exists in studentData
-            if (!studentData[username]) {
-                loginError.innerHTML = "❌ Invalid AD.NO. Please check and try again.";
-                loginError.style.display = "block";
-                return;
-            }
-            // Successful login
-            currentUsername = username;
-            const displayName = studentData[username];
-            
-            // Update UI
-            document.getElementById("studentName").innerText = formatStudentName(displayName);
-            document.getElementById("loginSection").classList.add("hidden");
-            document.getElementById("dashboardSection").classList.remove("hidden");
-            // Initialize user-specific data
-            initializePredefinedItems();
-            loadReceivedTransactions();
-            initializeEntrySets(); // Initialize entry sets
-            
-            // Fetch user data
-            fetchSummary();
-            fetchLedger();
-            // Update URL
-            try {
-                const newUrl = new URL(window.location);
-                newUrl.searchParams.set('user', username);
-                window.history.pushState({}, '', newUrl);
-            } catch (error) {
-                console.warn("Error updating URL:", error);
-            }
-        }
-        function logout() {
-            currentUsername = null;
-            
-            // Clear form inputs
-            const usernameInput = document.getElementById("usernameInput");
-            if (usernameInput) usernameInput.value = "";
-            
-            clearCurrentItemInput();
-            clearAutoAddTimeout(); // Clear any pending auto-add
-            
-            // Reset summary display
-            const totalCredit = document.getElementById("totalCredit");
-            const totalDebit = document.getElementById("totalDebit");
-            
-            if (totalCredit) totalCredit.innerText = "₹0";
-            if (totalDebit) totalDebit.innerText = "₹0";
-            updateBalanceDisplay(0);
-            
-            // Reset ledger
-            const ledgerBody = document.getElementById("ledgerBody");
-            const ledgerTable = document.getElementById("ledgerTable");
-            const ledgerStatus = document.getElementById("ledgerStatus");
-            
-            if (ledgerBody) ledgerBody.innerHTML = "";
-            if (ledgerTable) ledgerTable.style.display = "none";
-            if (ledgerStatus) ledgerStatus.innerHTML = '<div class="loading">Loading transactions...</div>';
-            
-            const loginSection = document.getElementById("loginSection");
-            const dashboardSection = document.getElementById("dashboardSection");
-            
-            if (loginSection) loginSection.classList.remove("hidden");
-            if (dashboardSection) dashboardSection.classList.add("hidden");
-            
-            // Update URL
-            try {
-                const newUrl = new URL(window.location);
-                newUrl.searchParams.delete('user');
-                window.history.pushState({}, '', newUrl);
-            } catch (error) {
-                console.warn("Error updating URL:", error);
-            }
-        }
-        function fetchSummary() {
-            if (!currentUsername) return;
-            
-            console.log("Fetching summary for:", currentUsername);
-            
-            // Show loading state
-            const totalCredit = document.getElementById("totalCredit");
-            const totalDebit = document.getElementById("totalDebit");
-            
-            if (totalCredit) totalCredit.innerText = "...";
-            if (totalDebit) totalDebit.innerText = "...";
-            updateBalanceDisplay(0);
-            
-            const requestUrl = `${api}?action=get_summary&username=${encodeURIComponent(currentUsername)}`;
-            console.log("Summary request URL:", requestUrl);
-            
-            fetch(requestUrl, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(res => {
-                console.log("Summary response status:", res.status);
-                
-                return res.text().then(text => {
-                    console.log("Summary raw response:", text);
-                    
-                    try {
-                        const jsonData = JSON.parse(text);
-                        console.log("Summary parsed JSON:", jsonData);
-                        return { success: res.ok, data: jsonData, raw: text };
-                    } catch (parseError) {
-                        console.error("Summary JSON parse error:", parseError);
-                        return { success: res.ok, data: null, raw: text, parseError: parseError.message };
-                    }
-                });
-            })
-            .then(result => {
-                console.log("Summary final result:", result);
-                logDebug(requestUrl, result);
-                
-                if (!result.success) {
-                    throw new Error(`HTTP Error: ${result.raw}`);
-                }
-                
-                if (!result.data) {
-                    throw new Error(`JSON Parse Error: ${result.parseError}`);
-                }
-                
-                if (result.data.error) {
-                    throw new Error(result.data.error);
-                }
-                
-                const totalCredit = result.data.totalCredit || 0;
-                const totalDebit = result.data.totalDebit || 0;
-                const balance = result.data.balance || 0;
-                
-                console.log("Summary values:", { totalCredit, totalDebit, balance });
-                
-                const totalCreditElement = document.getElementById("totalCredit");
-                const totalDebitElement = document.getElementById("totalDebit");
-                
-                if (totalCreditElement) totalCreditElement.innerText = "₹" + Number(totalCredit).toFixed(2);
-                if (totalDebitElement) totalDebitElement.innerText = "₹" + Number(totalDebit).toFixed(2);
-                updateBalanceDisplay(balance);
-            })
-            .catch(error => {
-                console.error("❌ Error fetching summary:", error);
-                logDebug(requestUrl, { error: error.message });
-                
-                const totalCreditElement = document.getElementById("totalCredit");
-                const totalDebitElement = document.getElementById("totalDebit");
-                
-                if (totalCreditElement) totalCreditElement.innerText = "Error";
-                if (totalDebitElement) totalDebitElement.innerText = "Error";
-                updateBalanceDisplay(0);
-                
-                console.error("Detailed summary error:", error);
-            });
-        }
-        function fetchLedger() {
-            if (!currentUsername) return;
-            
-            console.log("Fetching ledger for:", currentUsername);
-            
-            const ledgerStatus = document.getElementById("ledgerStatus");
-            const ledgerTable = document.getElementById("ledgerTable");
-            
-            if (ledgerStatus) ledgerStatus.innerHTML = '<div class="loading">📊 Loading transactions...</div>';
-            if (ledgerTable) ledgerTable.style.display = "none";
-            
-            const requestUrl = `${api}?action=get_ledger&username=${encodeURIComponent(currentUsername)}`;
-            console.log("Ledger request URL:", requestUrl);
-            
-            fetch(requestUrl, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(res => {
-                console.log("Ledger response status:", res.status);
-                
-                return res.text().then(text => {
-                    console.log("Ledger raw response:", text);
-                    
-                    try {
-                        const jsonData = JSON.parse(text);
-                        console.log("Ledger parsed JSON:", jsonData);
-                        return { success: res.ok, data: jsonData, raw: text };
-                    } catch (parseError) {
-                        console.error("Ledger JSON parse error:", parseError);
-                        return { success: res.ok, data: null, raw: text, parseError: parseError.message };
-                    }
-                });
-            })
-            .then(result => {
-                console.log("Ledger final result:", result);
-                logDebug(requestUrl, result);
-                
-                if (!result.success) {
-                    throw new Error(`HTTP Error: ${result.raw}`);
-                }
-                
-                if (!result.data) {
-                    throw new Error(`JSON Parse Error: ${result.parseError}`);
-                }
-                
-                if (result.data.error) {
-                    throw new Error(result.data.error);
-                }
-                
-                const ledgerBody = document.getElementById("ledgerBody");
-                if (ledgerBody) ledgerBody.innerHTML = "";
-                
-                let ledgerData = result.data.ledger || [];
-                
-                console.log("Ledger data array:", ledgerData);
-                
-                if (!Array.isArray(ledgerData)) {
-                    console.warn("Ledger data is not an array:", ledgerData);
-                    ledgerData = [];
-                }
-                
-                // Store all data for filtering
-                allLedgerData = ledgerData.map(entry => ({
-                    ...entry,
-                    parsedDate: new Date(entry.date || Date.now()),
-                    searchText: `${entry.item || ''} ${entry.type || ''}`.toLowerCase(),
-                    transactionId: generateTransactionId(entry)
-                }));
-                
-                // Apply current filters and display
-                applyFiltersAndDisplay();
-                
-                console.log(`✅ Successfully loaded ${ledgerData.length} ledger entries`);
-            })
-            .catch(error => {
-                console.error("❌ Error fetching ledger:", error);
-                logDebug(requestUrl, { error: error.message });
-                
-                if (ledgerStatus) {
-                    ledgerStatus.innerHTML = showError(`Failed to load transactions: ${error.message}`);
-                }
-            });
-        }
-        function applyFiltersAndDisplay() {
-            const ledgerStatus = document.getElementById("ledgerStatus");
-            const ledgerTable = document.getElementById("ledgerTable");
-            
-            if (allLedgerData.length === 0) {
-                if (ledgerStatus) {
-                    ledgerStatus.innerHTML = '<div class="status-message">📝 No transactions found. Add your first entry above!</div>';
-                }
-                if (ledgerTable) ledgerTable.style.display = "none";
-                return;
-            }
-            // Apply filters
-            filteredData = allLedgerData.filter(entry => {
-                // Type filter
-                const typeFilter = document.getElementById("filterType")?.value;
-                if (typeFilter && entry.type !== typeFilter) return false;
-                // Description filter
-                const descFilter = document.getElementById("filterDescription")?.value.toLowerCase() || '';
-                if (descFilter && !entry.searchText.includes(descFilter)) return false;
-                // Date filters
-                const fromDate = document.getElementById("filterDateFrom")?.value;
-                const toDate = document.getElementById("filterDateTo")?.value;
-                
-                if (fromDate) {
-                    const from = new Date(fromDate);
-                    if (entry.parsedDate < from) return false;
-                }
-                
-                if (toDate) {
-                    const to = new Date(toDate);
-                    to.setHours(23, 59, 59, 999);
-                    if (entry.parsedDate > to) return false;
-                }
-                // Amount filters
-                const minAmount = parseFloat(document.getElementById("filterAmountMin")?.value || '');
-                const maxAmount = parseFloat(document.getElementById("filterAmountMax")?.value || '');
-                
-                if (!isNaN(minAmount) && entry.amount < minAmount) return false;
-                if (!isNaN(maxAmount) && entry.amount > maxAmount) return false;
-                return true;
-            });
-            // Apply sorting
-            const sortBy = document.getElementById("sortBy")?.value || 'date-desc';
-            filteredData.sort((a, b) => {
-                switch (sortBy) {
-                    case 'date-desc':
-                        return b.parsedDate - a.parsedDate;
-                    case 'date-asc':
-                        return a.parsedDate - b.parsedDate;
-                    case 'amount-desc':
-                        return b.amount - a.amount;
-                    case 'amount-asc':
-                        return a.amount - b.amount;
-                    case 'type':
-                        return a.type.localeCompare(b.type);
-                    default:
-                        return b.parsedDate - a.parsedDate;
-                }
-            });
-            // Show filter summary
-            updateFilterSummary();
-            // Reset to first page when filters change
-            currentPage = 1;
-            displayPage();
-        }
-        function displayPage() {
-            const ledgerBody = document.getElementById("ledgerBody");
-            const ledgerStatus = document.getElementById("ledgerStatus");
-            const ledgerTable = document.getElementById("ledgerTable");
-            const paginationControls = document.getElementById("paginationControls");
-            
-            if (ledgerBody) ledgerBody.innerHTML = "";
-            if (filteredData.length === 0) {
-                if (ledgerStatus) {
-                    ledgerStatus.innerHTML = '<div class="status-message">🔍 No transactions match your filters. Try adjusting the filter criteria.</div>';
-                }
-                if (ledgerTable) ledgerTable.style.display = "none";
-                if (paginationControls) paginationControls.innerHTML = "";
-                return;
-            }
-            if (ledgerStatus) ledgerStatus.style.display = "none";
-            if (ledgerTable) ledgerTable.style.display = "table";
-            // Calculate pagination
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
-            const pageData = filteredData.slice(startIndex, endIndex);
-            // Display rows
-            pageData.forEach((entry, index) => {
-                if (!ledgerBody) return;
-                
-                const row = document.createElement("tr");
-                row.className = entry.type === 'credit' ? 'credit-row transaction-row' : 'debit-row transaction-row';
-                
-                // Check if transaction was already received
-                const isReceived = receivedTransactions.has(entry.transactionId);
-                if (isReceived) {
-                    row.classList.add('received');
-                }
-                
-                // Format date
-                let formattedDate = 'N/A';
-                if (entry.parsedDate && !isNaN(entry.parsedDate.getTime())) {
-                    formattedDate = entry.parsedDate.toLocaleDateString('en-IN', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                }
-                
-                const typeIcon = entry.type === 'credit' ? '💰' : '💸';
-                const amountClass = entry.type === 'credit' ? 'text-success' : 'text-danger';
-                const amount = Number(entry.amount || 0);
-                const item = entry.item || 'No description';
-                const type = (entry.type || 'unknown').charAt(0).toUpperCase() + (entry.type || 'unknown').slice(1);
-                
-                // Create action cell content
-                let actionContent = '';
-                if (entry.type === 'debit' && !entry.item.startsWith('Received:')) {
-                    if (isReceived) {
-                        actionContent = '<span style="color: #28a745; font-weight: 600;">✅ Received</span>';
-                    } else {
-                        actionContent = `<button class="received-btn" onclick="markAsReceived('${entry.transactionId}', ${amount}, '${item.replace(/'/g, "\\'")}', this)">Received</button>`;
-                    }
-                } else if (entry.type === 'credit') {
-                    actionContent = '<span style="color: #6c757d;">—</span>';
-                }
-                
-                row.innerHTML = `
-                    <td>${formattedDate}</td>
-                    <td>${typeIcon} ${type}</td>
-                    <td>${item}</td>
-                    <td class="amount-display ${amountClass}">₹${amount.toFixed(2)}</td>
-                    <td class="action-cell">${actionContent}</td>
-                `;
-                ledgerBody.appendChild(row);
-            });
-            // Update pagination controls
-            updatePaginationControls();
-        }
-        function updateFilterSummary() {
-            const summaryDiv = document.getElementById("filterSummary");
-            if (!summaryDiv) return;
-            
-            if (filteredData.length === allLedgerData.length) {
-                summaryDiv.classList.remove("show");
-                return;
-            }
-            // Calculate filtered totals
-            let filteredCredit = 0;
-            let filteredDebit = 0;
-            
-            filteredData.forEach(entry => {
-                if (entry.type === 'credit') {
-                    filteredCredit += entry.amount;
-                } else {
-                    filteredDebit += entry.amount;
-                }
-            });
-            const filteredBalance = filteredCredit - filteredDebit;
-            const balanceDisplay = filteredBalance < 0 ? Math.abs(filteredBalance) : filteredBalance;
-            summaryDiv.innerHTML = `
-                <strong>📊 Filtered Results:</strong> 
-                ${filteredData.length} of ${allLedgerData.length} transactions | 
-                Credit: <span class="text-success">₹${filteredCredit.toFixed(2)}</span> | 
-                Debit: <span class="text-danger">₹${filteredDebit.toFixed(2)}</span> | 
-                Balance: <span class="${filteredBalance >= 0 ? 'text-success' : 'text-danger'}">₹${balanceDisplay.toFixed(2)}</span>
-            `;
-            summaryDiv.classList.add("show");
-        }
-        function updatePaginationControls() {
-            const controls = document.getElementById("paginationControls");
-            if (!controls) return;
-            
-            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-            
-            if (totalPages <= 1) {
-                controls.innerHTML = "";
-                return;
-            }
-            let html = "";
-            
-            // Previous button
-            html += `<button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Previous</button>`;
-            
-            // Page numbers
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
-                    html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
-                } else if (i === currentPage - 3 || i === currentPage + 3) {
-                    html += `<span>...</span>`;
-                }
-            }
-            
-            // Next button
-            html += `<button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>`;
-            
-            // Info
-            const startItem = (currentPage - 1) * itemsPerPage + 1;
-            const endItem = Math.min(currentPage * itemsPerPage, filteredData.length);
-            html += `<div class="pagination-info">Showing ${startItem}-${endItem} of ${filteredData.length}</div>`;
-            
-            controls.innerHTML = html;
-        }
-        function changePage(page) {
-            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-            if (page >= 1 && page <= totalPages) {
-                currentPage = page;
-                displayPage();
-            }
-        }
-        function applyFilters() {
-            applyFiltersAndDisplay();
-        }
-        function clearFilters() {
-            const filterType = document.getElementById("filterType");
-            const filterDescription = document.getElementById("filterDescription");
-            const filterDateFrom = document.getElementById("filterDateFrom");
-            const filterDateTo = document.getElementById("filterDateTo");
-            const filterAmountMin = document.getElementById("filterAmountMin");
-            const filterAmountMax = document.getElementById("filterAmountMax");
-            const sortBy = document.getElementById("sortBy");
-            
-            if (filterType) filterType.value = "";
-            if (filterDescription) filterDescription.value = "";
-            if (filterDateFrom) filterDateFrom.value = "";
-            if (filterDateTo) filterDateTo.value = "";
-            if (filterAmountMin) filterAmountMin.value = "";
-            if (filterAmountMax) filterAmountMax.value = "";
-            if (sortBy) sortBy.value = "date-desc";
-            
-            applyFiltersAndDisplay();
-        }
-        function exportData() {
-            if (filteredData.length === 0) {
-                alert("No data to export!");
-                return;
-            }
-            try {
-                const { jsPDF } = window.jspdf;
-                if (!jsPDF) {
-                    throw new Error("PDF library not loaded");
-                }
-                
-                const doc = new jsPDF();
-                // Header
-                doc.setFontSize(16);
-                doc.setFont('helvetica', 'bold');
-                doc.text(`Transaction Report - ${currentUsername}`, 20, 20);
-                // Date
-                const currentDate = new Date().toLocaleDateString('en-IN');
-                doc.setFontSize(10);
-                doc.setFont('helvetica', 'normal');
-                doc.text(`Generated on: ${currentDate}`, 20, 30);
-                // Prepare table data
-                const headers = ["Date", "Type", "Description", "Amount", "Status"];
-                const rows = filteredData.map(entry => [
-                    entry.parsedDate.toLocaleDateString('en-IN'),
-                    entry.type.charAt(0).toUpperCase() + entry.type.slice(1),
-                    entry.item || '',
-                    `₹${entry.amount.toFixed(2)}`,
-                    receivedTransactions.has(entry.transactionId) ? 'Received' : (entry.type === 'debit' && !entry.item.startsWith('Received:') ? 'Pending' : '-')
-                ]);
-                // Generate table
-                doc.autoTable({
-                    startY: 40,
-                    head: [headers],
-                    body: rows,
-                    styles: { fontSize: 8 },
-                    headStyles: { fillColor: [102, 126, 234] }
-                });
-                // Save PDF
-                doc.save(`${currentUsername}_transactions_${new Date().toISOString().split('T')[0]}.pdf`);
-            } catch (error) {
-                console.error("Error exporting PDF:", error);
-                alert("Error generating PDF. Please try again or check if the PDF library is loaded.");
-            }
-        }
-        function refreshData() {
-            console.log("Refreshing data...");
-            fetchSummary();
-            fetchLedger();
-        }
-        // Debug functions
-        function toggleDebug() {
-            debugMode = !debugMode;
-            const debugDiv = document.getElementById("debugInfo");
-            if (debugDiv) {
-                debugDiv.style.display = debugMode ? "block" : "none";
-                const apiUrlSpan = document.getElementById("apiUrl");
-                if (apiUrlSpan) apiUrlSpan.textContent = api;
-            }
-        }
-        function logDebug(request, response) {
-            if (debugMode) {
-                const lastRequest = document.getElementById("lastRequest");
-                const lastResponse = document.getElementById("lastResponse");
-                
-                if (lastRequest) lastRequest.textContent = request;
-                if (lastResponse) lastResponse.textContent = JSON.stringify(response, null, 2);
-            }
-        }
-        // Event listeners setup
-        function setupEventListeners() {
-            // Login form
-            const usernameInput = document.getElementById("usernameInput");
-            if (usernameInput) {
-                usernameInput.addEventListener("keypress", function(e) {
-                    if (e.key === "Enter") login();
-                });
-            }
-            // Predefined items
-            const newItemInput = document.getElementById("newItemInput");
-            if (newItemInput) {
-                newItemInput.addEventListener("keypress", function(e) {
-                    if (e.key === "Enter") addPredefinedItem();
-                });
-            }
-            // Filter inputs
-            const filterDescription = document.getElementById("filterDescription");
-            if (filterDescription) {
-                filterDescription.addEventListener("keypress", function(e) {
-                    if (e.key === "Enter") applyFilters();
-                });
-            }
-            
-            const filterAmountMin = document.getElementById("filterAmountMin");
-            if (filterAmountMin) {
-                filterAmountMin.addEventListener("keypress", function(e) {
-                    if (e.key === "Enter") applyFilters();
-                });
-            }
-            
-            const filterAmountMax = document.getElementById("filterAmountMax");
-            if (filterAmountMax) {
-                filterAmountMax.addEventListener("keypress", function(e) {
-                    if (e.key === "Enter") applyFilters();
-                });
-            }
-            // Sort change
-            const sortBy = document.getElementById("sortBy");
-            if (sortBy) {
-                sortBy.addEventListener("change", function() {
-                    applyFiltersAndDisplay();
-                });
-            }
-        }
-        // Initialize the application
-        function initializeApp() {
-            // Initialize theme first
-            initializeTheme();
-            
-            // Setup event listeners
-            setupEventListeners();
-            
-            // Check for username in URL and auto-login
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlUsername = urlParams.get('user');
-            
-            if (urlUsername && urlUsername.trim()) {
-                const usernameInput = document.getElementById("usernameInput");
-                if (usernameInput) {
-                    usernameInput.value = urlUsername.trim();
-                    // Add a small delay to ensure DOM is ready
-                    setTimeout(() => {
-                        login();
-                    }, 100);
-                }
-            }
-        }
-        // Global error handlers
-        window.addEventListener('error', function(e) {
-            console.error('Global error:', e.error);
-        });
-        window.addEventListener('unhandledrejection', function(e) {
-            console.error('Unhandled promise rejection:', e.reason);
-        });
-        // Make studentData globally accessible
-        window.studentData = studentData;
-        // Initialize when DOM is loaded
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeApp);
-        } else {
-            initializeApp();
-        }
-    </script>
+
+document.getElementById("bulkDebit").value = exampleText;
+alert("Debit example loaded! You can modify it before adding.");
+}
+// Toggle manage items section
+function toggleManageItems() {
+const section = document.getElementById('manageItemsSection');
+const isVisible = section.style.display === 'block';
+
+if (isVisible) {
+section.style.display = 'none';
+document.getElementById('manageToggle').classList.remove('active');
+// Return to previous mode
+toggleItemInput(currentItemInputMode === 'predefined' ? 'predefined' : 'custom');
+} else {
+section.style.display = 'block';
+document.getElementById('manageToggle').classList.add('active');
+document.getElementById('predefinedItemSelect').style.display = 'none';
+document.getElementById('customItemInput').style.display = 'none';
+document.querySelectorAll('.item-toggle:not(#manageToggle)').forEach(btn => btn.classList.remove('active'));
+}
+
+// Clear any pending auto-add
+clearAutoAddTimeout();
+}
+// Add new predefined item
+function addPredefinedItem() {
+const input = document.getElementById('newItemInput');
+const itemName = input.value.trim();
+
+if (!itemName) {
+alert('⚠️ Please enter an item name.');
+return;
+}
+
+if (predefinedItems.includes(itemName)) {
+alert('⚠️ This item already exists in the list.');
+return;
+}
+
+predefinedItems.push(itemName);
+savePredefinedItems();
+updatePredefinedItemsUI();
+input.value = '';
+
+alert(`✅ "${itemName}" added to predefined items!`);
+}
+// Remove predefined item
+function removePredefinedItem(index) {
+const itemName = predefinedItems[index];
+
+if (confirm(`🗑️ Are you sure you want to remove "${itemName}" from the predefined items list?`)) {
+predefinedItems.splice(index, 1);
+savePredefinedItems();
+updatePredefinedItemsUI();
+alert(`✅ "${itemName}" removed from predefined items.`);
+}
+}
+// Get current item description based on input mode
+function getCurrentItemDescription() {
+if (currentItemInputMode === 'predefined') {
+const select = document.getElementById('predefinedItemSelect');
+return select ? select.value : '';
+} else {
+const input = document.getElementById('customItemInput');
+return input ? input.value.trim() : '';
+}
+}
+// Clear current item input
+function clearCurrentItemInput() {
+if (currentItemInputMode === 'predefined') {
+const select = document.getElementById('predefinedItemSelect');
+if (select) select.value = '';
+} else {
+const input = document.getElementById('customItemInput');
+if (input) input.value = '';
+}
+}
+// Load received transactions from local storage
+function loadReceivedTransactions() {
+try {
+if (currentUsername) {
+const stored = JSON.parse(localStorage.getItem(`receivedTransactions_${currentUsername}`) || '[]');
+receivedTransactions = new Set(stored);
+}
+} catch (error) {
+console.warn("Error loading received transactions:", error);
+receivedTransactions = new Set();
+}
+}
+// Save received transactions to local storage
+function saveReceivedTransactions() {
+try {
+if (currentUsername) {
+localStorage.setItem(`receivedTransactions_${currentUsername}`, JSON.stringify([...receivedTransactions]));
+}
+} catch (error) {
+console.warn("Error saving received transactions:", error);
+}
+}
+// Generate unique transaction ID
+function generateTransactionId(entry) {
+return `${entry.date || 'nodate'}_${entry.type || 'notype'}_${entry.item || 'noitem'}_${entry.amount || 0}`;
+}
+// Handle received button click
+function markAsReceived(transactionId, amount, description, buttonElement) {
+if (receivedTransactions.has(transactionId)) {
+alert("This transaction has already been marked as received!");
+return;
+}
+if (confirm(`Mark as received: ₹${amount} for "${description}"?\n\nThis will add ₹${amount} to your balance as credit.`)) {
+// Disable button and show processing
+buttonElement.disabled = true;
+buttonElement.innerText = 'Processing...';
+// Add credit entry for the received amount
+addReceivedCredit(amount, description, transactionId, buttonElement);
+}
+}
+// Add credit for received transaction
+function addReceivedCredit(amount, originalDescription, transactionId, buttonElement) {
+const item = `Received: ${originalDescription}`;
+const requestUrl = `${api}?action=add_credit&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(item)}&amount=${encodeURIComponent(amount)}`;
+
+console.log("Adding received credit:", { amount, item, transactionId });
+fetch(requestUrl, {
+method: "GET",
+headers: {
+'Accept': 'application/json'
+}
+})
+.then(res => {
+return res.text().then(text => {
+try {
+const jsonData = JSON.parse(text);
+return { success: res.ok, data: jsonData, raw: text };
+} catch (parseError) {
+return { success: res.ok, data: null, raw: text, parseError: parseError.message };
+}
+});
+})
+.then(result => {
+if (!result.success || !result.data || result.data.result !== "success") {
+throw new Error(result.data?.error || "Failed to add received credit");
+}
+// Mark transaction as received
+receivedTransactions.add(transactionId);
+saveReceivedTransactions();
+// Remove the button and update the row
+const row = buttonElement.closest('tr');
+if (row) {
+row.classList.add('received');
+buttonElement.parentElement.innerHTML = '<span style="color: #28a745; font-weight: 600;">✅ Received</span>';
+}
+// Refresh data
+setTimeout(() => {
+fetchSummary();
+fetchLedger();
+}, 500);
+alert(`✅ Marked as received! ₹${amount} has been added to your balance.`);
+})
+.catch(error => {
+console.error("Error adding received credit:", error);
+
+// Re-enable button
+buttonElement.disabled = false;
+buttonElement.innerText = 'Received';
+
+alert(`❌ Failed to mark as received: ${error.message}`);
+});
+}
+// Update balance display with color coding and special handling for negative amounts
+function updateBalanceDisplay(balance) {
+const balanceCard = document.getElementById('balanceCard');
+const balanceElement = document.getElementById('balanceAmountElement');
+const balanceAmountSpan = document.getElementById('balanceAmount');
+
+if (!balanceCard || !balanceElement || !balanceAmountSpan) return;
+
+// Remove existing classes
+balanceCard.classList.remove('positive', 'negative');
+balanceElement.classList.remove('positive', 'negative');
+
+// For negative balances, show the absolute value in red
+const displayAmount = balance < 0 ? Math.abs(balance) : balance;
+balanceAmountSpan.innerText = Number(displayAmount).toFixed(2);
+
+// Add appropriate classes based on balance
+if (balance >= 0) {
+balanceCard.classList.add('positive');
+balanceElement.classList.add('positive');
+} else {
+balanceCard.classList.add('negative');
+balanceElement.classList.add('negative');
+}
+}
+function showError(message) {
+return `<div class="error">❌ ${message}</div>`;
+}
+// Login function
+function login() {
+const usernameInput = document.getElementById("usernameInput");
+const loginError = document.getElementById("loginError");
+const username = usernameInput.value.trim();
+if (!username) {
+loginError.innerHTML = "⚠️ Please enter your AD.NO.";
+loginError.style.display = "block";
+return;
+}
+// Check if username exists in studentData
+if (!studentData[username]) {
+loginError.innerHTML = "❌ Invalid AD.NO. Please check and try again.";
+loginError.style.display = "block";
+return;
+}
+// Successful login
+currentUsername = username;
+const displayName = studentData[username];
+
+// Update UI
+document.getElementById("studentName").innerText = formatStudentName(displayName);
+document.getElementById("loginSection").classList.add("hidden");
+document.getElementById("dashboardSection").classList.remove("hidden");
+// Initialize user-specific data
+initializePredefinedItems();
+loadReceivedTransactions();
+initializeEntrySets(); // Initialize entry sets
+
+// Fetch user data
+fetchSummary();
+fetchLedger();
+// Update URL
+try {
+const newUrl = new URL(window.location);
+newUrl.searchParams.set('user', username);
+window.history.pushState({}, '', newUrl);
+} catch (error) {
+console.warn("Error updating URL:", error);
+}
+}
+function logout() {
+currentUsername = null;
+
+// Clear form inputs
+const usernameInput = document.getElementById("usernameInput");
+if (usernameInput) usernameInput.value = "";
+
+clearCurrentItemInput();
+clearAutoAddTimeout(); // Clear any pending auto-add
+
+// Reset summary display
+const totalCredit = document.getElementById("totalCredit");
+const totalDebit = document.getElementById("totalDebit");
+
+if (totalCredit) totalCredit.innerText = "₹0";
+if (totalDebit) totalDebit.innerText = "₹0";
+updateBalanceDisplay(0);
+
+// Reset ledger
+const ledgerBody = document.getElementById("ledgerBody");
+const ledgerTable = document.getElementById("ledgerTable");
+const ledgerStatus = document.getElementById("ledgerStatus");
+
+if (ledgerBody) ledgerBody.innerHTML = "";
+if (ledgerTable) ledgerTable.style.display = "none";
+if (ledgerStatus) ledgerStatus.innerHTML = '<div class="loading">Loading transactions...</div>';
+
+const loginSection = document.getElementById("loginSection");
+const dashboardSection = document.getElementById("dashboardSection");
+
+if (loginSection) loginSection.classList.remove("hidden");
+if (dashboardSection) dashboardSection.classList.add("hidden");
+
+// Update URL
+try {
+const newUrl = new URL(window.location);
+newUrl.searchParams.delete('user');
+window.history.pushState({}, '', newUrl);
+} catch (error) {
+console.warn("Error updating URL:", error);
+}
+}
+function fetchSummary() {
+if (!currentUsername) return;
+
+console.log("Fetching summary for:", currentUsername);
+
+// Show loading state
+const totalCredit = document.getElementById("totalCredit");
+const totalDebit = document.getElementById("totalDebit");
+
+if (totalCredit) totalCredit.innerText = "...";
+if (totalDebit) totalDebit.innerText = "...";
+updateBalanceDisplay(0);
+
+const requestUrl = `${api}?action=get_summary&username=${encodeURIComponent(currentUsername)}`;
+console.log("Summary request URL:", requestUrl);
+
+fetch(requestUrl, {
+method: 'GET',
+headers: {
+'Accept': 'application/json'
+}
+})
+.then(res => {
+console.log("Summary response status:", res.status);
+
+return res.text().then(text => {
+console.log("Summary raw response:", text);
+
+try {
+const jsonData = JSON.parse(text);
+console.log("Summary parsed JSON:", jsonData);
+return { success: res.ok, data: jsonData, raw: text };
+} catch (parseError) {
+console.error("Summary JSON parse error:", parseError);
+return { success: res.ok, data: null, raw: text, parseError: parseError.message };
+}
+});
+})
+.then(result => {
+console.log("Summary final result:", result);
+logDebug(requestUrl, result);
+
+if (!result.success) {
+throw new Error(`HTTP Error: ${result.raw}`);
+}
+
+if (!result.data) {
+throw new Error(`JSON Parse Error: ${result.parseError}`);
+}
+
+if (result.data.error) {
+throw new Error(result.data.error);
+}
+
+const totalCredit = result.data.totalCredit || 0;
+const totalDebit = result.data.totalDebit || 0;
+const balance = result.data.balance || 0;
+
+console.log("Summary values:", { totalCredit, totalDebit, balance });
+
+const totalCreditElement = document.getElementById("totalCredit");
+const totalDebitElement = document.getElementById("totalDebit");
+
+if (totalCreditElement) totalCreditElement.innerText = "₹" + Number(totalCredit).toFixed(2);
+if (totalDebitElement) totalDebitElement.innerText = "₹" + Number(totalDebit).toFixed(2);
+updateBalanceDisplay(balance);
+})
+.catch(error => {
+console.error("❌ Error fetching summary:", error);
+logDebug(requestUrl, { error: error.message });
+
+const totalCreditElement = document.getElementById("totalCredit");
+const totalDebitElement = document.getElementById("totalDebit");
+
+if (totalCreditElement) totalCreditElement.innerText = "Error";
+if (totalDebitElement) totalDebitElement.innerText = "Error";
+updateBalanceDisplay(0);
+
+console.error("Detailed summary error:", error);
+});
+}
+function fetchLedger() {
+if (!currentUsername) return;
+
+console.log("Fetching ledger for:", currentUsername);
+
+const ledgerStatus = document.getElementById("ledgerStatus");
+const ledgerTable = document.getElementById("ledgerTable");
+
+if (ledgerStatus) ledgerStatus.innerHTML = '<div class="loading">📊 Loading transactions...</div>';
+if (ledgerTable) ledgerTable.style.display = "none";
+
+const requestUrl = `${api}?action=get_ledger&username=${encodeURIComponent(currentUsername)}`;
+console.log("Ledger request URL:", requestUrl);
+
+fetch(requestUrl, {
+method: 'GET',
+headers: {
+'Accept': 'application/json'
+}
+})
+.then(res => {
+console.log("Ledger response status:", res.status);
+
+return res.text().then(text => {
+console.log("Ledger raw response:", text);
+
+try {
+const jsonData = JSON.parse(text);
+console.log("Ledger parsed JSON:", jsonData);
+return { success: res.ok, data: jsonData, raw: text };
+} catch (parseError) {
+console.error("Ledger JSON parse error:", parseError);
+return { success: res.ok, data: null, raw: text, parseError: parseError.message };
+}
+});
+})
+.then(result => {
+console.log("Ledger final result:", result);
+logDebug(requestUrl, result);
+
+if (!result.success) {
+throw new Error(`HTTP Error: ${result.raw}`);
+}
+
+if (!result.data) {
+throw new Error(`JSON Parse Error: ${result.parseError}`);
+}
+
+if (result.data.error) {
+throw new Error(result.data.error);
+}
+
+const ledgerBody = document.getElementById("ledgerBody");
+if (ledgerBody) ledgerBody.innerHTML = "";
+
+let ledgerData = result.data.ledger || [];
+
+console.log("Ledger data array:", ledgerData);
+
+if (!Array.isArray(ledgerData)) {
+console.warn("Ledger data is not an array:", ledgerData);
+ledgerData = [];
+}
+
+// Store all data for filtering
+allLedgerData = ledgerData.map(entry => ({
+...entry,
+parsedDate: new Date(entry.date || Date.now()),
+searchText: `${entry.item || ''} ${entry.type || ''}`.toLowerCase(),
+transactionId: generateTransactionId(entry)
+}));
+
+// Apply current filters and display
+applyFiltersAndDisplay();
+
+console.log(`✅ Successfully loaded ${ledgerData.length} ledger entries`);
+})
+.catch(error => {
+console.error("❌ Error fetching ledger:", error);
+logDebug(requestUrl, { error: error.message });
+
+if (ledgerStatus) {
+ledgerStatus.innerHTML = showError(`Failed to load transactions: ${error.message}`);
+}
+});
+}
+function applyFiltersAndDisplay() {
+const ledgerStatus = document.getElementById("ledgerStatus");
+const ledgerTable = document.getElementById("ledgerTable");
+
+if (allLedgerData.length === 0) {
+if (ledgerStatus) {
+ledgerStatus.innerHTML = '<div class="status-message">📝 No transactions found. Add your first entry above!</div>';
+}
+if (ledgerTable) ledgerTable.style.display = "none";
+return;
+}
+// Apply filters
+filteredData = allLedgerData.filter(entry => {
+// Type filter
+const typeFilter = document.getElementById("filterType")?.value;
+if (typeFilter && entry.type !== typeFilter) return false;
+// Description filter
+const descFilter = document.getElementById("filterDescription")?.value.toLowerCase() || '';
+if (descFilter && !entry.searchText.includes(descFilter)) return false;
+// Date filters
+const fromDate = document.getElementById("filterDateFrom")?.value;
+const toDate = document.getElementById("filterDateTo")?.value;
+
+if (fromDate) {
+const from = new Date(fromDate);
+if (entry.parsedDate < from) return false;
+}
+
+if (toDate) {
+const to = new Date(toDate);
+to.setHours(23, 59, 59, 999);
+if (entry.parsedDate > to) return false;
+}
+// Amount filters
+const minAmount = parseFloat(document.getElementById("filterAmountMin")?.value || '');
+const maxAmount = parseFloat(document.getElementById("filterAmountMax")?.value || '');
+
+if (!isNaN(minAmount) && entry.amount < minAmount) return false;
+if (!isNaN(maxAmount) && entry.amount > maxAmount) return false;
+return true;
+});
+// Apply sorting
+const sortBy = document.getElementById("sortBy")?.value || 'date-desc';
+filteredData.sort((a, b) => {
+switch (sortBy) {
+case 'date-desc':
+return b.parsedDate - a.parsedDate;
+case 'date-asc':
+return a.parsedDate - b.parsedDate;
+case 'amount-desc':
+return b.amount - a.amount;
+case 'amount-asc':
+return a.amount - b.amount;
+case 'type':
+return a.type.localeCompare(b.type);
+default:
+return b.parsedDate - a.parsedDate;
+}
+});
+// Show filter summary
+updateFilterSummary();
+// Reset to first page when filters change
+currentPage = 1;
+displayPage();
+}
+function displayPage() {
+const ledgerBody = document.getElementById("ledgerBody");
+const ledgerStatus = document.getElementById("ledgerStatus");
+const ledgerTable = document.getElementById("ledgerTable");
+const paginationControls = document.getElementById("paginationControls");
+
+if (ledgerBody) ledgerBody.innerHTML = "";
+if (filteredData.length === 0) {
+if (ledgerStatus) {
+ledgerStatus.innerHTML = '<div class="status-message">🔍 No transactions match your filters. Try adjusting the filter criteria.</div>';
+}
+if (ledgerTable) ledgerTable.style.display = "none";
+if (paginationControls) paginationControls.innerHTML = "";
+return;
+}
+if (ledgerStatus) ledgerStatus.style.display = "none";
+if (ledgerTable) ledgerTable.style.display = "table";
+// Calculate pagination
+const startIndex = (currentPage - 1) * itemsPerPage;
+const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
+const pageData = filteredData.slice(startIndex, endIndex);
+// Display rows
+pageData.forEach((entry, index) => {
+if (!ledgerBody) return;
+
+const row = document.createElement("tr");
+row.className = entry.type === 'credit' ? 'credit-row transaction-row' : 'debit-row transaction-row';
+
+// Check if transaction was already received
+const isReceived = receivedTransactions.has(entry.transactionId);
+if (isReceived) {
+row.classList.add('received');
+}
+
+// Format date
+let formattedDate = 'N/A';
+if (entry.parsedDate && !isNaN(entry.parsedDate.getTime())) {
+formattedDate = entry.parsedDate.toLocaleDateString('en-IN', {
+year: 'numeric',
+month: 'short',
+day: 'numeric',
+hour: '2-digit',
+minute: '2-digit'
+});
+}
+
+const typeIcon = entry.type === 'credit' ? '💰' : '💸';
+const amountClass = entry.type === 'credit' ? 'text-success' : 'text-danger';
+const amount = Number(entry.amount || 0);
+const item = entry.item || 'No description';
+const type = (entry.type || 'unknown').charAt(0).toUpperCase() + (entry.type || 'unknown').slice(1);
+
+// Create action cell content
+let actionContent = '';
+if (entry.type === 'debit' && !entry.item.startsWith('Received:')) {
+if (isReceived) {
+actionContent = '<span style="color: #28a745; font-weight: 600;">✅ Received</span>';
+} else {
+actionContent = `<button class="received-btn" onclick="markAsReceived('${entry.transactionId}', ${amount}, '${item.replace(/'/g, "\\'")}', this)">Received</button>`;
+}
+} else if (entry.type === 'credit') {
+actionContent = '<span style="color: #6c757d;">—</span>';
+}
+
+row.innerHTML = `
+<td>${formattedDate}</td>
+<td>${typeIcon} ${type}</td>
+<td>${item}</td>
+<td class="amount-display ${amountClass}">₹${amount.toFixed(2)}</td>
+<td class="action-cell">${actionContent}</td>
+`;
+ledgerBody.appendChild(row);
+});
+// Update pagination controls
+updatePaginationControls();
+}
+function updateFilterSummary() {
+const summaryDiv = document.getElementById("filterSummary");
+if (!summaryDiv) return;
+
+if (filteredData.length === allLedgerData.length) {
+summaryDiv.classList.remove("show");
+return;
+}
+// Calculate filtered totals
+let filteredCredit = 0;
+let filteredDebit = 0;
+
+filteredData.forEach(entry => {
+if (entry.type === 'credit') {
+filteredCredit += entry.amount;
+} else {
+filteredDebit += entry.amount;
+}
+});
+const filteredBalance = filteredCredit - filteredDebit;
+const balanceDisplay = filteredBalance < 0 ? Math.abs(filteredBalance) : filteredBalance;
+summaryDiv.innerHTML = `
+<strong>📊 Filtered Results:</strong>
+${filteredData.length} of ${allLedgerData.length} transactions |
+Credit: <span class="text-success">₹${filteredCredit.toFixed(2)}</span> |
+Debit: <span class="text-danger">₹${filteredDebit.toFixed(2)}</span> |
+Balance: <span class="${filteredBalance >= 0 ? 'text-success' : 'text-danger'}">₹${balanceDisplay.toFixed(2)}</span>
+`;
+summaryDiv.classList.add("show");
+}
+function updatePaginationControls() {
+const controls = document.getElementById("paginationControls");
+if (!controls) return;
+
+const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+if (totalPages <= 1) {
+controls.innerHTML = "";
+return;
+}
+let html = "";
+
+// Previous button
+html += `<button class="pagination-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>← Previous</button>`;
+
+// Page numbers
+for (let i = 1; i <= totalPages; i++) {
+if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+html += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+} else if (i === currentPage - 3 || i === currentPage + 3) {
+html += `<span>...</span>`;
+}
+}
+
+// Next button
+html += `<button class="pagination-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next →</button>`;
+
+// Info
+const startItem = (currentPage - 1) * itemsPerPage + 1;
+const endItem = Math.min(currentPage * itemsPerPage, filteredData.length);
+html += `<div class="pagination-info">Showing ${startItem}-${endItem} of ${filteredData.length}</div>`;
+
+controls.innerHTML = html;
+}
+function changePage(page) {
+const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+if (page >= 1 && page <= totalPages) {
+currentPage = page;
+displayPage();
+}
+}
+function applyFilters() {
+applyFiltersAndDisplay();
+}
+function clearFilters() {
+const filterType = document.getElementById("filterType");
+const filterDescription = document.getElementById("filterDescription");
+const filterDateFrom = document.getElementById("filterDateFrom");
+const filterDateTo = document.getElementById("filterDateTo");
+const filterAmountMin = document.getElementById("filterAmountMin");
+const filterAmountMax = document.getElementById("filterAmountMax");
+const sortBy = document.getElementById("sortBy");
+
+if (filterType) filterType.value = "";
+if (filterDescription) filterDescription.value = "";
+if (filterDateFrom) filterDateFrom.value = "";
+if (filterDateTo) filterDateTo.value = "";
+if (filterAmountMin) filterAmountMin.value = "";
+if (filterAmountMax) filterAmountMax.value = "";
+if (sortBy) sortBy.value = "date-desc";
+
+applyFiltersAndDisplay();
+}
+function exportData() {
+if (filteredData.length === 0) {
+alert("No data to export!");
+return;
+}
+try {
+const { jsPDF } = window.jspdf;
+if (!jsPDF) {
+throw new Error("PDF library not loaded");
+}
+
+const doc = new jsPDF();
+// Header
+doc.setFontSize(16);
+doc.setFont('helvetica', 'bold');
+doc.text(`Transaction Report - ${currentUsername}`, 20, 20);
+// Date
+const currentDate = new Date().toLocaleDateString('en-IN');
+doc.setFontSize(10);
+doc.setFont('helvetica', 'normal');
+doc.text(`Generated on: ${currentDate}`, 20, 30);
+// Prepare table data
+const headers = ["Date", "Type", "Description", "Amount", "Status"];
+const rows = filteredData.map(entry => [
+entry.parsedDate.toLocaleDateString('en-IN'),
+entry.type.charAt(0).toUpperCase() + entry.type.slice(1),
+entry.item || '',
+`₹${entry.amount.toFixed(2)}`,
+receivedTransactions.has(entry.transactionId) ? 'Received' : (entry.type === 'debit' && !entry.item.startsWith('Received:') ? 'Pending' : '-')
+]);
+// Generate table
+doc.autoTable({
+startY: 40,
+head: [headers],
+body: rows,
+styles: { fontSize: 8 },
+headStyles: { fillColor: [102, 126, 234] }
+});
+// Save PDF
+doc.save(`${currentUsername}_transactions_${new Date().toISOString().split('T')[0]}.pdf`);
+} catch (error) {
+console.error("Error exporting PDF:", error);
+alert("Error generating PDF. Please try again or check if the PDF library is loaded.");
+}
+}
+function refreshData() {
+console.log("Refreshing data...");
+fetchSummary();
+fetchLedger();
+}
+// Debug functions
+function toggleDebug() {
+debugMode = !debugMode;
+const debugDiv = document.getElementById("debugInfo");
+if (debugDiv) {
+debugDiv.style.display = debugMode ? "block" : "none";
+const apiUrlSpan = document.getElementById("apiUrl");
+if (apiUrlSpan) apiUrlSpan.textContent = api;
+}
+}
+function logDebug(request, response) {
+if (debugMode) {
+const lastRequest = document.getElementById("lastRequest");
+const lastResponse = document.getElementById("lastResponse");
+
+if (lastRequest) lastRequest.textContent = request;
+if (lastResponse) lastResponse.textContent = JSON.stringify(response, null, 2);
+}
+}
+// Event listeners setup
+function setupEventListeners() {
+// Login form
+const usernameInput = document.getElementById("usernameInput");
+if (usernameInput) {
+usernameInput.addEventListener("keypress", function(e) {
+if (e.key === "Enter") login();
+});
+}
+// Predefined items
+const newItemInput = document.getElementById("newItemInput");
+if (newItemInput) {
+newItemInput.addEventListener("keypress", function(e) {
+if (e.key === "Enter") addPredefinedItem();
+});
+}
+// Filter inputs
+const filterDescription = document.getElementById("filterDescription");
+if (filterDescription) {
+filterDescription.addEventListener("keypress", function(e) {
+if (e.key === "Enter") applyFilters();
+});
+}
+
+const filterAmountMin = document.getElementById("filterAmountMin");
+if (filterAmountMin) {
+filterAmountMin.addEventListener("keypress", function(e) {
+if (e.key === "Enter") applyFilters();
+});
+}
+
+const filterAmountMax = document.getElementById("filterAmountMax");
+if (filterAmountMax) {
+filterAmountMax.addEventListener("keypress", function(e) {
+if (e.key === "Enter") applyFilters();
+});
+}
+// Sort change
+const sortBy = document.getElementById("sortBy");
+if (sortBy) {
+sortBy.addEventListener("change", function() {
+applyFiltersAndDisplay();
+});
+}
+}
+// Initialize the application
+function initializeApp() {
+// Initialize theme first
+initializeTheme();
+
+// Setup event listeners
+setupEventListeners();
+
+// Check for username in URL and auto-login
+const urlParams = new URLSearchParams(window.location.search);
+const urlUsername = urlParams.get('user');
+
+if (urlUsername && urlUsername.trim()) {
+const usernameInput = document.getElementById("usernameInput");
+if (usernameInput) {
+usernameInput.value = urlUsername.trim();
+// Add a small delay to ensure DOM is ready
+setTimeout(() => {
+login();
+}, 100);
+}
+}
+}
+// Global error handlers
+window.addEventListener('error', function(e) {
+console.error('Global error:', e.error);
+});
+window.addEventListener('unhandledrejection', function(e) {
+console.error('Unhandled promise rejection:', e.reason);
+});
+// Make studentData globally accessible
+window.studentData = studentData;
+// Initialize when DOM is loaded
+if (document.readyState === 'loading') {
+document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+initializeApp();
+}
+</script>
 </body>
 </html>
