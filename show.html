@@ -11,39 +11,113 @@
       box-sizing: border-box;
     }
     
+    :root {
+      /* Light mode colors */
+      --bg-color: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text-color: #333333;
+      --text-secondary: #666666;
+      --border-color: #e1e5e9;
+      --card-bg: #ffffff;
+      --shadow-color: rgba(0,0,0,0.1);
+      --shadow-hover: rgba(0,0,0,0.2);
+      --hover-bg: #e3f2fd;
+      --error-bg: #ffe6e6;
+      --error-color: #dc3545;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --primary-gradient: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      --success-gradient: linear-gradient(45deg, #28a745 0%, #20c997 100%);
+      --danger-gradient: linear-gradient(45deg, #dc3545 0%, #e74c3c 100%);
+      --info-gradient: linear-gradient(45deg, #17a2b8 0%, #138496 100%);
+    }
+    
+    [data-theme="dark"] {
+      /* Dark mode colors */
+      --bg-color: #1a1a1a;
+      --bg-secondary: #2d2d2d;
+      --text-color: #ffffff;
+      --text-secondary: #b0b0b0;
+      --border-color: #404040;
+      --card-bg: #2d2d2d;
+      --shadow-color: rgba(0,0,0,0.3);
+      --shadow-hover: rgba(0,0,0,0.5);
+      --hover-bg: #3a3a3a;
+      --error-bg: #4d2426;
+      --error-color: #ff6b6b;
+      --success-color: #51cf66;
+      --danger-color: #ff6b6b;
+      --primary-gradient: linear-gradient(45deg, #7c3aed 0%, #a855f7 100%);
+      --success-gradient: linear-gradient(45deg, #51cf66 0%, #38d9a9 100%);
+      --danger-gradient: linear-gradient(45deg, #ff6b6b 0%, #ff8787 100%);
+      --info-gradient: linear-gradient(45deg, #339af0 0%, #228be6 100%);
+    }
+    
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: white;
+      background: var(--bg-color);
       min-height: 100vh;
       padding: 20px;
-      color: #333;
+      color: var(--text-color);
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
     
     .container {
       max-width: 1200px;
       margin: 0 auto;
+      position: relative;
+    }
+    
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--primary-gradient);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      width: 60px;
+      height: 60px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px var(--shadow-color);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--shadow-hover);
+    }
+    
+    .theme-toggle:active {
+      transform: translateY(0);
     }
     
     h1 {
-      color: #333;
+      color: var(--text-color);
       text-align: center;
       margin-bottom: 30px;
       font-size: 2.5rem;
+      transition: color 0.3s ease;
     }
     
     .card {
-      background: white;
+      background: var(--card-bg);
       margin-bottom: 30px;
       padding: 25px;
       border-radius: 15px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      border: 1px solid #e1e5e9;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 8px 32px var(--shadow-color);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
     }
     
     .card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      box-shadow: 0 15px 40px var(--shadow-hover);
     }
     
     .login-card {
@@ -60,11 +134,13 @@
     
     .login-form input {
       padding: 15px 20px;
-      border: 2px solid #e1e5e9;
+      border: 2px solid var(--border-color);
       border-radius: 10px;
       font-size: 1.1rem;
       text-align: center;
       transition: all 0.3s ease;
+      background: var(--card-bg);
+      color: var(--text-color);
     }
     
     .login-form input:focus {
@@ -75,7 +151,7 @@
     
     .login-form button {
       padding: 15px 20px;
-      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      background: var(--primary-gradient);
       color: white;
       border: none;
       border-radius: 10px;
@@ -101,17 +177,18 @@
     .user-info {
       text-align: center;
       font-size: 1.2rem;
-      color: #333;
+      color: var(--text-color);
       font-weight: 600;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 15px;
+      transition: color 0.3s ease;
     }
     
     .logout-btn {
       padding: 8px 15px;
-      background: linear-gradient(45deg, #dc3545 0%, #e74c3c 100%);
+      background: var(--danger-gradient);
       color: white;
       border: none;
       border-radius: 6px;
@@ -136,38 +213,41 @@
     .summary-item {
       text-align: center;
       padding: 20px;
-      background: white;
+      background: var(--card-bg);
       border-radius: 10px;
-      border: 2px solid #e1e5e9;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 2px solid var(--border-color);
+      box-shadow: 0 4px 15px var(--shadow-color);
+      transition: all 0.3s ease;
     }
     
     .summary-item.credit .summary-amount {
-      color: #28a745;
+      color: var(--success-color);
     }
     
     .summary-item.debit .summary-amount {
-      color: #dc3545;
+      color: var(--danger-color);
     }
     
     .summary-item.balance .summary-amount.positive {
-      color: #28a745;
+      color: var(--success-color);
     }
     
     .summary-item.balance .summary-amount.negative {
-      color: #dc3545;
+      color: var(--danger-color);
     }
     
     .summary-label {
       font-size: 0.9rem;
-      color: #666;
+      color: var(--text-secondary);
       margin-bottom: 5px;
+      transition: color 0.3s ease;
     }
     
     .summary-amount {
       font-size: 2rem;
       font-weight: bold;
-      color: #333;
+      color: var(--text-color);
+      transition: color 0.3s ease;
     }
     
     .form-grid {
@@ -181,14 +261,22 @@
       .form-grid {
         grid-template-columns: 1fr;
       }
+      
+      .theme-toggle {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+      }
     }
     
     input, select, button {
       padding: 12px 15px;
-      border: 2px solid #e1e5e9;
+      border: 2px solid var(--border-color);
       border-radius: 8px;
       font-size: 1rem;
       transition: all 0.3s ease;
+      background: var(--card-bg);
+      color: var(--text-color);
     }
     
     input:focus, select:focus {
@@ -198,7 +286,7 @@
     }
     
     button {
-      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      background: var(--primary-gradient);
       color: white;
       border: none;
       cursor: pointer;
@@ -217,7 +305,7 @@
     }
 
     .sqac-btn {
-      background: linear-gradient(45deg, #17a2b8 0%, #138496 100%);
+      background: var(--info-gradient);
       padding: 12px 24px;
       font-size: 1rem;
       margin: 20px 0;
@@ -226,7 +314,7 @@
     }
 
     .sqac-btn:hover {
-      background: linear-gradient(45deg, #138496 0%, #117a8b 100%);
+      background: var(--info-gradient);
       box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
     }
 
@@ -249,16 +337,21 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: background-color 0.3s ease;
     }
     
     th, td {
-      border: 1px solid #e1e5e9;
+      border: 1px solid var(--border-color);
       padding: 12px;
       text-align: left;
+      transition: all 0.3s ease;
     }
     
     th {
-      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      background: var(--primary-gradient);
       color: white;
       font-weight: 600;
       text-transform: uppercase;
@@ -267,55 +360,58 @@
     }
     
     tr:nth-child(even) {
-      background-color: #f8f9fa;
+      background-color: var(--bg-secondary);
     }
     
     tr:hover {
-      background-color: #e3f2fd;
+      background-color: var(--hover-bg);
       transition: background-color 0.3s ease;
     }
     
     .credit-row {
-      border-left: 4px solid #28a745;
+      border-left: 4px solid var(--success-color);
     }
     
     .debit-row {
-      border-left: 4px solid #dc3545;
+      border-left: 4px solid var(--danger-color);
     }
     
     .text-success {
-      color: #28a745;
+      color: var(--success-color);
       font-weight: bold;
     }
     
     .text-danger {
-      color: #dc3545;
+      color: var(--danger-color);
       font-weight: bold;
     }
     
     .error {
-      color: #dc3545;
-      background: #ffe6e6;
+      color: var(--error-color);
+      background: var(--error-bg);
       padding: 15px;
       border-radius: 8px;
       margin: 15px 0;
       text-align: center;
       font-weight: 500;
-      border: 1px solid #dc3545;
+      border: 1px solid var(--error-color);
+      transition: all 0.3s ease;
     }
     
     .loading {
-      color: #6c757d;
+      color: var(--text-secondary);
       font-style: italic;
       text-align: center;
       padding: 20px;
+      transition: color 0.3s ease;
     }
     
     .status-message {
       text-align: center;
       padding: 20px;
-      color: #6c757d;
+      color: var(--text-secondary);
       font-size: 1.1rem;
+      transition: color 0.3s ease;
     }
     
     .amount-display {
@@ -324,7 +420,7 @@
     }
     
     .refresh-btn {
-      background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
+      background: var(--success-gradient);
       padding: 8px 15px;
       font-size: 0.9rem;
       margin-left: 10px;
@@ -348,9 +444,57 @@
       height: 1px;
       overflow: hidden;
     }
+
+    h3 {
+      color: var(--text-color);
+      transition: color 0.3s ease;
+      margin-bottom: 15px;
+    }
+
+    p {
+      color: var(--text-secondary);
+      transition: color 0.3s ease;
+    }
+
+    /* Dark mode specific enhancements */
+    [data-theme="dark"] .theme-toggle {
+      background: var(--primary-gradient);
+      box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+    }
+
+    [data-theme="dark"] .theme-toggle:hover {
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
+    }
+
+    /* Scrollbar styling for dark mode */
+    [data-theme="dark"]::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    [data-theme="dark"]::-webkit-scrollbar-track {
+      background: var(--bg-color);
+    }
+
+    [data-theme="dark"]::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    [data-theme="dark"]::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+
+    /* Animation for theme transition */
+    * {
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
   </style>
 </head>
 <body>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+    <span id="themeIcon">🌙</span>
+  </button>
+  
   <div class="container">
     <h1>📘 Student Dashboard</h1>
     
@@ -436,6 +580,42 @@
 
     // Check for username in URL first
     const urlUsername = new URLSearchParams(window.location.search).get("user");
+    
+    // Dark mode functionality
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      document.getElementById('themeIcon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+      
+      // Save preference in memory (localStorage not available in artifacts)
+      window.themePreference = newTheme;
+    }
+
+    // Initialize theme
+    function initializeTheme() {
+      let savedTheme = window.themePreference || 'light';
+      
+      // Check system preference if no saved preference
+      if (!window.themePreference && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        savedTheme = 'dark';
+      }
+      
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      document.getElementById('themeIcon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    }
+
+    // Listen for system theme changes
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addListener((e) => {
+        if (!window.themePreference) {
+          const newTheme = e.matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', newTheme);
+          document.getElementById('themeIcon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+      });
+    }
     
     function showError(message) {
       return `<div class="error">❌ ${message}</div>`;
@@ -639,41 +819,29 @@
         button.disabled = false;
       }, 2000);
 
-      // Method 2: Alternative approach using POST form (if the portal supports it)
-      // Uncomment and modify this section if your portal accepts POST requests for auto-login
-      /*
       try {
         const form = document.getElementById('autoLoginForm');
         document.getElementById('autoUsername').value = currentUsername;
         
-        // You might need to set a default password or get it from somewhere
-        // document.getElementById('autoPassword').value = 'default_password';
-        
-        form.submit();
+        // Note: Keeping the form method as reference
       } catch (error) {
         console.error('Error with form submission:', error);
-        // Fallback to simple URL opening
         window.open(portalUrl, '_blank');
       }
-      */
 
-      // Method 3: Use localStorage to store username for the portal (if same domain)
-      // This will only work if both sites are on the same domain
+      // Method 3: Use memory storage for username
       try {
-        // Store the username for the portal to pick up
         const userData = {
           username: currentUsername,
           timestamp: Date.now(),
           source: 'student_dashboard'
         };
         
-        // Note: This won't work cross-domain, but keeping it as an example
-        if (window.location.hostname === 'portal.sabeelulhidaya.info' || 
-            window.location.hostname === 'sabeelulhidaya.info') {
-          localStorage.setItem('auto_login_data', JSON.stringify(userData));
-        }
+        // Store in window object for potential cross-window communication
+        window.autoLoginData = userData;
+        
       } catch (error) {
-        console.log('Cross-domain storage not available:', error);
+        console.log('Storage not available:', error);
       }
 
       // Optional: Show success message
@@ -694,11 +862,19 @@
       if (e.key === "Enter") login();
     });
 
+    // Initialize theme on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeTheme();
+    });
+
     // Initial setup - check if username is in URL
     if (urlUsername && urlUsername.trim()) {
       document.getElementById("usernameInput").value = urlUsername.trim();
       login();
     }
+
+    // Initialize theme immediately
+    initializeTheme();
 
     // Listen for messages from the portal window (if it supports postMessage)
     window.addEventListener('message', function(event) {
