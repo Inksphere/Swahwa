@@ -12,13 +12,68 @@
             box-sizing: border-box;
         }
 
+        :root {
+            /* Light mode colors */
+            --bg-color: white;
+            --text-color: #333;
+            --card-bg: white;
+            --card-border: #e1e5e9;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --input-bg: white;
+            --input-border: #e1e5e9;
+            --input-focus: #667eea;
+            --table-even: #f8f9fa;
+            --table-hover: #e3f2fd;
+            --filter-summary-bg: #e3f2fd;
+            --filter-summary-border: #2196f3;
+            --debug-bg: #f8f9fa;
+            --debug-border: #dee2e6;
+            --debug-text: #495057;
+            --error-bg: #f8d7da;
+            --error-border: #f5c6cb;
+            --error-text: #721c24;
+            --loading-text: #6c757d;
+            --received-bg: #f0f9ff;
+            --stat-bg: #f8f9fa;
+            --stat-border: #e1e5e9;
+            --pagination-info: #666;
+        }
+
+        [data-theme="dark"] {
+            /* Dark mode colors */
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --card-bg: #2d2d2d;
+            --card-border: #404040;
+            --card-shadow: rgba(0, 0, 0, 0.3);
+            --input-bg: #404040;
+            --input-border: #555;
+            --input-focus: #667eea;
+            --table-even: #333;
+            --table-hover: #404040;
+            --filter-summary-bg: #1e3a8a;
+            --filter-summary-border: #3b82f6;
+            --debug-bg: #333;
+            --debug-border: #555;
+            --debug-text: #ccc;
+            --error-bg: #4a1e1e;
+            --error-border: #6b2c2c;
+            --error-text: #ff9999;
+            --loading-text: #999;
+            --received-bg: #1e293b;
+            --stat-bg: #333;
+            --stat-border: #555;
+            --pagination-info: #999;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: white;
+            background: var(--bg-color);
             min-height: 100vh;
             padding: 10px;
-            color: #333;
+            color: var(--text-color);
             font-size: 14px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .dashboard-container {
@@ -26,27 +81,64 @@
             margin: 0 auto;
         }
 
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 50px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .theme-toggle-icon {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover .theme-toggle-icon {
+            transform: rotate(20deg);
+        }
+
         .main-title {
-            color: #333;
+            color: var(--text-color);
             text-align: center;
             margin-bottom: 20px;
             font-size: 1.8rem;
         }
 
         .card {
-            background: white;
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 12px;
             padding: 16px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            border: 1px solid #e1e5e9;
+            box-shadow: 0 4px 16px var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            border: 1px solid var(--card-border);
             margin-bottom: 16px;
         }
 
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 6px 20px var(--card-shadow);
         }
 
         .card-header {
@@ -69,13 +161,14 @@
         }
 
         .card h3 {
-            color: #2c3e50;
+            color: var(--text-color);
             font-size: 16px;
             margin: 0;
         }
 
         .card p {
-            color: #7f8c8d;
+            color: var(--text-color);
+            opacity: 0.8;
             line-height: 1.5;
             margin-bottom: 12px;
             font-size: 13px;
@@ -97,16 +190,18 @@
 
         .login-form input {
             padding: 12px 16px;
-            border: 2px solid #e1e5e9;
+            border: 2px solid var(--input-border);
             border-radius: 8px;
             font-size: 16px;
             text-align: center;
             transition: all 0.3s ease;
+            background: var(--input-bg);
+            color: var(--text-color);
         }
 
         .login-form input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--input-focus);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
@@ -199,15 +294,15 @@
         .stat-item {
             text-align: center;
             padding: 16px 8px;
-            background: #f8f9fa;
+            background: var(--stat-bg);
             border-radius: 8px;
-            border: 2px solid #e1e5e9;
+            border: 2px solid var(--stat-border);
             transition: all 0.3s ease;
         }
 
         .stat-item:hover {
             transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px var(--card-shadow);
         }
 
         .stat-item.credit {
@@ -252,7 +347,8 @@
 
         .stat-label {
             font-size: 10px;
-            color: #7f8c8d;
+            color: var(--text-color);
+            opacity: 0.7;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -300,7 +396,7 @@
         .new-item-section {
             margin-top: 12px;
             padding-top: 12px;
-            border-top: 1px solid #e1e5e9;
+            border-top: 1px solid var(--card-border);
             display: none;
         }
 
@@ -315,10 +411,10 @@
         .predefined-items {
             max-height: 150px;
             overflow-y: auto;
-            border: 1px solid #e1e5e9;
+            border: 1px solid var(--card-border);
             border-radius: 4px;
             padding: 8px;
-            background: #f8f9fa;
+            background: var(--stat-bg);
             margin-top: 8px;
         }
 
@@ -327,8 +423,9 @@
             align-items: center;
             justify-content: space-between;
             padding: 6px 0;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid var(--card-border);
             font-size: 12px;
+            color: var(--text-color);
         }
 
         .predefined-item:last-child {
@@ -344,13 +441,13 @@
         }
 
         .filter-summary {
-            background: #e3f2fd;
+            background: var(--filter-summary-bg);
             padding: 12px;
             border-radius: 6px;
             margin-top: 12px;
             display: none;
-            color: #333;
-            border-left: 3px solid #2196f3;
+            color: var(--text-color);
+            border-left: 3px solid var(--filter-summary-border);
             font-size: 12px;
         }
 
@@ -415,16 +512,18 @@
         /* Input Styles */
         input, select {
             padding: 10px 12px;
-            border: 2px solid #e1e5e9;
+            border: 2px solid var(--input-border);
             border-radius: 6px;
             font-size: 14px;
             transition: all 0.3s ease;
             width: 100%;
+            background: var(--input-bg);
+            color: var(--text-color);
         }
 
         input:focus, select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--input-focus);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
@@ -433,16 +532,17 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 16px;
-            background: white;
+            background: var(--card-bg);
             border-radius: 6px;
             overflow: hidden;
             font-size: 12px;
         }
 
         th, td {
-            border: 1px solid #e1e5e9;
+            border: 1px solid var(--card-border);
             padding: 8px 6px;
             text-align: left;
+            color: var(--text-color);
         }
 
         th {
@@ -455,11 +555,11 @@
         }
 
         tr:nth-child(even) {
-            background-color: #f8f9fa;
+            background-color: var(--table-even);
         }
 
         tr:hover {
-            background-color: #e3f2fd;
+            background-color: var(--table-hover);
             transition: background-color 0.3s ease;
         }
 
@@ -473,7 +573,7 @@
 
         .transaction-row.received {
             opacity: 0.7;
-            background-color: #f0f9ff;
+            background-color: var(--received-bg);
         }
 
         .text-success {
@@ -546,7 +646,7 @@
         }
 
         .pagination-info {
-            color: #666;
+            color: var(--pagination-info);
             font-size: 11px;
         }
 
@@ -556,19 +656,19 @@
         }
 
         .error {
-            color: #dc3545;
-            background: #f8d7da;
+            color: var(--error-text);
+            background: var(--error-bg);
             padding: 12px;
             border-radius: 6px;
             margin: 12px 0;
             text-align: center;
             font-weight: 500;
-            border: 1px solid #f5c6cb;
+            border: 1px solid var(--error-border);
             font-size: 13px;
         }
 
         .loading {
-            color: #6c757d;
+            color: var(--loading-text);
             font-style: italic;
             text-align: center;
             padding: 16px;
@@ -578,19 +678,19 @@
         .status-message {
             text-align: center;
             padding: 16px;
-            color: #6c757d;
+            color: var(--loading-text);
             font-size: 13px;
         }
 
         .debug-info {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
+            background: var(--debug-bg);
+            border: 1px solid var(--debug-border);
             border-radius: 4px;
             padding: 8px;
             margin: 8px 0;
             font-family: monospace;
             font-size: 10px;
-            color: #495057;
+            color: var(--debug-text);
         }
 
         .dashboard-content {
@@ -608,6 +708,18 @@
 
         /* Mobile Optimizations */
         @media (max-width: 768px) {
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                padding: 6px;
+                font-size: 10px;
+                gap: 4px;
+            }
+
+            .theme-toggle-icon {
+                font-size: 16px;
+            }
+
             body {
                 padding: 8px;
                 font-size: 13px;
@@ -873,35 +985,70 @@
                 grid-template-columns: repeat(3, 1fr);
             }
         }
+
+        /* Dark mode specific adjustments */
+        [data-theme="dark"] .profile-photo {
+            background: #404040;
+            color: #667eea;
+        }
+
+        [data-theme="dark"] .card-icon {
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        [data-theme="dark"] .btn:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        [data-theme="dark"] .received-btn:hover {
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.6);
+        }
+
+        [data-theme="dark"] .pagination-btn:hover {
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Smooth transitions for theme changes */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card, input, select, table, th, td, .stat-item, .predefined-items, .filter-summary, .debug-info, .error, .theme-toggle {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
     </style>
 </head>
 <body>
+    <!-- Dark Mode Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span class="theme-toggle-icon">🌓</span>
+        <span class="theme-toggle-text">Dark</span>
+    </div>
+
     <div class="dashboard-container">
         <h1 class="main-title">📘 Student Financial Dashboard</h1>
         
         <!-- Login Section -->
-      <!-- Login Section -->
-<!-- Login Section -->
-<div id="loginSection" class="card login-card">
-    <div class="card-header">
-        <div class="card-icon">👋</div>
-        <h3>Welcome! Please Login</h3>
-    </div>
-    <div class="login-form">
-        <input type="text" id="usernameInput" placeholder="Enter AD.NO (e.g., 1050)" maxlength="4" pattern="\d{4}" inputmode="numeric">
-        <button class="btn btn-primary" onclick="login()">🔑 Student Login</button>
-    </div>
-    <div style="margin-top: 16px; text-align: center;">
-        <p style="font-size: 12px; color: #666; margin-bottom: 8px;">Admin Access:</p>
-        <button class="btn btn-info" onclick="window.location.href='admin-dashboard.html'" style="margin-top: 0;">⚙️ Admin Dashboard</button>
-    </div>
-    <div id="loginError" class="error" style="display: none; margin-top: 12px;"></div>
-    <div id="debugInfo" class="debug-info" style="display: none;">
-        <div>API URL: <span id="apiUrl"></span></div>
-        <div>Last Request: <span id="lastRequest"></span></div>
-        <div>Last Response: <span id="lastResponse"></span></div>
-    </div>
-</div>
+        <div id="loginSection" class="card login-card">
+            <div class="card-header">
+                <div class="card-icon">👋</div>
+                <h3>Welcome! Please Login</h3>
+            </div>
+            <div class="login-form">
+                <input type="text" id="usernameInput" placeholder="Enter AD.NO (e.g., 1050)" maxlength="4" pattern="\d{4}" inputmode="numeric">
+                <button class="btn btn-primary" onclick="login()">🔑 Student Login</button>
+            </div>
+            <div style="margin-top: 16px; text-align: center;">
+                <p style="font-size: 12px; color: var(--text-color); opacity: 0.7; margin-bottom: 8px;">Admin Access:</p>
+                <button class="btn btn-info" onclick="window.location.href='admin-dashboard.html'" style="margin-top: 0;">⚙️ Admin Dashboard</button>
+            </div>
+            <div id="loginError" class="error" style="display: none; margin-top: 12px;"></div>
+            <div id="debugInfo" class="debug-info" style="display: none;">
+                <div>API URL: <span id="apiUrl"></span></div>
+                <div>Last Request: <span id="lastRequest"></span></div>
+                <div>Last Response: <span id="lastResponse"></span></div>
+            </div>
+        </div>
 
         <!-- Dashboard Section -->
         <div id="dashboardSection" class="hidden">
@@ -922,7 +1069,7 @@
                 <!-- Financial Summary Card -->
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-icon"></div>
+                        <div class="card-icon">💰</div>
                         <h3>Financial Summary</h3>
                     </div>
                     <p>Track your financial activities and current balance.</p>
@@ -941,7 +1088,7 @@
                         </div>
                     </div>
                     <div style="margin-top: 16px;">
-                        <button class="btn btn-success" onclick="refreshData()">Refresh Data</button>
+                        <button class="btn btn-success" onclick="refreshData()">🔄 Refresh Data</button>
                     </div>
                 </div>
 
@@ -982,7 +1129,7 @@
                         </div>
                         
                         <input type="number" id="amount" placeholder="Amount (₹)" step="0.01" min="0">
-                        <button class="btn btn-primary" onclick="addEntry()">Add Entry</button>
+                        <button class="btn btn-primary" onclick="addEntry()">📝 Add Entry</button>
                     </div>
                 </div>
 
@@ -1013,7 +1160,7 @@
                 <!-- Transaction Ledger Card -->
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-icon"></div>
+                        <div class="card-icon">📊</div>
                         <h3>Transaction Ledger</h3>
                     </div>
                     <p>View and manage your complete transaction history.</p>
@@ -1021,11 +1168,11 @@
                         <select id="sortBy">
                             <option value="date-desc">📅Date (Newest First)</option>
                             <option value="date-asc">📅 Date (Oldest First)</option>
-                            <option value="amount-desc">Amount (High to Low)</option>
-                            <option value="amount-asc">Amount (Low to High)</option>
-                            <option value="type">Type</option>
+                            <option value="amount-desc">💰 Amount (High to Low)</option>
+                            <option value="amount-asc">💰 Amount (Low to High)</option>
+                            <option value="type">📝 Type</option>
                         </select>
-                        <button class="btn btn-success" onclick="exportData()">Export PDF</button>
+                        <button class="btn btn-success" onclick="exportData()">📄 Export PDF</button>
                     </div>
                     
                     <div id="ledgerStatus" class="loading">Loading transactions...</div>
@@ -1064,40 +1211,70 @@
         let receivedTransactions = new Set();
         const api = "https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec";
 
+        // Theme management
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            
+            const toggleText = document.querySelector('.theme-toggle-text');
+            const toggleIcon = document.querySelector('.theme-toggle-icon');
+            
+            if (theme === 'dark') {
+                toggleText.textContent = 'Light';
+                toggleIcon.textContent = '☀️';
+            } else {
+                toggleText.textContent = 'Dark';
+                toggleIcon.textContent = '🌙';
+            }
+        }
+
         // Student data mapping
         const studentData = {
-            '1050': 'MUHAMMAD SINAN PC',
-            '1070': 'MUHAMMED MUSAMMIL B K',
-            '1074': 'MUAD .M',
-            '1058': 'MUHAMMED JALAL AT',
-            '1051': 'MUHAMMAD HISHAM T',
-            '1056': 'MUHAMMED SHADIN N.M.',
-            '1076': 'MUHAMMED MINHAJ KK',
-            '1071': 'SAYYID MOHAMMAD ZUHAIR A K',
-            '1075': 'MUHAMMED HASHIM P',
-            '1061': 'ANSHID M P',
-            '1072': 'SINAN TP',
-            '1078': 'MUHAMMED RABIEUE MK',
-            '1088': 'NAEEM K',
-            '1082': 'MUHAMMED SANEEN',
-            '1090': 'MUHAMMED BASSAM',
-            '1066': 'HASHIM K P',
-            '1063': 'RISHADH. T',
-            '1073': 'MUHAMMAD MUSTHAFA KK',
-            '1068': 'MUHAMMED UVAIS.EK',
-            '1053': 'AMEEN T',
-            '1040': 'MUHAMMAD RIFAD K',
-            '1059': 'AFSAL',
-            '1064': 'SHAMIL M',
-            '1013': 'SAHAD.K',
-            '1087': 'SHAMIL. A',
-            '1089': 'ADIL SHAH M',
-            '1084': 'ASIM M',
-            '1024': 'FADHIL KATTIPARUTHI',
-            '1008': 'MINHAJ',
-            '1086': 'NIDAL',
-            '1085': 'NAFIH',
-            '1014': 'MURSHID MK'
+            
+   '1050': 'MUHAMMAD SINAN PC',
+   '1070': 'MUHAMMED MUSAMMIL B K',
+   '1074': 'MUAD .M',
+   '1058': 'MUHAMMED JALAL AT',
+   '1051': 'MUHAMMAD HISHAM T',
+   '1056': 'MUHAMMED SHADIN N.M.',
+   '1076': 'MUHAMMED MINHAJ KK',
+   '1071': 'SAYYID MOHAMMAD ZUHAIR A K',
+   '1075': 'MUHAMMED HASHIM P',
+   '1061': 'ANSHID M P',
+   '1072': 'MOHAMMED SINAN TP',
+   '1078': 'MUHAMMED RABIEUE MK',
+   '1088': 'MOHAMMED NAEEM K',
+   '1082': 'MUHAMMED SANEEN',
+   '1090': 'MUHAMMED BASSAM',
+   '1066': 'HASHIM MOHAMMED K P',
+   '1063': 'MOHAMMED RISHADH. T',
+   '1073': 'MUHAMMAD MUSTHAFA KK',
+   '1068': 'MUHAMMED UVAIS.EK',
+   '1053': 'AMEEN T',
+   '1040': 'MUHAMMAD RIFAD K',
+   '1059': 'AFSAL',
+   '1064': 'MOHAMED SHAMIL M',
+   '1013': 'MOHAMMED SAHAD.K',
+   '1087': 'MUHAMMED SHAMIL. A',
+   '1089': 'ADIL SHAH M',
+   '1084': 'ASIM MOHAMED M',
+   '1024': 'FADHIL KATTIPARUTHI',
+   '1008': 'MUHAMMED MINHAJ',
+   '1086': 'MOHAMMED NIDAL',
+   '1085': 'MUHAMMED NAFIH',
+   '1014': 'MURSHID MK'
+
         };
 
         // Default predefined items
@@ -1425,109 +1602,53 @@
             return `<div class="error">❌ ${message}</div>`;
         }
 
-   // Replace the login function (remove the duplicate one)
-function login() {
-    const usernameInput = document.getElementById("usernameInput");
-    const loginError = document.getElementById("loginError");
-    const username = usernameInput.value.trim();
+        // Login function
+        function login() {
+            const usernameInput = document.getElementById("usernameInput");
+            const loginError = document.getElementById("loginError");
+            const username = usernameInput.value.trim();
 
-    if (!username) {
-        loginError.innerHTML = "⚠️ Please enter your AD.NO.";
-        loginError.style.display = "block";
-        return;
-    }
+            if (!username) {
+                loginError.innerHTML = "⚠️ Please enter your AD.NO.";
+                loginError.style.display = "block";
+                return;
+            }
 
-    // Check if username exists in studentData
-    if (!studentData[username]) {
-        const allowedIds = Object.keys(studentData).join(', ');
-        loginError.innerHTML = `❌ Invalid AD.NO.<br><small>Allowed: ${allowedIds}</small>`;
-        loginError.style.display = "block";
-        return;
-    }
+            // Check if username exists in studentData
+            if (!studentData[username]) {
+                const allowedIds = Object.keys(studentData).join(', ');
+                loginError.innerHTML = `❌ Invalid AD.NO.<br><small>Allowed: ${allowedIds}</small>`;
+                loginError.style.display = "block";
+                return;
+            }
 
-    // Successful login
-    currentUsername = username;
-    const displayName = studentData[username];
-    
-    // Update UI
-    document.getElementById("studentName").innerText = formatStudentName(displayName);
-    document.getElementById("loginSection").classList.add("hidden");
-    document.getElementById("dashboardSection").classList.remove("hidden");
+            // Successful login
+            currentUsername = username;
+            const displayName = studentData[username];
+            
+            // Update UI
+            document.getElementById("studentName").innerText = formatStudentName(displayName);
+            document.getElementById("loginSection").classList.add("hidden");
+            document.getElementById("dashboardSection").classList.remove("hidden");
 
-    // Initialize user-specific data
-    initializePredefinedItems();
-    loadReceivedTransactions();
-    
-    // Fetch user data
-    fetchSummary();
-    fetchLedger();
+            // Initialize user-specific data
+            initializePredefinedItems();
+            loadReceivedTransactions();
+            
+            // Fetch user data
+            fetchSummary();
+            fetchLedger();
 
-    // Update URL
-    try {
-        const newUrl = new URL(window.location);
-        newUrl.searchParams.set('user', username);
-        window.history.pushState({}, '', newUrl);
-    } catch (error) {
-        console.warn("Error updating URL:", error);
-    }
-}
-
-// Fix the initializeApp function
-function initializeApp() {
-    setupEventListeners();
-    
-    // Check for username in URL and auto-login
-    const urlParams = new URLSearchParams(window.location.search);
-    const urlUsername = urlParams.get('user');
-    
-    if (urlUsername && urlUsername.trim()) {
-        const usernameInput = document.getElementById("usernameInput");
-        if (usernameInput) {
-            usernameInput.value = urlUsername.trim();
-            // Add a small delay to ensure DOM is ready
-            setTimeout(() => {
-                login();
-            }, 100);
+            // Update URL
+            try {
+                const newUrl = new URL(window.location);
+                newUrl.searchParams.set('user', username);
+                window.history.pushState({}, '', newUrl);
+            } catch (error) {
+                console.warn("Error updating URL:", error);
+            }
         }
-    }
-}
 
-// Ensure studentData is properly defined (it looks correct in your code)
-// Make sure this is at the global scope
-window.studentData = {
-    '1050': 'MUHAMMAD SINAN PC',
-    '1070': 'MUHAMMED MUSAMMIL B K',
-    '1074': 'MUAD .M',
-    '1058': 'MUHAMMED JALAL AT',
-    '1051': 'MUHAMMAD HISHAM T',
-    '1056': 'MUHAMMED SHADIN N.M.',
-    '1076': 'MUHAMMED MINHAJ KK',
-    '1071': 'SAYYID MOHAMMAD ZUHAIR A K',
-    '1075': 'MUHAMMED HASHIM P',
-    '1061': 'ANSHID M P',
-    '1072': 'SINAN TP',
-    '1078': 'MUHAMMED RABIEUE MK',
-    '1088': 'NAEEM K',
-    '1082': 'MUHAMMED SANEEN',
-    '1090': 'MUHAMMED BASSAM',
-    '1066': 'HASHIM K P',
-    '1063': 'RISHADH. T',
-    '1073': 'MUHAMMAD MUSTHAFA KK',
-    '1068': 'MUHAMMED UVAIS.EK',
-    '1053': 'AMEEN T',
-    '1040': 'MUHAMMAD RIFAD K',
-    '1059': 'AFSAL',
-    '1064': 'SHAMIL M',
-    '1013': 'SAHAD.K',
-    '1087': 'SHAMIL. A',
-    '1089': 'ADIL SHAH M',
-    '1084': 'ASIM M',
-    '1024': 'FADHIL KATTIPARUTHI',
-    '1008': 'MINHAJ',
-    '1086': 'NIDAL',
-    '1085': 'NAFIH',
-    '1014': 'MURSHID MK'
-};
         function logout() {
             currentUsername = null;
             
@@ -2265,15 +2386,24 @@ window.studentData = {
 
         // Initialize the application
         function initializeApp() {
+            // Initialize theme first
+            initializeTheme();
+            
             // Setup event listeners
             setupEventListeners();
             
             // Check for username in URL and auto-login
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlUsername = urlParams.get('user');
+            
             if (urlUsername && urlUsername.trim()) {
                 const usernameInput = document.getElementById("usernameInput");
                 if (usernameInput) {
                     usernameInput.value = urlUsername.trim();
-                    login();
+                    // Add a small delay to ensure DOM is ready
+                    setTimeout(() => {
+                        login();
+                    }, 100);
                 }
             }
         }
@@ -2287,6 +2417,9 @@ window.studentData = {
             console.error('Unhandled promise rejection:', e.reason);
         });
 
+        // Make studentData globally accessible
+        window.studentData = studentData;
+
         // Initialize when DOM is loaded
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initializeApp);
@@ -2296,8 +2429,3 @@ window.studentData = {
     </script>
 </body>
 </html>
-
-
-
-
-
