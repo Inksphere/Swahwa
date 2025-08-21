@@ -11,7 +11,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         :root {
             /* Light mode colors */
             --bg-color: white;
@@ -38,7 +37,6 @@
             --stat-border: #e1e5e9;
             --pagination-info: #666;
         }
-
         [data-theme="dark"] {
             /* Dark mode colors */
             --bg-color: #1a1a1a;
@@ -65,7 +63,6 @@
             --stat-border: #555;
             --pagination-info: #999;
         }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-color);
@@ -75,12 +72,10 @@
             font-size: 14px;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
-
         .dashboard-container {
             max-width: 1200px;
             margin: 0 auto;
         }
-
         /* Dark Mode Toggle */
         .theme-toggle {
             position: fixed;
@@ -103,28 +98,23 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
         .theme-toggle:hover {
             transform: scale(1.05);
             box-shadow: 0 4px 12px var(--card-shadow);
         }
-
         .theme-toggle-icon {
             font-size: 20px;
             transition: transform 0.3s ease;
         }
-
         .theme-toggle:hover .theme-toggle-icon {
             transform: rotate(20deg);
         }
-
         .main-title {
             color: var(--text-color);
             text-align: center;
             margin-bottom: 20px;
             font-size: 1.8rem;
         }
-
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
@@ -135,19 +125,16 @@
             border: 1px solid var(--card-border);
             margin-bottom: 16px;
         }
-
         .card:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px var(--card-shadow);
         }
-
         .card-header {
             display: flex;
             align-items: center;
             gap: 12px;
             margin-bottom: 16px;
         }
-
         .card-icon {
             width: 32px;
             height: 32px;
@@ -159,13 +146,11 @@
             color: white;
             font-size: 16px;
         }
-
         .card h3 {
             color: var(--text-color);
             font-size: 16px;
             margin: 0;
         }
-
         .card p {
             color: var(--text-color);
             opacity: 0.8;
@@ -173,21 +158,18 @@
             margin-bottom: 12px;
             font-size: 13px;
         }
-
         /* Login Card Styles */
         .login-card {
             max-width: 400px;
             margin: 30px auto;
             text-align: center;
         }
-
         .login-form {
             display: flex;
             flex-direction: column;
             gap: 16px;
             margin-top: 16px;
         }
-
         .login-form input {
             padding: 12px 16px;
             border: 2px solid var(--input-border);
@@ -198,13 +180,11 @@
             background: var(--input-bg);
             color: var(--text-color);
         }
-
         .login-form input:focus {
             outline: none;
             border-color: var(--input-focus);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-
         /* Student Profile Header */
         .profile-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -214,7 +194,6 @@
             color: white;
             text-align: center;
         }
-
         .profile-photo {
             width: 80px;
             height: 80px;
@@ -229,28 +208,24 @@
             color: #667eea;
             margin: 0 auto 16px;
         }
-
         .student-name {
             font-size: 1.4rem;
             font-weight: bold;
             margin-bottom: 8px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
-
         .student-role {
             font-size: 1rem;
             opacity: 0.9;
             font-weight: 500;
             margin-bottom: 16px;
         }
-
         .profile-actions {
             display: flex;
             gap: 12px;
             justify-content: center;
             flex-wrap: wrap;
         }
-
         .profile-btn {
             padding: 10px 16px;
             background: rgba(255, 255, 255, 0.2);
@@ -267,22 +242,18 @@
             backdrop-filter: blur(10px);
             font-size: 13px;
         }
-
         .profile-btn:hover {
             background: rgba(255, 255, 255, 0.3);
             border-color: rgba(255, 255, 255, 0.5);
             transform: translateY(-1px);
         }
-
         .profile-btn.danger {
             background: rgba(220, 53, 69, 0.8);
             border-color: rgba(220, 53, 69, 1);
         }
-
         .profile-btn.danger:hover {
             background: rgba(220, 53, 69, 1);
         }
-
         /* Statistics Grid */
         .stats-grid {
             display: grid;
@@ -290,7 +261,6 @@
             gap: 12px;
             margin-top: 16px;
         }
-
         .stat-item {
             text-align: center;
             padding: 16px 8px;
@@ -299,28 +269,22 @@
             border: 2px solid var(--stat-border);
             transition: all 0.3s ease;
         }
-
         .stat-item:hover {
             transform: translateY(-1px);
             box-shadow: 0 2px 8px var(--card-shadow);
         }
-
         .stat-item.credit {
             border-color: #28a745;
         }
-
         .stat-item.debit {
             border-color: #dc3545;
         }
-
         .stat-item.balance.positive {
             border-color: #28a745;
         }
-
         .stat-item.balance.negative {
             border-color: #dc3545;
         }
-
         .stat-number {
             font-size: 18px;
             font-weight: bold;
@@ -328,23 +292,18 @@
             display: block;
             margin-bottom: 4px;
         }
-
         .stat-number.credit {
             color: #28a745;
         }
-
         .stat-number.debit {
             color: #dc3545;
         }
-
         .stat-number.balance.positive {
             color: #28a745;
         }
-
         .stat-number.balance.negative {
             color: #dc3545;
         }
-
         .stat-label {
             font-size: 10px;
             color: var(--text-color);
@@ -352,26 +311,22 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
         /* Form Styles */
         .form-grid {
             display: grid;
             gap: 12px;
         }
-
         .item-input-container {
             position: relative;
             display: flex;
             flex-direction: column;
         }
-
         .item-selector {
             display: flex;
             gap: 8px;
             margin-bottom: 8px;
             flex-wrap: wrap;
         }
-
         .item-toggle {
             padding: 6px 10px;
             background: linear-gradient(45deg, #6c757d 0%, #5a6268 100%);
@@ -384,22 +339,18 @@
             flex: 1;
             min-width: 70px;
         }
-
         .item-toggle.active {
             background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
         }
-
         .item-toggle:hover {
             transform: translateY(-1px);
         }
-
         .new-item-section {
             margin-top: 12px;
             padding-top: 12px;
             border-top: 1px solid var(--card-border);
             display: none;
         }
-
         .new-item-form {
             display: flex;
             gap: 8px;
@@ -407,7 +358,6 @@
             margin-top: 8px;
             flex-direction: column;
         }
-
         .predefined-items {
             max-height: 150px;
             overflow-y: auto;
@@ -417,7 +367,6 @@
             background: var(--stat-bg);
             margin-top: 8px;
         }
-
         .predefined-item {
             display: flex;
             align-items: center;
@@ -427,11 +376,9 @@
             font-size: 12px;
             color: var(--text-color);
         }
-
         .predefined-item:last-child {
             border-bottom: none;
         }
-
         /* Filter Grid */
         .filter-grid {
             display: grid;
@@ -439,7 +386,6 @@
             align-items: end;
             margin-bottom: 12px;
         }
-
         .filter-summary {
             background: var(--filter-summary-bg);
             padding: 12px;
@@ -450,11 +396,9 @@
             border-left: 3px solid var(--filter-summary-border);
             font-size: 12px;
         }
-
         .filter-summary.show {
             display: block;
         }
-
         /* Button Styles */
         .btn {
             padding: 10px 16px;
@@ -472,45 +416,37 @@
             letter-spacing: 0.3px;
             justify-content: center;
         }
-
         .btn-primary {
             background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-
         .btn-success {
             background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
             color: white;
         }
-
         .btn-danger {
             background: linear-gradient(45deg, #dc3545 0%, #e74c3c 100%);
             color: white;
         }
-
         .btn-warning {
             background: linear-gradient(45deg, #ff7043 0%, #ff5722 100%);
             color: white;
         }
-
         .btn-info {
             background: linear-gradient(45deg, #17a2b8 0%, #138496 100%);
             color: white;
         }
-
         .btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
-
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
         }
-
         /* Input Styles */
-        input, select {
+        input, select, textarea {
             padding: 10px 12px;
             border: 2px solid var(--input-border);
             border-radius: 6px;
@@ -520,13 +456,11 @@
             background: var(--input-bg);
             color: var(--text-color);
         }
-
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--input-focus);
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-
         /* Table Styles */
         table {
             width: 100%;
@@ -537,14 +471,12 @@
             overflow: hidden;
             font-size: 12px;
         }
-
         th, td {
             border: 1px solid var(--card-border);
             padding: 8px 6px;
             text-align: left;
             color: var(--text-color);
         }
-
         th {
             background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -553,44 +485,35 @@
             font-size: 10px;
             letter-spacing: 0.3px;
         }
-
         tr:nth-child(even) {
             background-color: var(--table-even);
         }
-
         tr:hover {
             background-color: var(--table-hover);
             transition: background-color 0.3s ease;
         }
-
         .credit-row {
             border-left: 3px solid #28a745;
         }
-
         .debit-row {
             border-left: 3px solid #dc3545;
         }
-
         .transaction-row.received {
             opacity: 0.7;
             background-color: var(--received-bg);
         }
-
         .text-success {
             color: #28a745 !important;
             font-weight: bold;
         }
-
         .text-danger {
             color: #dc3545 !important;
             font-weight: bold;
         }
-
         .amount-display {
             font-weight: bold;
             font-family: 'Courier New', monospace;
         }
-
         /* Received Button */
         .received-btn {
             background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
@@ -603,12 +526,10 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-
         .received-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 2px 8px rgba(40, 167, 69, 0.4);
         }
-
         /* Pagination */
         .pagination-controls {
             display: flex;
@@ -618,7 +539,6 @@
             margin-top: 16px;
             flex-wrap: wrap;
         }
-
         .pagination-btn {
             padding: 6px 10px;
             background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
@@ -629,32 +549,26 @@
             font-size: 11px;
             transition: all 0.3s ease;
         }
-
         .pagination-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 2px 6px rgba(102, 126, 234, 0.4);
         }
-
         .pagination-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
-
         .pagination-btn.active {
             background: linear-gradient(45deg, #4caf50 0%, #66bb6a 100%);
         }
-
         .pagination-info {
             color: var(--pagination-info);
             font-size: 11px;
         }
-
         /* Utility Classes */
         .hidden {
             display: none;
         }
-
         .error {
             color: var(--error-text);
             background: var(--error-bg);
@@ -666,7 +580,6 @@
             border: 1px solid var(--error-border);
             font-size: 13px;
         }
-
         .loading {
             color: var(--loading-text);
             font-style: italic;
@@ -674,14 +587,12 @@
             padding: 16px;
             font-size: 13px;
         }
-
         .status-message {
             text-align: center;
             padding: 16px;
             color: var(--loading-text);
             font-size: 13px;
         }
-
         .debug-info {
             background: var(--debug-bg);
             border: 1px solid var(--debug-border);
@@ -692,12 +603,10 @@
             font-size: 10px;
             color: var(--debug-text);
         }
-
         .dashboard-content {
             display: grid;
             gap: 16px;
         }
-
         .controls-section {
             display: flex;
             gap: 12px;
@@ -705,7 +614,111 @@
             margin-bottom: 12px;
             flex-wrap: wrap;
         }
-
+        
+        /* Bulk Entry Styles */
+        .bulk-entry-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .bulk-section {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+        
+        .bulk-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+        
+        .credit-section {
+            border-color: rgba(40, 167, 69, 0.3);
+            background: linear-gradient(to bottom, rgba(40, 167, 69, 0.05), transparent);
+        }
+        
+        .debit-section {
+            border-color: rgba(220, 53, 69, 0.3);
+            background: linear-gradient(to bottom, rgba(220, 53, 69, 0.05), transparent);
+        }
+        
+        .bulk-section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .bulk-section-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .credit-section .bulk-section-icon {
+            background: linear-gradient(45deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .debit-section .bulk-section-icon {
+            background: linear-gradient(45deg, #dc3545 0%, #e74c3c 100%);
+            color: white;
+        }
+        
+        .bulk-section-header h4 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .bulk-section-content {
+            padding: 12px;
+        }
+        
+        .bulk-section textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--input-border);
+            border-radius: 6px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .bulk-section textarea:focus {
+            outline: none;
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .bulk-section-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .bulk-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             .theme-toggle {
@@ -715,305 +728,280 @@
                 font-size: 10px;
                 gap: 4px;
             }
-
             .theme-toggle-icon {
                 font-size: 16px;
             }
-
             body {
                 padding: 8px;
                 font-size: 13px;
             }
-
             .main-title {
                 font-size: 1.5rem;
                 margin-bottom: 16px;
             }
-
             .card {
                 padding: 12px;
                 margin-bottom: 12px;
                 border-radius: 8px;
             }
-
             .card-header {
                 gap: 10px;
                 margin-bottom: 12px;
             }
-
             .card-icon {
                 width: 28px;
                 height: 28px;
                 font-size: 14px;
             }
-
             .card h3 {
                 font-size: 14px;
             }
-
             .card p {
                 font-size: 12px;
                 margin-bottom: 10px;
             }
-
             .login-card {
                 margin: 20px auto;
                 padding: 16px;
             }
-
             .profile-header {
                 padding: 16px;
                 margin-bottom: 16px;
             }
-
             .profile-photo {
                 width: 60px;
                 height: 60px;
                 font-size: 1.5rem;
                 margin-bottom: 12px;
             }
-
             .student-name {
                 font-size: 1.2rem;
                 margin-bottom: 6px;
             }
-
             .student-role {
                 font-size: 0.9rem;
                 margin-bottom: 12px;
             }
-
             .profile-actions {
                 flex-direction: column;
                 gap: 8px;
             }
-
             .profile-btn {
                 width: 100%;
                 justify-content: center;
                 padding: 12px;
                 font-size: 12px;
             }
-
             .stats-grid {
                 grid-template-columns: 1fr;
                 gap: 8px;
             }
-
             .stat-item {
                 padding: 12px 8px;
             }
-
             .stat-number {
                 font-size: 16px;
             }
-
             .stat-label {
                 font-size: 9px;
             }
-
             .form-grid {
                 grid-template-columns: 1fr;
                 gap: 10px;
             }
-
             .item-selector {
                 flex-direction: column;
                 gap: 6px;
             }
-
             .item-toggle {
                 padding: 8px 12px;
                 font-size: 12px;
             }
-
             .new-item-form {
                 flex-direction: column;
                 gap: 10px;
             }
-
             .new-item-form input,
             .new-item-form button {
                 width: 100%;
             }
-
             .filter-grid {
                 grid-template-columns: 1fr;
                 gap: 10px;
             }
-
             .btn {
                 padding: 12px 16px;
                 font-size: 13px;
                 width: 100%;
                 margin-bottom: 8px;
             }
-
             .controls-section {
                 flex-direction: column;
                 gap: 8px;
             }
-
             .controls-section > * {
                 width: 100%;
             }
-
             table {
                 font-size: 10px;
             }
-
             th, td {
                 padding: 6px 4px;
             }
-
             .received-btn {
                 padding: 3px 6px;
                 font-size: 9px;
             }
-
             .pagination-controls {
                 flex-direction: column;
                 gap: 8px;
             }
-
             .pagination-btn {
                 padding: 8px 12px;
                 font-size: 12px;
             }
-
             .pagination-info {
                 font-size: 10px;
                 text-align: center;
             }
-
             .dashboard-content {
                 gap: 12px;
             }
-
             /* Table scroll for mobile */
             .table-container {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
-
             /* Input improvements for mobile */
-            input, select {
+            input, select, textarea {
                 padding: 12px;
                 font-size: 16px; /* Prevents zoom on iOS */
                 border-radius: 8px;
             }
-
             .login-form input {
                 font-size: 16px;
                 padding: 14px;
             }
-
             /* Button improvements for mobile */
             .btn {
                 min-height: 44px; /* Better touch target */
                 font-size: 14px;
             }
-
             /* Improve touch targets */
             .item-toggle,
             .pagination-btn,
             .received-btn {
                 min-height: 32px;
             }
+            /* Bulk entry mobile styles */
+            .bulk-entry-container {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .bulk-section-header {
+                padding: 10px;
+            }
+            
+            .bulk-section-content {
+                padding: 10px;
+            }
+            
+            .bulk-section textarea {
+                min-height: 80px;
+                margin-bottom: 10px;
+            }
+            
+            .bulk-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .bulk-actions .btn {
+                width: 100%;
+            }
         }
-
         /* Extra small devices */
         @media (max-width: 480px) {
             body {
                 padding: 6px;
             }
-
             .main-title {
                 font-size: 1.3rem;
             }
-
             .card {
                 padding: 10px;
                 border-radius: 6px;
             }
-
             .profile-header {
                 padding: 12px;
             }
-
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
                 gap: 6px;
             }
-
             .stat-item {
                 padding: 10px 6px;
             }
-
             .stat-number {
                 font-size: 14px;
             }
-
             table {
                 font-size: 9px;
             }
-
             th, td {
                 padding: 4px 3px;
             }
-
             .received-btn {
                 padding: 2px 4px;
                 font-size: 8px;
             }
         }
-
         /* Landscape orientation optimization for mobile */
         @media (max-width: 768px) and (orientation: landscape) {
             .profile-actions {
                 flex-direction: row;
                 justify-content: center;
             }
-
             .profile-btn {
                 width: auto;
                 flex: 1;
                 max-width: 200px;
             }
-
             .stats-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
         }
-
         /* Dark mode specific adjustments */
         [data-theme="dark"] .profile-photo {
             background: #404040;
             color: #667eea;
         }
-
         [data-theme="dark"] .card-icon {
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
         }
-
         [data-theme="dark"] .btn:hover {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
         }
-
         [data-theme="dark"] .received-btn:hover {
             box-shadow: 0 2px 8px rgba(40, 167, 69, 0.6);
         }
-
         [data-theme="dark"] .pagination-btn:hover {
             box-shadow: 0 2px 6px rgba(102, 126, 234, 0.6);
         }
-
+        [data-theme="dark"] .credit-section {
+            border-color: rgba(40, 167, 69, 0.5);
+            background: linear-gradient(to bottom, rgba(40, 167, 69, 0.1), transparent);
+        }
+        [data-theme="dark"] .debit-section {
+            border-color: rgba(220, 53, 69, 0.5);
+            background: linear-gradient(to bottom, rgba(220, 53, 69, 0.1), transparent);
+        }
         /* Smooth transitions for theme changes */
         * {
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
-
-        .card, input, select, table, th, td, .stat-item, .predefined-items, .filter-summary, .debug-info, .error, .theme-toggle {
+        .card, input, select, table, th, td, .stat-item, .predefined-items, .filter-summary, .debug-info, .error, .theme-toggle, .bulk-section {
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
     </style>
@@ -1024,7 +1012,6 @@
         <span class="theme-toggle-icon">🌓</span>
         <span class="theme-toggle-text">Dark</span>
     </div>
-
     <div class="dashboard-container">
         <h1 class="main-title">📘 Student Financial Dashboard</h1>
         
@@ -1049,7 +1036,6 @@
                 <div>Last Response: <span id="lastResponse"></span></div>
             </div>
         </div>
-
         <!-- Dashboard Section -->
         <div id="dashboardSection" class="hidden">
             <!-- Student Profile Header -->
@@ -1064,7 +1050,6 @@
                     <button class="profile-btn" onclick="window.location.href='admin-dashboard.html'">Home</button>
                 </div>
             </div>
-
             <div class="dashboard-content">
                 <!-- Financial Summary Card -->
                 <div class="card">
@@ -1091,7 +1076,6 @@
                         <button class="btn btn-success" onclick="refreshData()">🔄 Refresh Data</button>
                     </div>
                 </div>
-
                 <!-- Add New Entry Card -->
                 <div class="card">
                     <div class="card-header">
@@ -1128,28 +1112,57 @@
                             </div>
                         </div>
                         
+                        <input type="number" id="amount" placeholder="Amount (₹)" step="0.01" min="0">
+                        <button class="btn btn-primary" onclick="addEntry()">📝 Add Entry</button>
+                    </div>
+                </div>
                 <!-- Bulk Entry Card -->
                 <div class="card">
                     <div class="card-header">
                         <div class="card-icon">📝</div>
                         <h3>Bulk Entry</h3>
                     </div>
-                    <p>Add multiple transactions quickly using the format: type,description,amount</p>
-                    <div class="form-grid">
-                        <textarea id="bulkEntries" rows="8" placeholder="credit,Pocket Money Received,500&#10;debit,Books & Supplies,200&#10;debit,Fine,50&#10;credit,Monthly Allowance,1000"></textarea>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <button class="btn btn-primary" onclick="addBulkEntries()">📝 Add All Entries</button>
-                            <button class="btn btn-warning" onclick="clearBulkEntries()">🗑️ Clear</button>
-                            <button class="btn btn-info" onclick="showBulkExample()">📋 Example</button>
+                    <p>Add multiple transactions quickly using the format: description,amount</p>
+                    
+                    <div class="bulk-entry-container">
+                        <!-- Credit Section -->
+                        <div class="bulk-section credit-section">
+                            <div class="bulk-section-header">
+                                <div class="bulk-section-icon">💰</div>
+                                <h4>Credit Entries</h4>
+                            </div>
+                            <div class="bulk-section-content">
+                                <textarea id="bulkCredit" rows="5" placeholder="Pocket Money Received,500&#10;Monthly Allowance,1000&#10;Account Transfer,1500"></textarea>
+                                <div class="bulk-section-actions">
+                                    <button class="btn btn-success" onclick="addBulkCredit()">➕ Add Credits</button>
+                                    <button class="btn btn-info" onclick="showCreditExample()">📋 Example</button>
+                                </div>
+                            </div>
                         </div>
-                        <div id="bulkStatus" class="status-message" style="display: none;"></div>
+                        
+                        <!-- Debit Section -->
+                        <div class="bulk-section debit-section">
+                            <div class="bulk-section-header">
+                                <div class="bulk-section-icon">💸</div>
+                                <h4>Debit Entries</h4>
+                            </div>
+                            <div class="bulk-section-content">
+                                <textarea id="bulkDebit" rows="5" placeholder="Books & Supplies,200&#10;Fine,50&#10;Phone & Internet,300"></textarea>
+                                <div class="bulk-section-actions">
+                                    <button class="btn btn-danger" onclick="addBulkDebit()">➕ Add Debits</button>
+                                    <button class="btn btn-info" onclick="showDebitExample()">📋 Example</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                        <input type="number" id="amount" placeholder="Amount (₹)" step="0.01" min="0">
-                        <button class="btn btn-primary" onclick="addEntry()">📝 Add Entry</button>
+                    
+                    <div class="bulk-actions">
+                        <button class="btn btn-primary" onclick="addBulkEntries()">📝 Add All Entries</button>
+                        <button class="btn btn-warning" onclick="clearBulkEntries()">🗑️ Clear All</button>
                     </div>
+                    
+                    <div id="bulkStatus" class="status-message" style="display: none;"></div>
                 </div>
-
                 <!-- Filter & Search Card -->
                 <div class="card">
                     <div class="card-header">
@@ -1173,7 +1186,6 @@
                     </div>
                     <div id="filterSummary" class="filter-summary"></div>
                 </div>
-
                 <!-- Transaction Ledger Card -->
                 <div class="card">
                     <div class="card-header">
@@ -1212,10 +1224,8 @@
             </div>
         </div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-
     <script>
         let currentUsername = null;
         let debugMode = false;
@@ -1227,19 +1237,16 @@
         let currentItemInputMode = 'predefined';
         let receivedTransactions = new Set();
         const api = "https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec";
-
         // Theme management
         function initializeTheme() {
             const savedTheme = localStorage.getItem('theme') || 'light';
             setTheme(savedTheme);
         }
-
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             setTheme(newTheme);
         }
-
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('theme', theme);
@@ -1261,7 +1268,6 @@
         } else {
             initializeApp();
         }
-
         // Student data mapping
         const studentData = {
             
@@ -1297,9 +1303,7 @@
    '1086': 'MOHAMMED NIDAL',
    '1085': 'MUHAMMED NAFIH',
    '1014': 'MURSHID MK'
-
         };
-
         // Default predefined items
         const defaultPredefinedItems = [
             'Fine',
@@ -1315,10 +1319,8 @@
             'Accessories',
             'Emergency Expense'
         ];
-
         // Check for username in URL first
         const urlUsername = new URLSearchParams(window.location.search).get("user");
-
         // Function to format student name without "Mohammed" prefix
         function formatStudentName(name) {
             if (!name) return name;
@@ -1332,7 +1334,6 @@
             
             return formattedName || name; // Return original if empty after removal
         }
-
         // Initialize predefined items
         function initializePredefinedItems() {
             try {
@@ -1349,7 +1350,6 @@
             }
             updatePredefinedItemsUI();
         }
-
         // Save predefined items to localStorage
         function savePredefinedItems() {
             try {
@@ -1360,7 +1360,6 @@
                 console.warn("Error saving predefined items to localStorage:", error);
             }
         }
-
         // Update predefined items dropdown and management list
         function updatePredefinedItemsUI() {
             const select = document.getElementById('predefinedItemSelect');
@@ -1376,7 +1375,6 @@
                 option.textContent = item;
                 select.appendChild(option);
             });
-
             // Update management list
             managementList.innerHTML = '';
             predefinedItems.forEach((item, index) => {
@@ -1389,7 +1387,6 @@
                 managementList.appendChild(itemDiv);
             });
         }
-
         // Toggle between predefined and custom item input
         function toggleItemInput(mode) {
             currentItemInputMode = mode;
@@ -1413,45 +1410,106 @@
                 manageSection.style.display = 'none';
             }
         }
-
         // Bulk Entry Functions
+        function addBulkCredit() {
+            const bulkCredit = document.getElementById("bulkCredit");
+            const bulkStatus = document.getElementById("bulkStatus");
+            const entriesText = bulkCredit.value.trim();
+            
+            if (!entriesText) {
+                alert("⚠️ Please enter at least one credit entry.");
+                return;
+            }
+            
+            processBulkEntries(entriesText, 'credit', bulkStatus);
+        }
+
+        function addBulkDebit() {
+            const bulkDebit = document.getElementById("bulkDebit");
+            const bulkStatus = document.getElementById("bulkStatus");
+            const entriesText = bulkDebit.value.trim();
+            
+            if (!entriesText) {
+                alert("⚠️ Please enter at least one debit entry.");
+                return;
+            }
+            
+            processBulkEntries(entriesText, 'debit', bulkStatus);
+        }
+
         function addBulkEntries() {
+            const bulkCredit = document.getElementById("bulkCredit");
+            const bulkDebit = document.getElementById("bulkDebit");
+            const bulkStatus = document.getElementById("bulkStatus");
+            
+            const creditText = bulkCredit.value.trim();
+            const debitText = bulkDebit.value.trim();
+            
+            if (!creditText && !debitText) {
+                alert("⚠️ Please enter at least one entry.");
+                return;
+            }
+            
+            let allEntries = [];
+            let successCount = 0;
+            let errorCount = 0;
+            
+            // Process credit entries
+            if (creditText) {
+                const creditResults = processBulkEntriesSync(creditText, 'credit');
+                allEntries = allEntries.concat(creditResults.entries);
+                successCount += creditResults.successCount;
+                errorCount += creditResults.errorCount;
+            }
+            
+            // Process debit entries
+            if (debitText) {
+                const debitResults = processBulkEntriesSync(debitText, 'debit');
+                allEntries = allEntries.concat(debitResults.entries);
+                successCount += debitResults.successCount;
+                errorCount += debitResults.errorCount;
+            }
+            
+            // Show combined status
+            bulkStatus.style.display = "block";
+            bulkStatus.className = "status-message";
+            bulkStatus.innerHTML = `✅ Bulk entry complete: ${successCount} added successfully, ${errorCount} failed.`;
+            
+            // Clear textareas if all were successful
+            if (errorCount === 0) {
+                bulkCredit.value = "";
+                bulkDebit.value = "";
+            }
+            
+            // Refresh data
+            setTimeout(() => {
+                fetchSummary();
+                fetchLedger();
+            }, 500);
+        }
+
+        function processBulkEntries(entriesText, type, statusElement) {
             if (!currentUsername) {
                 alert("⚠️ Please login first.");
                 return;
             }
-
-            const bulkTextarea = document.getElementById("bulkEntries");
-            const bulkStatus = document.getElementById("bulkStatus");
-            const entriesText = bulkTextarea.value.trim();
             
-            if (!entriesText) {
-                alert("⚠️ Please enter at least one entry.");
-                return;
-            }
-
-            // Split into lines and process each line
             const lines = entriesText.split('\n').filter(line => line.trim() !== '');
             const results = [];
             let successCount = 0;
             let errorCount = 0;
             
             // Show processing status
-            bulkStatus.style.display = "block";
-            bulkStatus.className = "loading";
-            bulkStatus.innerHTML = "Processing bulk entries...";
+            statusElement.style.display = "block";
+            statusElement.className = "loading";
+            statusElement.innerHTML = `Processing ${type} entries...`;
             
             // Process each entry
             const processEntry = (index) => {
                 if (index >= lines.length) {
                     // All entries processed
-                    bulkStatus.className = "status-message";
-                    bulkStatus.innerHTML = `✅ Bulk entry complete: ${successCount} added successfully, ${errorCount} failed.`;
-                    
-                    // Clear the textarea if all were successful
-                    if (errorCount === 0) {
-                        bulkTextarea.value = "";
-                    }
+                    statusElement.className = "status-message";
+                    statusElement.innerHTML = `✅ ${type} entries complete: ${successCount} added successfully, ${errorCount} failed.`;
                     
                     // Refresh data
                     setTimeout(() => {
@@ -1466,22 +1524,14 @@
                 const parts = line.split(',').map(part => part.trim());
                 
                 // Validate format
-                if (parts.length !== 3) {
-                    results.push({ line, error: "Invalid format. Expected: type,description,amount" });
+                if (parts.length !== 2) {
+                    results.push({ line, error: "Invalid format. Expected: description,amount" });
                     errorCount++;
                     processEntry(index + 1);
                     return;
                 }
                 
-                const [type, description, amountStr] = parts;
-                
-                // Validate type
-                if (type !== 'credit' && type !== 'debit') {
-                    results.push({ line, error: "Type must be 'credit' or 'debit'" });
-                    errorCount++;
-                    processEntry(index + 1);
-                    return;
-                }
+                const [description, amountStr] = parts;
                 
                 // Validate amount
                 const amount = parseFloat(amountStr);
@@ -1526,23 +1576,66 @@
             processEntry(0);
         }
 
+        function processBulkEntriesSync(entriesText, type) {
+            const lines = entriesText.split('\n').filter(line => line.trim() !== '');
+            const results = [];
+            let successCount = 0;
+            let errorCount = 0;
+            
+            for (const line of lines) {
+                const parts = line.split(',').map(part => part.trim());
+                
+                // Validate format
+                if (parts.length !== 2) {
+                    results.push({ line, error: "Invalid format. Expected: description,amount" });
+                    errorCount++;
+                    continue;
+                }
+                
+                const [description, amountStr] = parts;
+                
+                // Validate amount
+                const amount = parseFloat(amountStr);
+                if (isNaN(amount) || amount <= 0) {
+                    results.push({ line, error: "Amount must be a positive number" });
+                    errorCount++;
+                    continue;
+                }
+                
+                results.push({ line, type, description, amount, success: true });
+                successCount++;
+            }
+            
+            return { entries: results, successCount, errorCount };
+        }
+
         function clearBulkEntries() {
-            document.getElementById("bulkEntries").value = "";
+            document.getElementById("bulkCredit").value = "";
+            document.getElementById("bulkDebit").value = "";
             document.getElementById("bulkStatus").style.display = "none";
         }
 
-        function showBulkExample() {
-            const exampleText = `credit,Pocket Money Received,500
-debit,Books & Supplies,200
-debit,Fine,50
-credit,Monthly Allowance,1000
-debit,Phone & Internet,300
-credit,Account Transfer,1500`;
+        function showCreditExample() {
+            const exampleText = `Pocket Money Received,500
+Monthly Allowance,1000
+Account Transfer,1500
+Scholarship,2000
+Gift from Family,750`;
             
-            document.getElementById("bulkEntries").value = exampleText;
-            alert("Example loaded! You can modify it before adding.");
+            document.getElementById("bulkCredit").value = exampleText;
+            alert("Credit example loaded! You can modify it before adding.");
         }
 
+        function showDebitExample() {
+            const exampleText = `Books & Supplies,200
+Fine,50
+Phone & Internet,300
+Food Expenses,450
+Transportation,150`;
+            
+            document.getElementById("bulkDebit").value = exampleText;
+            alert("Debit example loaded! You can modify it before adding.");
+        }
         // Toggle manage items section
         function toggleManageItems() {
             const section = document.getElementById('manageItemsSection');
@@ -1561,7 +1654,6 @@ credit,Account Transfer,1500`;
                 document.querySelectorAll('.item-toggle:not(#manageToggle)').forEach(btn => btn.classList.remove('active'));
             }
         }
-
         // Add new predefined item
         function addPredefinedItem() {
             const input = document.getElementById('newItemInput');
@@ -1584,7 +1676,6 @@ credit,Account Transfer,1500`;
             
             alert(`✅ "${itemName}" added to predefined items!`);
         }
-
         // Remove predefined item
         function removePredefinedItem(index) {
             const itemName = predefinedItems[index];
@@ -1596,7 +1687,6 @@ credit,Account Transfer,1500`;
                 alert(`✅ "${itemName}" removed from predefined items.`);
             }
         }
-
         // Get current item description based on input mode
         function getCurrentItemDescription() {
             if (currentItemInputMode === 'predefined') {
@@ -1607,7 +1697,6 @@ credit,Account Transfer,1500`;
                 return input ? input.value.trim() : '';
             }
         }
-
         // Clear current item input
         function clearCurrentItemInput() {
             if (currentItemInputMode === 'predefined') {
@@ -1618,7 +1707,6 @@ credit,Account Transfer,1500`;
                 if (input) input.value = '';
             }
         }
-
         // Load received transactions from local storage
         function loadReceivedTransactions() {
             try {
@@ -1631,7 +1719,6 @@ credit,Account Transfer,1500`;
                 receivedTransactions = new Set();
             }
         }
-
         // Save received transactions to local storage
         function saveReceivedTransactions() {
             try {
@@ -1642,36 +1729,30 @@ credit,Account Transfer,1500`;
                 console.warn("Error saving received transactions:", error);
             }
         }
-
         // Generate unique transaction ID
         function generateTransactionId(entry) {
             return `${entry.date || 'nodate'}_${entry.type || 'notype'}_${entry.item || 'noitem'}_${entry.amount || 0}`;
         }
-
         // Handle received button click
         function markAsReceived(transactionId, amount, description, buttonElement) {
             if (receivedTransactions.has(transactionId)) {
                 alert("This transaction has already been marked as received!");
                 return;
             }
-
             if (confirm(`Mark as received: ₹${amount} for "${description}"?\n\nThis will add ₹${amount} to your balance as credit.`)) {
                 // Disable button and show processing
                 buttonElement.disabled = true;
                 buttonElement.innerText = 'Processing...';
-
                 // Add credit entry for the received amount
                 addReceivedCredit(amount, description, transactionId, buttonElement);
             }
         }
-
         // Add credit for received transaction
         function addReceivedCredit(amount, originalDescription, transactionId, buttonElement) {
             const item = `Received: ${originalDescription}`;
             const requestUrl = `${api}?action=add_credit&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(item)}&amount=${encodeURIComponent(amount)}`;
             
             console.log("Adding received credit:", { amount, item, transactionId });
-
             fetch(requestUrl, { 
                 method: "GET",
                 headers: {
@@ -1692,26 +1773,21 @@ credit,Account Transfer,1500`;
                 if (!result.success || !result.data || result.data.result !== "success") {
                     throw new Error(result.data?.error || "Failed to add received credit");
                 }
-
                 // Mark transaction as received
                 receivedTransactions.add(transactionId);
                 saveReceivedTransactions();
-
                 // Remove the button and update the row
                 const row = buttonElement.closest('tr');
                 if (row) {
                     row.classList.add('received');
                     buttonElement.parentElement.innerHTML = '<span style="color: #28a745; font-weight: 600;">✅ Received</span>';
                 }
-
                 // Refresh data
                 setTimeout(() => {
                     fetchSummary();
                     fetchLedger();
                 }, 500);
-
                 alert(`✅ Marked as received! ₹${amount} has been added to your balance.`);
-
             })
             .catch(error => {
                 console.error("Error adding received credit:", error);
@@ -1723,7 +1799,6 @@ credit,Account Transfer,1500`;
                 alert(`❌ Failed to mark as received: ${error.message}`);
             });
         }
-
         // Update balance display with color coding and special handling for negative amounts
         function updateBalanceDisplay(balance) {
             const balanceCard = document.getElementById('balanceCard');
@@ -1749,23 +1824,19 @@ credit,Account Transfer,1500`;
                 balanceElement.classList.add('negative');
             }
         }
-
         function showError(message) {
             return `<div class="error">❌ ${message}</div>`;
         }
-
         // Login function
         function login() {
             const usernameInput = document.getElementById("usernameInput");
             const loginError = document.getElementById("loginError");
             const username = usernameInput.value.trim();
-
             if (!username) {
                 loginError.innerHTML = "⚠️ Please enter your AD.NO.";
                 loginError.style.display = "block";
                 return;
             }
-
             // Check if username exists in studentData
             if (!studentData[username]) {
                 const allowedIds = Object.keys(studentData).join(', ');
@@ -1773,7 +1844,6 @@ credit,Account Transfer,1500`;
                 loginError.style.display = "block";
                 return;
             }
-
             // Successful login
             currentUsername = username;
             const displayName = studentData[username];
@@ -1782,7 +1852,6 @@ credit,Account Transfer,1500`;
             document.getElementById("studentName").innerText = formatStudentName(displayName);
             document.getElementById("loginSection").classList.add("hidden");
             document.getElementById("dashboardSection").classList.remove("hidden");
-
             // Initialize user-specific data
             initializePredefinedItems();
             loadReceivedTransactions();
@@ -1790,7 +1859,6 @@ credit,Account Transfer,1500`;
             // Fetch user data
             fetchSummary();
             fetchLedger();
-
             // Update URL
             try {
                 const newUrl = new URL(window.location);
@@ -1800,7 +1868,6 @@ credit,Account Transfer,1500`;
                 console.warn("Error updating URL:", error);
             }
         }
-
         function logout() {
             currentUsername = null;
             
@@ -1845,7 +1912,6 @@ credit,Account Transfer,1500`;
                 console.warn("Error updating URL:", error);
             }
         }
-
         function fetchSummary() {
             if (!currentUsername) return;
             
@@ -1927,7 +1993,6 @@ credit,Account Transfer,1500`;
                 console.error("Detailed summary error:", error);
             });
         }
-
         function fetchLedger() {
             if (!currentUsername) return;
             
@@ -2014,7 +2079,6 @@ credit,Account Transfer,1500`;
                 }
             });
         }
-
         function applyFiltersAndDisplay() {
             const ledgerStatus = document.getElementById("ledgerStatus");
             const ledgerTable = document.getElementById("ledgerTable");
@@ -2026,17 +2090,14 @@ credit,Account Transfer,1500`;
                 if (ledgerTable) ledgerTable.style.display = "none";
                 return;
             }
-
             // Apply filters
             filteredData = allLedgerData.filter(entry => {
                 // Type filter
                 const typeFilter = document.getElementById("filterType")?.value;
                 if (typeFilter && entry.type !== typeFilter) return false;
-
                 // Description filter
                 const descFilter = document.getElementById("filterDescription")?.value.toLowerCase() || '';
                 if (descFilter && !entry.searchText.includes(descFilter)) return false;
-
                 // Date filters
                 const fromDate = document.getElementById("filterDateFrom")?.value;
                 const toDate = document.getElementById("filterDateTo")?.value;
@@ -2051,17 +2112,14 @@ credit,Account Transfer,1500`;
                     to.setHours(23, 59, 59, 999);
                     if (entry.parsedDate > to) return false;
                 }
-
                 // Amount filters
                 const minAmount = parseFloat(document.getElementById("filterAmountMin")?.value || '');
                 const maxAmount = parseFloat(document.getElementById("filterAmountMax")?.value || '');
                 
                 if (!isNaN(minAmount) && entry.amount < minAmount) return false;
                 if (!isNaN(maxAmount) && entry.amount > maxAmount) return false;
-
                 return true;
             });
-
             // Apply sorting
             const sortBy = document.getElementById("sortBy")?.value || 'date-desc';
             filteredData.sort((a, b) => {
@@ -2080,15 +2138,12 @@ credit,Account Transfer,1500`;
                         return b.parsedDate - a.parsedDate;
                 }
             });
-
             // Show filter summary
             updateFilterSummary();
-
             // Reset to first page when filters change
             currentPage = 1;
             displayPage();
         }
-
         function displayPage() {
             const ledgerBody = document.getElementById("ledgerBody");
             const ledgerStatus = document.getElementById("ledgerStatus");
@@ -2096,7 +2151,6 @@ credit,Account Transfer,1500`;
             const paginationControls = document.getElementById("paginationControls");
             
             if (ledgerBody) ledgerBody.innerHTML = "";
-
             if (filteredData.length === 0) {
                 if (ledgerStatus) {
                     ledgerStatus.innerHTML = '<div class="status-message">🔍 No transactions match your filters. Try adjusting the filter criteria.</div>';
@@ -2105,15 +2159,12 @@ credit,Account Transfer,1500`;
                 if (paginationControls) paginationControls.innerHTML = "";
                 return;
             }
-
             if (ledgerStatus) ledgerStatus.style.display = "none";
             if (ledgerTable) ledgerTable.style.display = "table";
-
             // Calculate pagination
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
             const pageData = filteredData.slice(startIndex, endIndex);
-
             // Display rows
             pageData.forEach((entry, index) => {
                 if (!ledgerBody) return;
@@ -2166,11 +2217,9 @@ credit,Account Transfer,1500`;
                 `;
                 ledgerBody.appendChild(row);
             });
-
             // Update pagination controls
             updatePaginationControls();
         }
-
         function updateFilterSummary() {
             const summaryDiv = document.getElementById("filterSummary");
             if (!summaryDiv) return;
@@ -2179,7 +2228,6 @@ credit,Account Transfer,1500`;
                 summaryDiv.classList.remove("show");
                 return;
             }
-
             // Calculate filtered totals
             let filteredCredit = 0;
             let filteredDebit = 0;
@@ -2191,10 +2239,8 @@ credit,Account Transfer,1500`;
                     filteredDebit += entry.amount;
                 }
             });
-
             const filteredBalance = filteredCredit - filteredDebit;
             const balanceDisplay = filteredBalance < 0 ? Math.abs(filteredBalance) : filteredBalance;
-
             summaryDiv.innerHTML = `
                 <strong>📊 Filtered Results:</strong> 
                 ${filteredData.length} of ${allLedgerData.length} transactions | 
@@ -2204,7 +2250,6 @@ credit,Account Transfer,1500`;
             `;
             summaryDiv.classList.add("show");
         }
-
         function updatePaginationControls() {
             const controls = document.getElementById("paginationControls");
             if (!controls) return;
@@ -2215,7 +2260,6 @@ credit,Account Transfer,1500`;
                 controls.innerHTML = "";
                 return;
             }
-
             let html = "";
             
             // Previous button
@@ -2240,7 +2284,6 @@ credit,Account Transfer,1500`;
             
             controls.innerHTML = html;
         }
-
         function changePage(page) {
             const totalPages = Math.ceil(filteredData.length / itemsPerPage);
             if (page >= 1 && page <= totalPages) {
@@ -2248,11 +2291,9 @@ credit,Account Transfer,1500`;
                 displayPage();
             }
         }
-
         function applyFilters() {
             applyFiltersAndDisplay();
         }
-
         function clearFilters() {
             const filterType = document.getElementById("filterType");
             const filterDescription = document.getElementById("filterDescription");
@@ -2272,13 +2313,11 @@ credit,Account Transfer,1500`;
             
             applyFiltersAndDisplay();
         }
-
         function exportData() {
             if (filteredData.length === 0) {
                 alert("No data to export!");
                 return;
             }
-
             try {
                 const { jsPDF } = window.jspdf;
                 if (!jsPDF) {
@@ -2286,18 +2325,15 @@ credit,Account Transfer,1500`;
                 }
                 
                 const doc = new jsPDF();
-
                 // Header
                 doc.setFontSize(16);
                 doc.setFont('helvetica', 'bold');
                 doc.text(`Transaction Report - ${currentUsername}`, 20, 20);
-
                 // Date
                 const currentDate = new Date().toLocaleDateString('en-IN');
                 doc.setFontSize(10);
                 doc.setFont('helvetica', 'normal');
                 doc.text(`Generated on: ${currentDate}`, 20, 30);
-
                 // Prepare table data
                 const headers = ["Date", "Type", "Description", "Amount", "Status"];
                 const rows = filteredData.map(entry => [
@@ -2307,7 +2343,6 @@ credit,Account Transfer,1500`;
                     `₹${entry.amount.toFixed(2)}`,
                     receivedTransactions.has(entry.transactionId) ? 'Received' : (entry.type === 'debit' && !entry.item.startsWith('Received:') ? 'Pending' : '-')
                 ]);
-
                 // Generate table
                 doc.autoTable({
                     startY: 40,
@@ -2316,7 +2351,6 @@ credit,Account Transfer,1500`;
                     styles: { fontSize: 8 },
                     headStyles: { fillColor: [102, 126, 234] }
                 });
-
                 // Save PDF
                 doc.save(`${currentUsername}_transactions_${new Date().toISOString().split('T')[0]}.pdf`);
             } catch (error) {
@@ -2324,13 +2358,11 @@ credit,Account Transfer,1500`;
                 alert("Error generating PDF. Please try again or check if the PDF library is loaded.");
             }
         }
-
         function addEntry() {
             if (!currentUsername) {
                 alert("⚠️ Please login first.");
                 return;
             }
-
             const item = getCurrentItemDescription();
             const amountInput = document.getElementById("amount");
             const entryType = document.getElementById("entryType");
@@ -2342,17 +2374,14 @@ credit,Account Transfer,1500`;
             
             const amount = amountInput.value.trim();
             const type = entryType.value;
-
             if (!item || !amount) {
                 alert("⚠️ Please fill in both description and amount.");
                 return;
             }
-
             if (isNaN(amount) || parseFloat(amount) <= 0) {
                 alert("⚠️ Please enter a valid positive amount.");
                 return;
             }
-
             const action = type === "credit" ? "add_credit" : "add_debit";
             const requestUrl = `${api}?action=${encodeURIComponent(action)}&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(item)}&amount=${encodeURIComponent(amount)}`;
             
@@ -2365,7 +2394,6 @@ credit,Account Transfer,1500`;
                 const originalText = addButton.innerText;
                 addButton.innerText = "Adding...";
                 addButton.disabled = true;
-
                 fetch(requestUrl, { 
                     method: "GET",
                     headers: {
@@ -2444,13 +2472,11 @@ credit,Account Transfer,1500`;
                 });
             }
         }
-
         function refreshData() {
             console.log("Refreshing data...");
             fetchSummary();
             fetchLedger();
         }
-
         // Debug functions
         function toggleDebug() {
             debugMode = !debugMode;
@@ -2461,7 +2487,6 @@ credit,Account Transfer,1500`;
                 if (apiUrlSpan) apiUrlSpan.textContent = api;
             }
         }
-
         function logDebug(request, response) {
             if (debugMode) {
                 const lastRequest = document.getElementById("lastRequest");
@@ -2471,7 +2496,6 @@ credit,Account Transfer,1500`;
                 if (lastResponse) lastResponse.textContent = JSON.stringify(response, null, 2);
             }
         }
-
         // Event listeners setup
         function setupEventListeners() {
             // Login form
@@ -2481,7 +2505,6 @@ credit,Account Transfer,1500`;
                     if (e.key === "Enter") login();
                 });
             }
-
             // Entry form
             const customItemInput = document.getElementById("customItemInput");
             if (customItemInput) {
@@ -2496,7 +2519,6 @@ credit,Account Transfer,1500`;
                     if (e.key === "Enter") addEntry();
                 });
             }
-
             // Predefined items
             const newItemInput = document.getElementById("newItemInput");
             if (newItemInput) {
@@ -2504,7 +2526,6 @@ credit,Account Transfer,1500`;
                     if (e.key === "Enter") addPredefinedItem();
                 });
             }
-
             // Filter inputs
             const filterDescription = document.getElementById("filterDescription");
             if (filterDescription) {
@@ -2526,7 +2547,6 @@ credit,Account Transfer,1500`;
                     if (e.key === "Enter") applyFilters();
                 });
             }
-
             // Sort change
             const sortBy = document.getElementById("sortBy");
             if (sortBy) {
@@ -2535,7 +2555,6 @@ credit,Account Transfer,1500`;
                 });
             }
         }
-
         // Initialize the application
         function initializeApp() {
             // Initialize theme first
@@ -2559,19 +2578,15 @@ credit,Account Transfer,1500`;
                 }
             }
         }
-
         // Global error handlers
         window.addEventListener('error', function(e) {
             console.error('Global error:', e.error);
         });
-
         window.addEventListener('unhandledrejection', function(e) {
             console.error('Unhandled promise rejection:', e.reason);
         });
-
         // Make studentData globally accessible
         window.studentData = studentData;
-
         // Initialize when DOM is loaded
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initializeApp);
@@ -2581,5 +2596,3 @@ credit,Account Transfer,1500`;
     </script>
 </body>
 </html>
-
-
