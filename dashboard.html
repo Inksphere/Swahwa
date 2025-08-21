@@ -404,6 +404,66 @@
             50% { opacity: 1; }
             100% { opacity: 0.7; }
         }
+        /* Multiple Entry Sets */
+        .entry-sets-container {
+            margin-top: 12px;
+        }
+        .entry-set {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 8px;
+            margin-bottom: 12px;
+            align-items: center;
+            padding: 8px;
+            border-radius: 6px;
+            background: var(--stat-bg);
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+        .entry-set:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px var(--card-shadow);
+        }
+        .entry-set select,
+        .entry-set input {
+            margin-bottom: 0;
+        }
+        .remove-set-btn {
+            background: linear-gradient(45deg, #dc3545 0%, #e74c3c 100%);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .remove-set-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(220, 53, 69, 0.4);
+        }
+        .add-set-btn {
+            background: linear-gradient(45deg, #17a2b8 0%, #138496 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .add-set-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(23, 162, 184, 0.4);
+        }
         /* Filter Grid */
         .filter-grid {
             display: grid;
@@ -945,6 +1005,15 @@
             .bulk-actions .btn {
                 width: 100%;
             }
+            /* Entry sets mobile styles */
+            .entry-set {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .remove-set-btn {
+                width: 100%;
+                margin-top: 8px;
+            }
         }
         /* Extra small devices */
         @media (max-width: 480px) {
@@ -1026,7 +1095,7 @@
         * {
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
-        .card, input, select, table, th, td, .stat-item, .predefined-items, .filter-summary, .debug-info, .error, .theme-toggle, .bulk-section {
+        .card, input, select, table, th, td, .stat-item, .predefined-items, .filter-summary, .debug-info, .error, .theme-toggle, .bulk-section, .entry-set {
             transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
     </style>
@@ -1137,14 +1206,21 @@
                             </div>
                         </div>
                         
-                        <input type="number" id="amount" placeholder="Amount (₹)" step="0.01" min="0">
+                        <div class="entry-sets-container" id="entrySetsContainer">
+                            <!-- Entry sets will be dynamically added here -->
+                        </div>
+                        
+                        <button class="add-set-btn" onclick="addNewEntrySet()">
+                            <span>➕</span>
+                            <span>Add Another Entry</span>
+                        </button>
                         
                         <div class="auto-add-indicator" id="autoAddIndicator">
                             <span>⏱️</span>
                             <span>Auto-adding entry...</span>
                         </div>
                         
-                        <button class="btn btn-primary" onclick="addEntry()">📝 Add Entry</button>
+                        <button class="btn btn-primary" onclick="addAllEntries()">📝 Add All Entries</button>
                     </div>
                 </div>
                 <!-- Bulk Entry Card -->
@@ -1268,6 +1344,7 @@
         let currentItemInputMode = 'predefined';
         let receivedTransactions = new Set();
         let autoAddTimeout = null;
+        let entrySetCounter = 0;
         const api = "https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec";
         // Theme management
         function initializeTheme() {
@@ -1445,63 +1522,232 @@
             // Clear any pending auto-add
             clearAutoAddTimeout();
         }
-        // Auto-add functionality
-        function setupAutoAddListeners() {
-            const predefinedSelect = document.getElementById('predefinedItemSelect');
-            const customInput = document.getElementById('customItemInput');
-            const amountInput = document.getElementById('amount');
+        // Entry Sets Management
+        function initializeEntrySets() {
+            const container = document.getElementById('entrySetsContainer');
+            if (!container) return;
             
-            // Add event listeners for auto-add
-            if (predefinedSelect) {
-                predefinedSelect.addEventListener('change', checkAutoAddConditions);
+            // Clear existing sets
+            container.innerHTML = '';
+            entrySetCounter = 0;
+            
+            // Add the first entry set
+            addNewEntrySet();
+        }
+        
+        function addNewEntrySet() {
+            const container = document.getElementById('entrySetsContainer');
+            if (!container) return;
+            
+            entrySetCounter++;
+            const setId = entrySetCounter;
+            
+            const entrySetDiv = document.createElement('div');
+            entrySetDiv.className = 'entry-set';
+            entrySetDiv.id = `entrySet-${setId}`;
+            
+            // Create item select
+            const itemSelect = document.createElement('select');
+            itemSelect.className = 'entry-item-select';
+            itemSelect.id = `entryItem-${setId}`;
+            
+            // Add predefined items to the select
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select an item...';
+            itemSelect.appendChild(defaultOption);
+            
+            predefinedItems.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                option.textContent = item;
+                itemSelect.appendChild(option);
+            });
+            
+            // Create amount input
+            const amountInput = document.createElement('input');
+            amountInput.type = 'number';
+            amountInput.className = 'entry-amount-input';
+            amountInput.id = `entryAmount-${setId}`;
+            amountInput.placeholder = 'Amount (₹)';
+            amountInput.step = '0.01';
+            amountInput.min = '0';
+            
+            // Create remove button (only if it's not the first set)
+            let removeButton = null;
+            if (entrySetCounter > 1) {
+                removeButton = document.createElement('button');
+                removeButton.type = 'button';
+                removeButton.className = 'remove-set-btn';
+                removeButton.textContent = 'Remove';
+                removeButton.onclick = function() {
+                    removeEntrySet(setId);
+                };
             }
             
-            if (customInput) {
-                customInput.addEventListener('input', checkAutoAddConditions);
+            // Add event listeners for auto-adding new set when both fields are filled
+            itemSelect.addEventListener('change', function() {
+                checkEntrySetFields(setId);
+            });
+            
+            amountInput.addEventListener('input', function() {
+                checkEntrySetFields(setId);
+            });
+            
+            // Append elements to the entry set
+            entrySetDiv.appendChild(itemSelect);
+            entrySetDiv.appendChild(amountInput);
+            if (removeButton) {
+                entrySetDiv.appendChild(removeButton);
             }
             
-            if (amountInput) {
-                amountInput.addEventListener('input', checkAutoAddConditions);
+            // Add the entry set to the container
+            container.appendChild(entrySetDiv);
+            
+            // Focus on the item select
+            itemSelect.focus();
+        }
+        
+        function removeEntrySet(setId) {
+            const entrySet = document.getElementById(`entrySet-${setId}`);
+            if (entrySet) {
+                entrySet.remove();
             }
         }
         
-        function checkAutoAddConditions() {
-            // Clear any existing timeout
-            clearAutoAddTimeout();
+        function checkEntrySetFields(setId) {
+            const itemSelect = document.getElementById(`entryItem-${setId}`);
+            const amountInput = document.getElementById(`entryAmount-${setId}`);
             
-            // Get current values
-            let itemValue = '';
-            if (currentItemInputMode === 'predefined') {
-                const select = document.getElementById('predefinedItemSelect');
-                itemValue = select ? select.value : '';
-            } else if (currentItemInputMode === 'custom') {
-                const input = document.getElementById('customItemInput');
-                itemValue = input ? input.value.trim() : '';
-            }
+            if (!itemSelect || !amountInput) return;
             
-            const amountInput = document.getElementById('amount');
-            const amountValue = amountInput ? amountInput.value.trim() : '';
+            const itemValue = itemSelect.value;
+            const amountValue = amountInput.value.trim();
             
             // Check if both fields have valid values
             if (itemValue && amountValue && !isNaN(parseFloat(amountValue)) && parseFloat(amountValue) > 0) {
-                // Show auto-add indicator
-                const indicator = document.getElementById('autoAddIndicator');
-                if (indicator) {
-                    indicator.classList.add('show');
-                }
+                // Check if this is the last entry set
+                const container = document.getElementById('entrySetsContainer');
+                const allSets = container.querySelectorAll('.entry-set');
+                const lastSet = allSets[allSets.length - 1];
                 
-                // Set timeout to auto-add after 1.5 seconds
-                autoAddTimeout = setTimeout(() => {
-                    addEntry();
-                    clearAutoAddTimeout();
-                }, 1500);
-            } else {
-                // Hide auto-add indicator
-                const indicator = document.getElementById('autoAddIndicator');
-                if (indicator) {
-                    indicator.classList.remove('show');
+                if (lastSet && lastSet.id === `entrySet-${setId}`) {
+                    // Add a new entry set after a short delay
+                    setTimeout(() => {
+                        addNewEntrySet();
+                    }, 500);
                 }
             }
+        }
+        
+        function addAllEntries() {
+            if (!currentUsername) {
+                alert("⚠️ Please login first.");
+                return;
+            }
+            
+            // Clear any pending auto-add
+            clearAutoAddTimeout();
+            
+            const entryType = document.getElementById('entryType');
+            const type = entryType ? entryType.value : 'credit';
+            
+            // Get all entry sets
+            const container = document.getElementById('entrySetsContainer');
+            const entrySets = container.querySelectorAll('.entry-set');
+            
+            const entries = [];
+            
+            // Collect all valid entries
+            entrySets.forEach(set => {
+                const setId = set.id.split('-')[1];
+                const itemSelect = document.getElementById(`entryItem-${setId}`);
+                const amountInput = document.getElementById(`entryAmount-${setId}`);
+                
+                if (itemSelect && amountInput) {
+                    const item = itemSelect.value;
+                    const amount = amountInput.value.trim();
+                    
+                    if (item && amount && !isNaN(parseFloat(amount)) && parseFloat(amount) > 0) {
+                        entries.push({
+                            item: item,
+                            amount: parseFloat(amount),
+                            setId: setId
+                        });
+                    }
+                }
+            });
+            
+            if (entries.length === 0) {
+                alert("⚠️ Please fill in at least one entry with valid item and amount.");
+                return;
+            }
+            
+            // Process each entry
+            let successCount = 0;
+            let errorCount = 0;
+            
+            const processEntry = (index) => {
+                if (index >= entries.length) {
+                    // All entries processed
+                    alert(`✅ Entry submission complete: ${successCount} added successfully, ${errorCount} failed.`);
+                    
+                    // Clear all entry sets and add a new one
+                    initializeEntrySets();
+                    
+                    // Refresh data
+                    setTimeout(() => {
+                        fetchSummary();
+                        fetchLedger();
+                    }, 500);
+                    
+                    return;
+                }
+                
+                const entry = entries[index];
+                const action = type === "credit" ? "add_credit" : "add_debit";
+                const requestUrl = `${api}?action=${encodeURIComponent(action)}&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(entry.item)}&amount=${encodeURIComponent(entry.amount)}`;
+                
+                fetch(requestUrl, { 
+                    method: "GET",
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.result === "success") {
+                        successCount++;
+                        // Mark the entry set as processed
+                        const entrySet = document.getElementById(`entrySet-${entry.setId}`);
+                        if (entrySet) {
+                            entrySet.style.opacity = '0.5';
+                            entrySet.style.pointerEvents = 'none';
+                        }
+                    } else {
+                        errorCount++;
+                        console.error(`Error adding entry: ${data.error || "Unknown error"}`);
+                    }
+                    
+                    // Process next entry
+                    processEntry(index + 1);
+                })
+                .catch(error => {
+                    errorCount++;
+                    console.error(`Error adding entry: ${error.message}`);
+                    
+                    // Process next entry
+                    processEntry(index + 1);
+                });
+            };
+            
+            // Start processing entries
+            processEntry(0);
+        }
+        
+        // Auto-add functionality
+        function setupAutoAddListeners() {
+            // This function is now handled by the entry set management
         }
         
         function clearAutoAddTimeout() {
@@ -1948,8 +2194,7 @@ Transportation,150`;
             }
             // Check if username exists in studentData
             if (!studentData[username]) {
-                const allowedIds = Object.keys(studentData).join(', ');
-                loginError.innerHTML = `❌ Invalid AD.NO.<br><small>Allowed: ${allowedIds}</small>`;
+                loginError.innerHTML = "❌ Invalid AD.NO. Please check and try again.";
                 loginError.style.display = "block";
                 return;
             }
@@ -1964,7 +2209,7 @@ Transportation,150`;
             // Initialize user-specific data
             initializePredefinedItems();
             loadReceivedTransactions();
-            setupAutoAddListeners(); // Setup auto-add listeners
+            initializeEntrySets(); // Initialize entry sets
             
             // Fetch user data
             fetchSummary();
@@ -1983,10 +2228,7 @@ Transportation,150`;
             
             // Clear form inputs
             const usernameInput = document.getElementById("usernameInput");
-            const amountInput = document.getElementById("amount");
-            
             if (usernameInput) usernameInput.value = "";
-            if (amountInput) amountInput.value = "";
             
             clearCurrentItemInput();
             clearAutoAddTimeout(); // Clear any pending auto-add
@@ -2467,132 +2709,6 @@ Transportation,150`;
             } catch (error) {
                 console.error("Error exporting PDF:", error);
                 alert("Error generating PDF. Please try again or check if the PDF library is loaded.");
-            }
-        }
-        function addEntry() {
-            if (!currentUsername) {
-                alert("⚠️ Please login first.");
-                return;
-            }
-            
-            // Clear any pending auto-add
-            clearAutoAddTimeout();
-            
-            const item = getCurrentItemDescription();
-            const amountInput = document.getElementById("amount");
-            const entryType = document.getElementById("entryType");
-            
-            if (!amountInput || !entryType) {
-                alert("⚠️ Form elements not found.");
-                return;
-            }
-            
-            const amount = amountInput.value.trim();
-            const type = entryType.value;
-            if (!item || !amount) {
-                alert("⚠️ Please fill in both description and amount.");
-                return;
-            }
-            if (isNaN(amount) || parseFloat(amount) <= 0) {
-                alert("⚠️ Please enter a valid positive amount.");
-                return;
-            }
-            const action = type === "credit" ? "add_credit" : "add_debit";
-            const requestUrl = `${api}?action=${encodeURIComponent(action)}&username=${encodeURIComponent(currentUsername)}&item=${encodeURIComponent(item)}&amount=${encodeURIComponent(amount)}`;
-            
-            console.log("Adding entry:", { username: currentUsername, item, amount, type, action });
-            console.log("Request URL:", requestUrl);
-            
-            // Disable button during request
-            const addButton = document.querySelector('button[onclick="addEntry()"]');
-            if (addButton) {
-                const originalText = addButton.innerText;
-                addButton.innerText = "Adding...";
-                addButton.disabled = true;
-                fetch(requestUrl, { 
-                    method: "GET",
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                })
-                .then(res => {
-                    console.log("Response status:", res.status);
-                    
-                    return res.text().then(text => {
-                        console.log("Raw response text:", text);
-                        
-                        try {
-                            const jsonData = JSON.parse(text);
-                            console.log("Parsed JSON data:", jsonData);
-                            return { success: res.ok, data: jsonData, raw: text };
-                        } catch (parseError) {
-                            console.error("JSON parse error:", parseError);
-                            return { success: res.ok, data: null, raw: text, parseError: parseError.message };
-                        }
-                    });
-                })
-                .then(result => {
-                    console.log("Final result:", result);
-                    logDebug(requestUrl, result);
-                    
-                    if (!result.success) {
-                        throw new Error(`HTTP ${result.success ? 'OK' : 'Error'}: ${result.raw}`);
-                    }
-                    
-                    if (!result.data) {
-                        throw new Error(`Invalid JSON response: ${result.parseError || 'Unknown parsing error'}`);
-                    }
-                    
-                    if (result.data.result === "success") {
-                        console.log("✅ Entry added successfully!");
-                        
-                        // Clear form
-                        clearCurrentItemInput();
-                        amountInput.value = "";
-                        
-                        // Focus the appropriate item field for next entry
-                        if (currentItemInputMode === 'predefined') {
-                            const select = document.getElementById('predefinedItemSelect');
-                            if (select) select.focus();
-                        } else if (currentItemInputMode === 'custom') {
-                            const input = document.getElementById('customItemInput');
-                            if (input) input.focus();
-                        }
-                        
-                        // Refresh data after a short delay
-                        setTimeout(() => {
-                            console.log("Refreshing data...");
-                            fetchSummary();
-                            fetchLedger();
-                        }, 500);
-                        
-                        alert(`✅ ${type.charAt(0).toUpperCase() + type.slice(1)} of ₹${amount} for "${item}" added successfully!`);
-                        
-                    } else if (result.data.error) {
-                        throw new Error(`Backend error: ${result.data.error}`);
-                    } else {
-                        throw new Error(`Unexpected response format: ${JSON.stringify(result.data)}`);
-                    }
-                })
-                .catch(error => {
-                    console.error("❌ Error adding entry:", error);
-                    logDebug(requestUrl, { error: error.message });
-                    
-                    let errorMessage = error.message;
-                    
-                    if (errorMessage.includes("Failed to fetch")) {
-                        errorMessage = "Network error - check your internet connection or API URL";
-                    } else if (errorMessage.includes("JSON")) {
-                        errorMessage = "Invalid response format from server";
-                    }
-                    
-                    alert(`❌ Failed to add entry: ${errorMessage}\n\nCheck the console (F12) for detailed error information.`);
-                })
-                .finally(() => {
-                    // Re-enable button
-                    addButton.innerText = originalText;
-                    addButton.disabled = false;
-                });
             }
         }
         function refreshData() {
