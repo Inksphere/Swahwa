@@ -303,7 +303,6 @@
     button:active {
       transform: translateY(0);
     }
-
     .sqac-btn {
       background: var(--info-gradient);
       padding: 12px 24px;
@@ -312,12 +311,10 @@
       position: relative;
       overflow: hidden;
     }
-
     .sqac-btn:hover {
       background: var(--info-gradient);
       box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
     }
-
     .sqac-btn:before {
       content: '';
       position: absolute;
@@ -328,7 +325,6 @@
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
       transition: left 0.5s;
     }
-
     .sqac-btn:hover:before {
       left: 100%;
     }
@@ -429,12 +425,10 @@
     .hidden {
       display: none;
     }
-
     .sqac-section {
       text-align: center;
       margin: 20px 0;
     }
-
     .auto-login-form {
       display: none;
       position: absolute;
@@ -444,49 +438,109 @@
       height: 1px;
       overflow: hidden;
     }
-
     h3 {
       color: var(--text-color);
       transition: color 0.3s ease;
       margin-bottom: 15px;
     }
-
     p {
       color: var(--text-secondary);
       transition: color 0.3s ease;
     }
-
     /* Dark mode specific enhancements */
     [data-theme="dark"] .theme-toggle {
       background: var(--primary-gradient);
       box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
     }
-
     [data-theme="dark"] .theme-toggle:hover {
       box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
     }
-
     /* Scrollbar styling for dark mode */
     [data-theme="dark"]::-webkit-scrollbar {
       width: 8px;
     }
-
     [data-theme="dark"]::-webkit-scrollbar-track {
       background: var(--bg-color);
     }
-
     [data-theme="dark"]::-webkit-scrollbar-thumb {
       background: var(--border-color);
       border-radius: 4px;
     }
-
     [data-theme="dark"]::-webkit-scrollbar-thumb:hover {
       background: #555;
     }
-
     /* Animation for theme transition */
     * {
       transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    
+    /* Confetti styles */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    
+    .confetti-notification {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,240,240,0.9) 100%);
+      color: #333;
+      padding: 25px 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2), 0 1px 8px rgba(0,0,0,0.1);
+      font-size: 1.2rem;
+      font-weight: 600;
+      z-index: 10000;
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+      max-width: 90%;
+    }
+    
+    [data-theme="dark"] .confetti-notification {
+      background: linear-gradient(135deg, rgba(45,45,45,0.95) 0%, rgba(30,30,30,0.9) 100%);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .confetti-notification.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+    
+    .confetti-notification h2 {
+      margin-bottom: 10px;
+      font-size: 1.5rem;
+      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .confetti-notification p {
+      margin: 0;
+      font-size: 1rem;
+      color: inherit;
+    }
+    
+    .confetti-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      animation: bounce 1s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
   </style>
 </head>
@@ -507,7 +561,6 @@
         <button onclick="window.location.href='index.html'">🏠Home</button>
       </div>
     </div>
-
     <!-- Dashboard Section -->
     <div id="dashboardSection" class="hidden">
       <div class="card">
@@ -517,7 +570,6 @@
            <button onclick="window.location.href='index.html'">Home</button>
         </div>
       </div>
-
       <div class="card">
         <h3>💰 Financial Summary</h3>
         <div class="summary-grid">
@@ -536,7 +588,6 @@
         </div>
         <button class="refresh-btn" onclick="refreshData()">🔄 Refresh</button>
       </div>
-
       <!-- SQAC Portal Section -->
       <div class="card">
         <div class="sqac-section">
@@ -547,7 +598,6 @@
           </button>
         </div>
       </div>
-
       <div class="card">
         <h3>📄 Transaction Ledger</h3>
         <div id="ledgerStatus" class="loading">Loading transactions...</div>
@@ -565,7 +615,6 @@
       </div>
     </div>
   </div>
-
   <!-- Hidden form for auto-login to SQAC portal -->
   <form id="autoLoginForm" class="auto-login-form" method="POST" target="_blank" action="https://portal.sabeelulhidaya.info/login">
     <input type="text" name="username" id="autoUsername">
@@ -573,11 +622,23 @@
     <input type="hidden" name="auto_login" value="true">
     <input type="submit">
   </form>
-
+  
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+  
+  <!-- Confetti Notification -->
+  <div id="confettiNotification" class="confetti-notification">
+    <div class="confetti-icon">🎉</div>
+    <h2>Celebration Time!</h2>
+    <p>Your balance has reached a milestone: Below -200</p>
+  </div>
+  
   <script>
     let currentUsername = null;
     const api = "https://script.google.com/macros/s/AKfycbwJVSzLvUzyPR13jeN3rU26E9eCdP0UZEE6Bx0eXf1L2MxrlAwfjqoVCELxnJ5QZR4l/exec";
-
+    let confettiInterval;
+    let confettiActive = false;
+    
     // Check for username in URL first
     const urlUsername = new URLSearchParams(window.location.search).get("user");
     
@@ -592,7 +653,6 @@
       // Save preference in memory (localStorage not available in artifacts)
       window.themePreference = newTheme;
     }
-
     // Initialize theme
     function initializeTheme() {
       let savedTheme = window.themePreference || 'light';
@@ -605,7 +665,6 @@
       document.documentElement.setAttribute('data-theme', savedTheme);
       document.getElementById('themeIcon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
     }
-
     // Listen for system theme changes
     if (window.matchMedia) {
       window.matchMedia('(prefers-color-scheme: dark)').addListener((e) => {
@@ -620,7 +679,6 @@
     function showError(message) {
       return `<div class="error">❌ ${message}</div>`;
     }
-
     function login() {
       const username = document.getElementById("usernameInput").value.trim();
       
@@ -628,12 +686,10 @@
         alert("⚠️ Please enter your name.");
         return;
       }
-
       if (username.length < 2) {
         alert("⚠️ Please enter a valid name (at least 2 characters).");
         return;
       }
-
       // Set current username
       currentUsername = username;
       document.getElementById("currentUser").innerText = username;
@@ -646,12 +702,14 @@
       fetchSummary();
       fetchLedger();
       
+      // Start confetti checker
+      startConfettiChecker();
+      
       // Update URL without refreshing page
       const newUrl = new URL(window.location);
       newUrl.searchParams.set('user', username);
       window.history.pushState({}, '', newUrl);
     }
-
     function logout() {
       currentUsername = null;
       
@@ -668,6 +726,9 @@
       document.getElementById("ledgerTable").style.display = "none";
       document.getElementById("ledgerStatus").innerHTML = '<div class="loading">Loading transactions...</div>';
       
+      // Stop confetti checker
+      stopConfettiChecker();
+      
       // Show login section and hide dashboard
       document.getElementById("loginSection").classList.remove("hidden");
       document.getElementById("dashboardSection").classList.add("hidden");
@@ -677,7 +738,6 @@
       newUrl.searchParams.delete('user');
       window.history.pushState({}, '', newUrl);
     }
-
     function updateBalanceColor(balance) {
       const balanceDisplay = document.getElementById("balanceDisplay");
       balanceDisplay.classList.remove("positive", "negative");
@@ -688,7 +748,6 @@
         balanceDisplay.classList.add("negative");
       }
     }
-
     function fetchSummary() {
       if (!currentUsername) return;
       
@@ -718,6 +777,9 @@
           document.getElementById("balanceAmount").innerText = balance.toFixed(2);
           
           updateBalanceColor(balance);
+          
+          // Check balance for confetti
+          checkBalanceForConfetti();
         })
         .catch(error => {
           console.error("Error fetching summary:", error);
@@ -726,7 +788,6 @@
           document.getElementById("balanceAmount").innerText = "Error";
         });
     }
-
     function fetchLedger() {
       if (!currentUsername) return;
       
@@ -788,19 +849,16 @@
           document.getElementById("ledgerStatus").innerHTML = showError(`Failed to load transactions: ${error.message}`);
         });
     }
-
     function refreshData() {
       fetchSummary();
       fetchLedger();
     }
-
     // Enhanced function to open portal with auto-login
     function openPortalWithAutoLogin() {
       if (!currentUsername) {
         alert("⚠️ Please login first to access SQAC portal.");
         return;
       }
-
       // Method 1: Try to open with username in URL parameters
       const portalUrl = `https://portal.sabeelulhidaya.info/login?username=${encodeURIComponent(currentUsername)}&auto_login=true&source=dashboard`;
       
@@ -809,7 +867,6 @@
       const originalText = button.innerHTML;
       button.innerHTML = '🔄 Opening Portal...';
       button.disabled = true;
-
       // Open the portal
       const portalWindow = window.open(portalUrl, '_blank', 'noopener,noreferrer');
       
@@ -818,7 +875,6 @@
         button.innerHTML = originalText;
         button.disabled = false;
       }, 2000);
-
       try {
         const form = document.getElementById('autoLoginForm');
         document.getElementById('autoUsername').value = currentUsername;
@@ -828,7 +884,6 @@
         console.error('Error with form submission:', error);
         window.open(portalUrl, '_blank');
       }
-
       // Method 3: Use memory storage for username
       try {
         const userData = {
@@ -843,7 +898,6 @@
       } catch (error) {
         console.log('Storage not available:', error);
       }
-
       // Optional: Show success message
       setTimeout(() => {
         if (portalWindow && !portalWindow.closed) {
@@ -851,31 +905,25 @@
         }
       }, 1000);
     }
-
     // Legacy function kept for compatibility
     function openPortal() {
       openPortalWithAutoLogin();
     }
-
     // Handle Enter key in login input
     document.getElementById("usernameInput").addEventListener("keypress", function(e) {
       if (e.key === "Enter") login();
     });
-
     // Initialize theme on page load
     document.addEventListener('DOMContentLoaded', function() {
       initializeTheme();
     });
-
     // Initial setup - check if username is in URL
     if (urlUsername && urlUsername.trim()) {
       document.getElementById("usernameInput").value = urlUsername.trim();
       login();
     }
-
     // Initialize theme immediately
     initializeTheme();
-
     // Listen for messages from the portal window (if it supports postMessage)
     window.addEventListener('message', function(event) {
       // Security check - make sure message is from your portal
@@ -891,7 +939,131 @@
         }
       }
     });
+    
+    // Confetti functionality
+    function startConfettiChecker() {
+      // Check immediately
+      checkBalanceForConfetti();
+      // Then set interval to check every 10 seconds
+      confettiInterval = setInterval(checkBalanceForConfetti, 10000);
+    }
+    
+    function stopConfettiChecker() {
+      clearInterval(confettiInterval);
+      confettiActive = false;
+    }
+    
+    function checkBalanceForConfetti() {
+      const balanceElement = document.getElementById('balanceAmount');
+      if (!balanceElement) return;
+      
+      const balance = parseFloat(balanceElement.innerText);
+      if (balance <= -200) {
+        triggerConfetti();
+      }
+    }
+    
+    function triggerConfetti() {
+      // Prevent multiple confetti instances
+      if (confettiActive) return;
+      confettiActive = true;
+      
+      const canvas = document.getElementById('confetti-canvas');
+      const notification = document.getElementById('confettiNotification');
+      
+      // Show notification
+      notification.classList.add('show');
+      
+      // Hide notification after 5 seconds
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 5000);
+      
+      // Create professional confetti
+      const confettiCount = 250;
+      const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#38f9d7', '#ffecd2', '#fcb69f'];
+      
+      // Set canvas size
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      const context = canvas.getContext('2d');
+      const particles = [];
+      
+      // Create particles
+      for (let i = 0; i < confettiCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 12 + 5,
+          speedX: (Math.random() - 0.5) * 8,
+          speedY: Math.random() * 3 + 2,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          angle: Math.random() * 360,
+          spin: (Math.random() - 0.5) * 10,
+          shape: Math.random() > 0.5 ? 'rect' : 'circle',
+          opacity: 1,
+          decay: Math.random() * 0.02 + 0.005
+        });
+      }
+      
+      // Animation function
+      function animate() {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        
+        let activeParticles = 0;
+        
+        particles.forEach(particle => {
+          // Update position
+          particle.x += particle.speedX;
+          particle.y += particle.speedY;
+          particle.speedY += 0.1; // Gravity
+          particle.angle += particle.spin;
+          particle.opacity -= particle.decay;
+          
+          // Draw particle
+          context.save();
+          context.globalAlpha = particle.opacity;
+          context.translate(particle.x, particle.y);
+          context.rotate(particle.angle * Math.PI / 180);
+          context.fillStyle = particle.color;
+          
+          if (particle.shape === 'rect') {
+            context.fillRect(-particle.size / 2, -particle.size / 2, particle.size, particle.size);
+          } else {
+            context.beginPath();
+            context.arc(0, 0, particle.size / 2, 0, Math.PI * 2);
+            context.fill();
+          }
+          
+          context.restore();
+          
+          // Check if particle is still visible
+          if (particle.opacity > 0 && particle.y < canvas.height) {
+            activeParticles++;
+          }
+        });
+        
+        // Continue animation if particles are still active
+        if (activeParticles > 0) {
+          requestAnimationFrame(animate);
+        } else {
+          // Clear canvas when animation is complete
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          confettiActive = false;
+        }
+      }
+      
+      // Start animation
+      animate();
+    }
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      const canvas = document.getElementById('confetti-canvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
   </script>
 </body>
 </html>
-
