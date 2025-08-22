@@ -487,23 +487,27 @@
     
     .confetti-notification {
       position: fixed;
-      top: 50%;
+      top: 20px;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translateX(-50%) translateY(-100px);
       background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,240,240,0.9) 100%);
       color: #333;
-      padding: 25px 40px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2), 0 1px 8px rgba(0,0,0,0.1);
-      font-size: 1.2rem;
+      padding: 12px 20px;
+      border-radius: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1);
+      font-size: 0.9rem;
       font-weight: 600;
       z-index: 10000;
       opacity: 0;
-      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       text-align: center;
       border: 1px solid rgba(255,255,255,0.8);
       backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
       max-width: 90%;
+      white-space: nowrap;
     }
     
     [data-theme="dark"] .confetti-notification {
@@ -514,33 +518,17 @@
     
     .confetti-notification.show {
       opacity: 1;
-      transform: translate(-50%, -50%) scale(1.05);
-    }
-    
-    .confetti-notification h2 {
-      margin-bottom: 10px;
-      font-size: 1.5rem;
-      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    .confetti-notification p {
-      margin: 0;
-      font-size: 1rem;
-      color: inherit;
+      transform: translateX(-50%) translateY(0);
     }
     
     .confetti-icon {
-      font-size: 2rem;
-      margin-bottom: 10px;
+      font-size: 1.2rem;
       animation: bounce 1s infinite;
     }
     
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
+      50% { transform: translateY(-3px); }
     }
   </style>
 </head>
@@ -628,9 +616,8 @@
   
   <!-- Confetti Notification -->
   <div id="confettiNotification" class="confetti-notification">
-    <div class="confetti-icon">🎉</div>
-    <h2>Celebration Time!</h2>
-    <p>Your balance has reached a milestone: Below -200</p>
+    <span class="confetti-icon">🎉</span>
+    <span>Balance milestone: Below -200</span>
   </div>
   
   <script>
@@ -974,13 +961,13 @@
       // Show notification
       notification.classList.add('show');
       
-      // Hide notification after 5 seconds
+      // Hide notification after 4 seconds
       setTimeout(() => {
         notification.classList.remove('show');
-      }, 5000);
+      }, 4000);
       
       // Create professional confetti
-      const confettiCount = 250;
+      const confettiCount = 200;
       const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#38f9d7', '#ffecd2', '#fcb69f'];
       
       // Set canvas size
@@ -995,12 +982,12 @@
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height - canvas.height,
-          size: Math.random() * 12 + 5,
-          speedX: (Math.random() - 0.5) * 8,
-          speedY: Math.random() * 3 + 2,
+          size: Math.random() * 10 + 4,
+          speedX: (Math.random() - 0.5) * 6,
+          speedY: Math.random() * 2 + 1,
           color: colors[Math.floor(Math.random() * colors.length)],
           angle: Math.random() * 360,
-          spin: (Math.random() - 0.5) * 10,
+          spin: (Math.random() - 0.5) * 8,
           shape: Math.random() > 0.5 ? 'rect' : 'circle',
           opacity: 1,
           decay: Math.random() * 0.02 + 0.005
@@ -1017,7 +1004,7 @@
           // Update position
           particle.x += particle.speedX;
           particle.y += particle.speedY;
-          particle.speedY += 0.1; // Gravity
+          particle.speedY += 0.08; // Gravity
           particle.angle += particle.spin;
           particle.opacity -= particle.decay;
           
